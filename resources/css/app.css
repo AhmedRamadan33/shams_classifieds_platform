@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        font-family: 'Tajawal', ui-sans-serif, system-ui, sans-serif;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* Keep form controls readable and consistent with the palette. */
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    a:focus-visible,
+    button:focus-visible {
+        outline: 2px solid theme('colors.brand.600');
+        outline-offset: 2px;
+    }
+
+    /* Phone numbers and other LTR tokens stay left-to-right inside an RTL page. */
+    .ltr-input {
+        direction: ltr;
+        text-align: end;
+    }
+}

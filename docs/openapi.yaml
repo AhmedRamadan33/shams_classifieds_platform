@@ -1,0 +1,760 @@
+openapi: 3.0.3
+info:
+  title: شمس (Shams) Classifieds API
+  version: "1.0"
+  description: |
+    A token-based (Laravel Sanctum personal access tokens) JSON API for the شمس classifieds
+    platform, built for a future native mobile app (no such app is built in this repository — see
+    README.md). It reuses the exact same validation rules, authorization policies and business
+    actions as the website, so behaviour never diverges between the two.
+
+    ## Authentication
+
+    Register (`POST /auth/register`) creates an unverified account and sends a 6-digit SMS OTP,
+    exactly like the website. Confirm it with `POST /auth/verify-otp`, which verifies the phone
+    number **and** returns a bearer token in the same call — no separate login step is needed right
+    after registering. An already-verified user can get a token directly with
+    `POST /auth/login` (phone + password). Send the token on every subsequent request:
+
+    ```
+    Authorization: Bearer <token>
+    ```
+
+    A banned user's token is revoked the moment they make an authenticated request (they get a 403
+    once, then 401 afterwards, exactly like a signed-out session on the website).
+
+    ## Conventions
+
+    - All request/response bodies are JSON. Send `Accept: application/json` on every request (some
+      HTTP clients omit it by default, and error responses in particular depend on it to stay JSON
+      instead of Laravel's HTML error page).
+    - List endpoints return `{ "data": [...], "meta": {...} }`; single-resource endpoints return
+      `{ "data": {...} }`. Action endpoints that don't return a resource return `{ "message": "..." }`.
+    - Validation failures return `422` with Laravel's standard shape:
+      `{ "message": "...", "errors": { "field": ["..."] } }`. All messages are in Arabic.
+    - The advertiser's phone number is **never** included in a listing's JSON (same as the public
+      listing page): call `POST /listings/{listing}/contact` to reveal it, which also records the
+      reveal as an analytics event, exactly like the "إظهار الرقم" button on the website.
+    - Updating a listing (`POST /my/listings/{listing}/update`) uses POST, not PUT/PATCH: this
+      endpoint accepts `multipart/form-data` for image uploads, which PHP does not reliably parse on
+      PUT/PATCH requests across HTTP clients.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+  - name: Browsing
+    description: Public, unauthenticated endpoints.
+  - name: My Listings
+  - name: Favorites
+  - name: Reports
+  - name: Notifications
+  - name: Messages
+  - name: Saved Searches
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Create an unverified account and send an OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, phone, password, password_confirmation]
+              properties:
+                name: { type: string, example: أحمد }
+                phone: { type: string, example: "01012345678", description: Egyptian format or E.164; normalized server-side. }
+                password: { type: string, format: password, minLength: 8 }
+                password_confirmation: { type: string, format: password }
+      responses:
+        '201':
+          description: OTP sent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  phone: { type: string, description: "The normalized E.164 phone number, needed for the next call." }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '503': { description: The SMS provider could not be reached; nothing was charged/created beyond the account itself. }
+
+  /auth/verify-otp:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Confirm the OTP and receive a bearer token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, code]
+              properties:
+                phone: { type: string }
+                code: { type: string, example: "123456" }
+      responses:
+        '200': { $ref: '#/components/responses/AuthToken' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /auth/resend-otp:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Resend the OTP (rate limited; a cooldown applies)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              properties: { phone: { type: string } }
+      responses:
+        '200': { description: Sent. }
+        '429': { description: Still within the resend cooldown. }
+        '503': { description: The SMS provider could not be reached. }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Log in with phone + password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, password]
+              properties:
+                phone: { type: string }
+                password: { type: string, format: password }
+                device_name: { type: string, description: "Optional; labels the token (e.g. \"Ahmed's iPhone\")." }
+      responses:
+        '200': { $ref: '#/components/responses/AuthToken' }
+        '403':
+          description: Credentials are correct but the phone is not verified yet.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  phone_verified: { type: boolean, example: false }
+                  phone: { type: string }
+        '422': { description: "Wrong phone/password, or the account is banned (Laravel validation-error shape on the phone field)." }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Revoke the current token
+      responses:
+        '200': { description: Logged out. }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: The current user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: '#/components/schemas/User' } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /categories:
+    get:
+      tags: [Browsing]
+      security: []
+      summary: The active category tree
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Category' } }
+
+  /categories/{category}/fields:
+    get:
+      tags: [Browsing]
+      security: []
+      summary: A leaf category's dynamic fields (own + inherited)
+      parameters:
+        - { name: category, in: path, required: true, schema: { type: string }, description: Category slug. }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { type: array, items: { $ref: '#/components/schemas/CategoryField' } } }
+        '404': { description: "Unknown category, or not a postable leaf category." }
+
+  /governorates:
+    get:
+      tags: [Browsing]
+      security: []
+      summary: Every governorate with its cities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { type: array, items: { $ref: '#/components/schemas/Governorate' } } }
+
+  /listings:
+    get:
+      tags: [Browsing]
+      security: []
+      summary: Browse/search listings (same filters as the website's /search and /category pages)
+      parameters:
+        - { name: q, in: query, schema: { type: string }, description: Arabic full-text search. }
+        - { name: category, in: query, schema: { type: string }, description: Category slug (includes its descendants). }
+        - { name: governorate, in: query, schema: { type: string } }
+        - { name: city, in: query, schema: { type: integer } }
+        - { name: price_min, in: query, schema: { type: number } }
+        - { name: price_max, in: query, schema: { type: number } }
+        - { name: price_type, in: query, schema: { type: string, enum: [fixed, negotiable, free, contact] } }
+        - { name: sort, in: query, schema: { type: string, enum: [newest, price_asc, price_desc] } }
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+        - name: f
+          in: query
+          style: deepObject
+          explode: true
+          schema: { type: object }
+          description: 'Category-specific dynamic field filters, e.g. f[year][min]=2015 or f[brand]=تويوتا (only fields flagged filterable on the given category).'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Listing' } }
+                  meta: { $ref: '#/components/schemas/PageMeta' }
+
+  /listings/{listing}:
+    get:
+      tags: [Browsing]
+      security: []
+      summary: A single live listing
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: '#/components/schemas/Listing' } }
+        '404': { description: "Pending/rejected/expired/sold, or the owner is banned." }
+
+  /listings/{listing}/contact:
+    post:
+      tags: [Browsing]
+      security: []
+      summary: Reveal the advertiser's phone number (rate limited)
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { channel: { type: string, enum: [phone, whatsapp], default: phone, description: Only changes which analytics event is recorded. } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  phone: { type: string, example: "+201012345678" }
+                  whatsapp_url: { type: string, format: uri }
+        '404': { description: Not a live listing. }
+        '429': { description: Rate limited. }
+
+  /listings/{listing}/favorite:
+    post:
+      tags: [Favorites]
+      summary: Toggle (or set) whether the listing is in your favorites
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { favorite: { type: boolean, description: Omit to toggle the current state instead of setting it explicitly. } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: object, properties: { favorited: { type: boolean } } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/favorites:
+    get:
+      tags: [Favorites]
+      summary: Your favorited listings that are still live
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { type: array, items: { $ref: '#/components/schemas/Listing' } } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /listings/{listing}/reports:
+    post:
+      tags: [Reports]
+      summary: Report a listing (once per user; never your own)
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, enum: [scam, duplicate, prohibited, sold, other] }
+                note: { type: string, description: Required when reason is "other". }
+      responses:
+        '201': { description: Report recorded. }
+        '409': { description: You already reported this listing. }
+        '422': { description: "Validation error, or you tried to report your own listing." }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/listings:
+    get:
+      tags: [My Listings]
+      summary: Your own listings
+      parameters:
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Listing' } }
+                  meta: { $ref: '#/components/schemas/PageMeta' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    post:
+      tags: [My Listings]
+      summary: Create a listing (goes to "pending" review unless moderation is off site-wide)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/ListingWrite' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { type: object, properties: { data: { $ref: '#/components/schemas/Listing' } } }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/listings/{listing}:
+    get:
+      tags: [My Listings]
+      summary: Show one of your own listings (any status)
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Listing' } } } } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    delete:
+      tags: [My Listings]
+      summary: Delete a listing
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      responses:
+        '200': { description: Deleted. }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+  /my/listings/{listing}/update:
+    post:
+      tags: [My Listings]
+      summary: Update a listing (goes back to "pending" review; see the note on POST vs PUT above)
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/ListingWrite'
+                - type: object
+                  properties:
+                    remove_images:
+                      type: array
+                      items: { type: integer }
+                      description: Media ids of existing images to delete.
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Listing' } } } } } }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/listings/{listing}/renew:
+    post:
+      tags: [My Listings]
+      summary: Renew an expired listing, or one expiring within the renew window
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Listing' } } } } } }
+        '422': { description: Not eligible for renewal yet. }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/listings/{listing}/sold:
+    post:
+      tags: [My Listings]
+      summary: Mark an active listing as sold
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Listing' } } } } } }
+        '422': { description: Only an active listing can be marked sold. }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/notifications:
+    get:
+      tags: [Notifications]
+      summary: Your in-app notifications (viewing marks the returned page as read)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Notification' } }
+                  meta:
+                    type: object
+                    properties:
+                      current_page: { type: integer }
+                      last_page: { type: integer }
+                      unread_count: { type: integer, description: How many of the returned items were unread until this call. }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+  /my/notifications/read-all:
+    post:
+      tags: [Notifications]
+      summary: Mark every notification as read
+      responses:
+        '200': { description: OK. }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /listings/{listing}/messages:
+    post:
+      tags: [Messages]
+      summary: Start (or reuse) a conversation with the seller ("راسل المعلن")
+      parameters: [{ $ref: '#/components/parameters/ListingId' }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { body: { type: string, description: "Optional first message, sent in the same call." } }
+      responses:
+        '201': { description: Created (or reused), content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Conversation' } } } } } }
+        '422': { description: "You can't message your own listing, or it is not currently live." }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/messages:
+    get:
+      tags: [Messages]
+      summary: Your conversations, newest activity first
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object, properties: { data: { type: array, items: { $ref: '#/components/schemas/Conversation' } } } } } } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/messages/{conversation}:
+    get:
+      tags: [Messages]
+      summary: A thread's messages (marks the other participant's messages as read)
+      parameters: [{ $ref: '#/components/parameters/ConversationId' }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Conversation' }
+                  messages: { type: array, items: { $ref: '#/components/schemas/Message' } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    post:
+      tags: [Messages]
+      summary: Reply in a thread (rate limited)
+      parameters: [{ $ref: '#/components/parameters/ConversationId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties: { body: { type: string, minLength: 1, maxLength: 2000 } }
+      responses:
+        '201': { description: Sent, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Message' } } } } } }
+        '422': { description: 'Validation error, or the message was blocked (blocked_words).' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/saved-searches:
+    get:
+      tags: [Saved Searches]
+      summary: Your saved searches, each with a live result count
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object, properties: { data: { type: array, items: { $ref: '#/components/schemas/SavedSearch' } } } } } } }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    post:
+      tags: [Saved Searches]
+      summary: Save the current search (capped at classifieds.saved_search_limit per user)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, minLength: 2, maxLength: 100 }
+                notify: { type: boolean, default: false, description: Whether searches:notify should e-mail/WhatsApp/notify about new matches. }
+                category_slug: { type: string, nullable: true }
+                governorate_slug: { type: string, nullable: true }
+                q: { type: string }
+                city: { type: integer }
+                price_min: { type: number }
+                price_max: { type: number }
+                price_type: { type: string, enum: [fixed, negotiable, free, contact] }
+                f: { type: object, description: Same deepObject dynamic-field shape as GET /listings. }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/SavedSearch' } } } } } }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /my/saved-searches/{savedSearch}:
+    patch:
+      tags: [Saved Searches]
+      summary: Toggle the notify flag
+      parameters: [{ $ref: '#/components/parameters/SavedSearchId' }]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { notify: { type: boolean } } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/SavedSearch' } } } } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    delete:
+      tags: [Saved Searches]
+      summary: Delete a saved search
+      parameters: [{ $ref: '#/components/parameters/SavedSearchId' }]
+      responses:
+        '200': { description: Deleted. }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: 'Sanctum personal access token, as returned by /auth/verify-otp or /auth/login'
+  parameters:
+    ListingId: { name: listing, in: path, required: true, schema: { type: integer } }
+    ConversationId: { name: conversation, in: path, required: true, schema: { type: integer } }
+    SavedSearchId: { name: savedSearch, in: path, required: true, schema: { type: integer } }
+  responses:
+    AuthToken:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token: { type: string, description: Send as `Authorization: Bearer <token>` from now on. }
+              data: { $ref: '#/components/schemas/User' }
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string }
+              errors: { type: object, additionalProperties: { type: array, items: { type: string } } }
+    Unauthenticated:
+      description: Missing, invalid, revoked or expired token.
+    Forbidden:
+      description: Authenticated, but not allowed to act on this resource (e.g. someone else's listing).
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        phone: { type: string, example: "+201012345678" }
+        email: { type: string, nullable: true }
+        avatar_url: { type: string, format: uri, nullable: true }
+        phone_verified: { type: boolean }
+        notify_email: { type: boolean }
+        notify_whatsapp: { type: boolean }
+        is_staff: { type: boolean }
+        created_at: { type: string, format: date-time }
+    Category:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        slug: { type: string }
+        icon: { type: string, nullable: true }
+        is_postable: { type: boolean, description: Whether a listing can be created directly in this category (leaf categories only). }
+        children: { type: array, items: { $ref: '#/components/schemas/Category' } }
+    CategoryField:
+      type: object
+      properties:
+        key: { type: string, example: brand }
+        name: { type: string, example: الماركة }
+        type: { type: string, enum: [text, number, select, boolean] }
+        options: { type: array, items: { type: string }, nullable: true, description: Only present for type=select. }
+        unit: { type: string, nullable: true, example: كم }
+        is_required: { type: boolean }
+        is_filterable: { type: boolean }
+    Governorate:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        slug: { type: string }
+        cities: { type: array, items: { type: object, properties: { id: { type: integer }, name: { type: string } } } }
+    Listing:
+      type: object
+      description: The advertiser's phone number is deliberately never included — see POST /listings/{listing}/contact.
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        slug: { type: string }
+        description: { type: string }
+        price: { type: number, nullable: true }
+        price_type: { type: string, enum: [fixed, negotiable, free, contact] }
+        formatted_price: { type: string, example: "450,000 ج.م" }
+        status: { type: string, enum: [pending, active, rejected, expired, sold] }
+        is_featured: { type: boolean }
+        views: { type: integer }
+        category: { type: object, properties: { id: { type: integer }, name: { type: string }, slug: { type: string } } }
+        governorate: { type: object, properties: { id: { type: integer }, name: { type: string }, slug: { type: string } } }
+        city: { type: object, nullable: true, properties: { id: { type: integer }, name: { type: string } } }
+        seller: { type: object, properties: { id: { type: integer }, name: { type: string }, average_rating: { type: number, nullable: true }, reviews_count: { type: integer } } }
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              key: { type: string }
+              name: { type: string }
+              type: { type: string, enum: [text, number, select, boolean] }
+              value: { oneOf: [{ type: string }, { type: boolean }] }
+              unit: { type: string, nullable: true }
+        images:
+          type: array
+          items:
+            type: object
+            properties: { thumb: { type: string, format: uri }, medium: { type: string, format: uri }, large: { type: string, format: uri } }
+        published_at: { type: string, format: date-time, nullable: true }
+        expires_at: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time }
+        url: { type: string, format: uri, description: The website's canonical page for this listing. }
+    ListingWrite:
+      type: object
+      required: [category_id, governorate_id, title, description, price_type, phone]
+      properties:
+        category_id: { type: integer, description: Must be a postable (leaf) category. }
+        governorate_id: { type: integer }
+        city_id: { type: integer, nullable: true }
+        title: { type: string, minLength: 5, maxLength: 150 }
+        description: { type: string, minLength: 20, maxLength: 5000 }
+        price_type: { type: string, enum: [fixed, negotiable, free, contact] }
+        price: { type: number, description: Required unless price_type is free/contact. }
+        phone: { type: string, description: Egyptian format or E.164; shown to interested buyers. }
+        fields: { type: object, description: 'key => value for the category''s dynamic fields (see GET /categories/{category}/fields); booleans as "0"/"1".' }
+        images: { type: array, items: { type: string, format: binary }, maxItems: 8 }
+        cover: { type: string, description: 'Which upload is the cover image, e.g. "new:0" or "existing:<media id>".' }
+    PageMeta:
+      type: object
+      properties:
+        current_page: { type: integer }
+        last_page: { type: integer }
+        per_page: { type: integer }
+        total: { type: integer }
+    Notification:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string, enum: [approved, rejected, expiring, new_message, saved_search_matched] }
+        message: { type: string }
+        url: { type: string, format: uri }
+        read_at: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time }
+    Conversation:
+      type: object
+      properties:
+        id: { type: integer }
+        listing: { type: object, nullable: true, properties: { id: { type: integer }, title: { type: string } } }
+        other_participant: { type: object, properties: { id: { type: integer }, name: { type: string } } }
+        last_message_at: { type: string, format: date-time, nullable: true }
+        unread_count: { type: integer, description: Only present when listing conversations. }
+        created_at: { type: string, format: date-time }
+    Message:
+      type: object
+      properties:
+        id: { type: integer }
+        body: { type: string }
+        mine: { type: boolean, description: Whether the current user sent it. }
+        sender: { type: object, properties: { id: { type: integer }, name: { type: string } } }
+        read_at: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time }
+    SavedSearch:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        category_slug: { type: string, nullable: true }
+        governorate_slug: { type: string, nullable: true }
+        filters: { type: object }
+        notify: { type: boolean }
+        url: { type: string, format: uri, description: The website page these results would show on. }
+        current_count: { type: integer, description: Only present when listing saved searches. }
+        created_at: { type: string, format: date-time }

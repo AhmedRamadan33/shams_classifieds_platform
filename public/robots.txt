@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /search
+Disallow: /api
+Disallow: /profile
+Disallow: /ads
+Disallow: /favorites
+Disallow: /notifications
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-phone
+
+# Refreshed with this site's absolute URL every time `php artisan sitemap:generate` runs (daily).
+Sitemap: http://localhost:8000/sitemap.xml
