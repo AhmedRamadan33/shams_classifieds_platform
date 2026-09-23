@@ -58,7 +58,7 @@ class ListingInfolist
                             ->extraAttributes(['class' => 'whitespace-pre-line']),
                         KeyValueEntry::make('field_values')
                             ->label(__('app.admin.field_values'))
-                            ->getStateUsing(fn (Listing $record): array => $record->fieldValues
+                            ->getStateUsing(fn (Listing $record): array => $record->loadMissing('fieldValues.field')->fieldValues
                                 ->mapWithKeys(fn (ListingFieldValue $value) => [$value->field->name => $value->value])
                                 ->all())
                             ->keyLabel(__('app.admin.field'))

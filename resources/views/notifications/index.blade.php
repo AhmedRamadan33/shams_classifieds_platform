@@ -12,7 +12,7 @@
                     @foreach ($notifications as $notification)
                         @php($unread = isset($unreadIds[$notification->id]))
                         <li class="{{ $unread ? 'bg-brand-50' : '' }}">
-                            <a href="{{ $notification->data['url'] ?? route('dashboard') }}" class="flex items-start gap-3 px-4 py-4 hover:bg-slate-50">
+                            <a href="{{ \App\Support\RelativeUrl::of($notification->data['url'] ?? null, route('dashboard', [], false)) }}" class="flex items-start gap-3 px-4 py-4 hover:bg-slate-50">
                                 <span class="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full {{ $unread ? 'bg-brand-600' : 'bg-transparent' }}" aria-hidden="true"></span>
                                 <span class="min-w-0 flex-1">
                                     <span class="block text-sm leading-6 text-slate-900">{{ $notification->data['message'] ?? '' }}</span>

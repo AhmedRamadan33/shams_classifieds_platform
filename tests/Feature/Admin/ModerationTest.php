@@ -198,6 +198,38 @@ it('has the moderation actions on the listing view page too', function () {
     expect($listing->fresh()->status)->toBe(ListingStatus::Active);
 });
 
+it('approves a listing that has dynamic field values from the view page', function () {
+    Storage::fake('public');
+    $tree = Fixtures::carsTree();
+    $listing = Listing::factory()->for($this->owner)->pending()->create(['category_id' => $tree['leaf']->id]);
+    $listing->fieldValues()->create(['category_field_id' => $tree['parent']->effectiveFields()->firstWhere('key', 'brand')->id, 'value' => 'كيا']);
+    $listing->fieldValues()->create(['category_field_id' => $tree['parent']->effectiveFields()->firstWhere('key', 'model')->id, 'value' => 'سبورتاج']);
+
+    Livewire::test(ViewListing::class, ['record' => $listing->getRouteKey()])
+        ->callAction('approve')
+        ->assertNotified()
+        ->assertSee('كيا')
+        ->assertSee('سبورتاج');
+
+    expect($listing->fresh()->status)->toBe(ListingStatus::Active);
+});
+
+it('rejects a listing that has dynamic field values from the view page', function () {
+    Storage::fake('public');
+    $tree = Fixtures::carsTree();
+    $listing = Listing::factory()->for($this->owner)->pending()->create(['category_id' => $tree['leaf']->id]);
+    $listing->fieldValues()->create(['category_field_id' => $tree['parent']->effectiveFields()->firstWhere('key', 'brand')->id, 'value' => 'كيا']);
+    $listing->fieldValues()->create(['category_field_id' => $tree['parent']->effectiveFields()->firstWhere('key', 'model')->id, 'value' => 'سبورتاج']);
+
+    Livewire::test(ViewListing::class, ['record' => $listing->getRouteKey()])
+        ->callAction('reject', ['reason' => 'الصور غير واضحة'])
+        ->assertNotified()
+        ->assertSee('كيا')
+        ->assertSee('سبورتاج');
+
+    expect($listing->fresh()->status)->toBe(ListingStatus::Rejected);
+});
+
 it('lists open reports by default', function () {
     $listing = Listing::factory()->for($this->owner)->create();
     $open = Report::create(['listing_id' => $listing->id, 'user_id' => User::factory()->create()->id, 'reason' => 'scam']);

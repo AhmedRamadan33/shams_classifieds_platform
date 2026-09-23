@@ -547,9 +547,9 @@ class DemoSeeder extends Seeder
     private function createHeroSlides(array $imageFiles): void
     {
         $slides = [
-            ['title' => 'اكتشف آلاف الإعلانات', 'subtitle' => 'سيارات، عقارات، إلكترونيات وأكثر في مكان واحد.', 'link_url' => url('/search')],
-            ['title' => 'بيع ما لا تحتاجه في دقائق', 'subtitle' => 'أضف إعلانك مجاناً ووصله للمهتمين مباشرة.', 'link_url' => route('listings.create')],
-            ['title' => 'ميّز إعلانك أو أعلن معنا', 'subtitle' => 'باقات تمييز وبانرات إعلانية لزيادة ظهورك.', 'link_url' => route('ad-banners.create')],
+            ['title' => 'اكتشف آلاف الإعلانات', 'subtitle' => 'سيارات، عقارات، إلكترونيات وأكثر في مكان واحد.', 'link_url' => route('search', [], false)],
+            ['title' => 'بيع ما لا تحتاجه في دقائق', 'subtitle' => 'أضف إعلانك مجاناً ووصله للمهتمين مباشرة.', 'link_url' => route('listings.create', [], false)],
+            ['title' => 'ميّز إعلانك أو أعلن معنا', 'subtitle' => 'باقات تمييز وبانرات إعلانية لزيادة ظهورك.', 'link_url' => route('ad-banners.create', [], false)],
         ];
 
         foreach ($slides as $i => $slide) {
