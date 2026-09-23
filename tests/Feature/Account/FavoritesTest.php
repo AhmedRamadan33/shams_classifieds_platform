@@ -63,7 +63,6 @@ it('does not allow favoriting listings that are not public, but always allows re
     $this->actingAs($this->user)->postJson("/ad/{$pending->id}/favorite", ['favorite' => true])->assertNotFound();
     expect(Favorite::count())->toBe(0);
 
-    // A listing that was favorited and later expired can still be removed from the favorites.
     Favorite::create(['user_id' => $this->user->id, 'listing_id' => $pending->id]);
     $this->postJson("/ad/{$pending->id}/favorite", ['favorite' => false])->assertOk();
     expect(Favorite::count())->toBe(0);

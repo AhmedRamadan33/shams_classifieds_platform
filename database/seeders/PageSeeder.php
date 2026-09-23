@@ -7,12 +7,6 @@ namespace Database\Seeders;
 use App\Models\Page;
 use Illuminate\Database\Seeder;
 
-/**
- * The static pages linked from the footer. Pages that already exist are left untouched, so
- * re-seeding never overwrites edits made in the admin panel.
- *
- * NOTE: the contact page uses a placeholder address; change it from the admin panel before launch.
- */
 class PageSeeder extends Seeder
 {
     public function run(): void

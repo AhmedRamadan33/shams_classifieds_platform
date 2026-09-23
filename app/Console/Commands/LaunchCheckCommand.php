@@ -15,25 +15,16 @@ use Illuminate\Support\Facades\Schema;
 use Symfony\Component\Process\ExecutableFinder;
 use Throwable;
 
-/**
- * Pre-launch checklist: `php artisan launch:check` (add --strict to fail on warnings, --json for tools).
- *
- * "fail" items make the site unsafe or broken in production; "warn" items are strongly recommended.
- */
 class LaunchCheckCommand extends Command
 {
     protected $signature = 'launch:check {--strict : Exit with an error on warnings too} {--json : Print the results as JSON}';
 
     protected $description = 'Check that the application is ready for production';
 
-    /** @var list<array{status: string, check: string, detail: string}> */
     private array $results = [];
 
     public function handle(): int
     {
-        // Artisan::call() (used by launchCheck() in tests, and possibly by other code) reuses the
-        // same command instance across calls, so this must be reset here rather than relying on the
-        // property default, or a second call in the same process would see stale results from the first.
         $this->results = [];
 
         $this->environment();
@@ -62,8 +53,6 @@ class LaunchCheckCommand extends Command
 
         return ($failed > 0 || ($this->option('strict') && $warned > 0)) ? self::FAILURE : self::SUCCESS;
     }
-
-    // ------------------------------------------------------------------ groups
 
     private function environment(): void
     {
@@ -107,8 +96,6 @@ class LaunchCheckCommand extends Command
         $mailer = (string) config('mail.default');
         $this->check('Real mail transport', ! in_array($mailer, ['log', 'array'], true), "MAIL_MAILER={$mailer} (backup alerts and e-mail notifications need a real transport)", 'warn');
 
-        // WhatsApp notifications are opt-in per user and off by default, so "log" is never a hard
-        // failure; only warn, and only check credentials once an admin actually selects "cloud".
         $whatsapp = (string) config('services.whatsapp.driver');
         $this->check('Real WhatsApp provider', $whatsapp !== 'log', $whatsapp === 'log' ? 'WHATSAPP_DRIVER=log: opted-in users get no WhatsApp copy' : "driver: {$whatsapp}", 'warn');
 
@@ -187,7 +174,6 @@ class LaunchCheckCommand extends Command
         $memory = $this->iniBytes((string) ini_get('memory_limit'));
         $this->check('PHP memory_limit for image processing', $memory === -1 || $memory >= 256 * 1024 * 1024, (string) ini_get('memory_limit').' (256M recommended)', 'warn');
 
-        // file_exists() follows a symlink, or a junction on Windows (where is_link()/is_dir() may say no).
         $this->check('public/storage link', file_exists(public_path('storage')), 'run php artisan storage:link', 'fail');
         $this->check('sitemap.xml generated', file_exists(public_path('sitemap.xml')), 'run php artisan sitemap:generate', 'warn');
 
@@ -195,8 +181,6 @@ class LaunchCheckCommand extends Command
         $found = (new ExecutableFinder)->find('mysqldump', null, array_filter([$dump]));
         $this->check('mysqldump available for backups', $found !== null, $found ?? 'install mysql-client or set DB_DUMP_BINARY_PATH', 'warn');
     }
-
-    // ----------------------------------------------------------------- helpers
 
     private function check(string $name, bool $passed, string $detail, string $failureLevel = 'fail'): void
     {

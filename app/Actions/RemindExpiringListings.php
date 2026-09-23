@@ -10,12 +10,6 @@ use App\Notifications\ListingExpiringSoon;
 
 final class RemindExpiringListings
 {
-    /**
-     * Notify the owners of active listings that expire within the reminder window and were not
-     * reminded yet, then remember that they were.
-     *
-     * @return int number of reminders sent
-     */
     public function __invoke(): int
     {
         $sent = 0;

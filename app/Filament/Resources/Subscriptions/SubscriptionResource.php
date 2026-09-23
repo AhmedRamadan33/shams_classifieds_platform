@@ -16,10 +16,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
-/**
- * Read-only view of store subscriptions (created by App\Actions\InitiateSubscriptionPayment,
- * activated by App\Actions\CompletePayment). Nothing is created or edited here.
- */
 class SubscriptionResource extends Resource
 {
     use AdminOnlyResource;

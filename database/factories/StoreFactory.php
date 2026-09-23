@@ -9,16 +9,10 @@ use App\Models\User;
 use App\Services\ArabicText;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Store>
- */
 class StoreFactory extends Factory
 {
     protected $model = Store::class;
 
-    /**
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $name = fake()->unique()->company();

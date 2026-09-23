@@ -9,9 +9,6 @@ use App\Models\User;
 
 class ListingPolicy
 {
-    /**
-     * Banned users can do nothing; admins and moderators can do everything else.
-     */
     public function before(User $user, string $ability): ?bool
     {
         if ($user->is_banned) {
@@ -21,9 +18,6 @@ class ListingPolicy
         return $user->isStaff() ? true : null;
     }
 
-    /**
-     * Only staff (through before()) can browse every listing, e.g. in the admin panel.
-     */
     public function viewAny(User $user): bool
     {
         return false;
@@ -59,9 +53,6 @@ class ListingPolicy
         return $this->owns($user, $listing);
     }
 
-    /**
-     * Buying a featured package only makes sense for a listing that is currently live.
-     */
     public function feature(User $user, Listing $listing): bool
     {
         return $this->owns($user, $listing) && $listing->isPubliclyListed();

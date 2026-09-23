@@ -6,10 +6,6 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-/**
- * A listing lifecycle action (renew, mark sold) is not allowed in the listing's current state.
- * The message is already in Arabic and safe to show to the user.
- */
 final class ListingActionException extends RuntimeException
 {
     public static function notRenewable(): self

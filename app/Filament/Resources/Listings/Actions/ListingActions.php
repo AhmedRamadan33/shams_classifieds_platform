@@ -16,14 +16,8 @@ use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 
-/**
- * Moderation actions shared by the listings table and the listing view page.
- */
 final class ListingActions
 {
-    /**
-     * Approve: publish now with a fresh expiry date and notify the owner.
-     */
     public static function approve(): Action
     {
         return Action::make('approve')
@@ -41,9 +35,6 @@ final class ListingActions
             });
     }
 
-    /**
-     * Reject with a reason (mandatory: it is shown to the owner).
-     */
     public static function reject(): Action
     {
         return Action::make('reject')
@@ -67,9 +58,6 @@ final class ListingActions
             });
     }
 
-    /**
-     * Feature a listing until a date (featured listings are shown first); empty clears it.
-     */
     public static function feature(): Action
     {
         return Action::make('feature')
@@ -91,9 +79,6 @@ final class ListingActions
             });
     }
 
-    /**
-     * Approve every selected listing that can be approved.
-     */
     public static function bulkApprove(): BulkAction
     {
         return BulkAction::make('bulk_approve')

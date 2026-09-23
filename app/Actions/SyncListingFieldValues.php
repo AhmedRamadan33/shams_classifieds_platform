@@ -10,17 +10,8 @@ use App\Models\Listing;
 use App\Models\ListingFieldValue;
 use Illuminate\Support\Collection;
 
-/**
- * Stores a listing's dynamic field values: one row per filled field, and no rows for fields that
- * are empty or no longer apply (for example after the category changed).
- */
 final class SyncListingFieldValues
 {
-    /**
-     * @param  Collection<int, CategoryField>  $fields  effective fields of the listing's category
-     * @param  array<string, mixed>  $input  submitted values keyed by field key
-     * @return Collection<string, array{field: CategoryField, value: string}> stored values keyed by field key
-     */
     public function __invoke(Listing $listing, Collection $fields, array $input): Collection
     {
         $stored = collect();
@@ -68,9 +59,6 @@ final class SyncListingFieldValues
         };
     }
 
-    /**
-     * "2020.50" -> "2020.5", "2020.00" -> "2020" so equal numbers are stored identically.
-     */
     private function normalizeNumber(string $value): string
     {
         return str_contains($value, '.') ? rtrim(rtrim($value, '0'), '.') : $value;

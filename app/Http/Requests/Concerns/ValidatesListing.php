@@ -16,18 +16,10 @@ use Closure;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
 
-/**
- * Validation shared by StoreListingRequest and UpdateListingRequest: base rules, rules generated
- * from the chosen category's fields, and the moderation checks (blocked words, duplicates, daily limit).
- */
 trait ValidatesListing
 {
     private ?Category $listingCategory = null;
 
-    /**
-     * Normalize the raw input before the rules run: trimmed text, E.164 phone, Latin digits in
-     * numeric inputs, and the category the dynamic rules depend on.
-     */
     protected function prepareListingInput(): void
     {
         $merge = [];
@@ -64,9 +56,6 @@ trait ValidatesListing
         $this->merge($merge);
     }
 
-    /**
-     * "١٬٢٥٠٫٥" / "1,250.5" -> "1250.5"
-     */
     private function cleanNumber(string $value): string
     {
         $value = ArabicText::toLatinDigits(trim($value));
@@ -74,9 +63,6 @@ trait ValidatesListing
         return str_replace(['٫', '٬', ',', ' '], ['.', '', '', ''], $value);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     protected function listingRules(): array
     {
         $maxImages = (int) config('classifieds.max_images');
@@ -134,11 +120,6 @@ trait ValidatesListing
         return $rules;
     }
 
-    /**
-     * Arabic labels of the dynamic fields for error messages.
-     *
-     * @return array<string, string>
-     */
     protected function listingAttributes(): array
     {
         $attributes = [];
@@ -152,9 +133,6 @@ trait ValidatesListing
         return $attributes;
     }
 
-    /**
-     * Checks that need the database or configuration; they only run once the basic rules pass.
-     */
     protected function validateListingExtras(Validator $validator, bool $creating): void
     {
         $validator->after(function (Validator $validator) use ($creating): void {
@@ -206,11 +184,6 @@ trait ValidatesListing
         });
     }
 
-    /**
-     * The validated data in the shape the CreateListing / UpdateListing actions expect.
-     *
-     * @return array<string, mixed>
-     */
     public function listingData(): array
     {
         $validated = $this->validated();

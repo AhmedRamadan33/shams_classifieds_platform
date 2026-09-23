@@ -15,9 +15,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-/**
- * User reports about listings; handled by admins and moderators (ReportPolicy).
- */
 class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;

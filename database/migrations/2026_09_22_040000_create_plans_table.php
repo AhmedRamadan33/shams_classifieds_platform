@@ -15,8 +15,6 @@ return new class extends Migration
             $table->string('name', 100);
             $table->decimal('price', 10, 2);
             $table->unsignedSmallInteger('duration_days');
-            // Overrides classifieds.daily_listing_limit for a subscriber with an active subscription
-            // to this plan (see App\Services\ListingLimits).
             $table->unsignedSmallInteger('daily_listing_limit');
             $table->boolean('is_active')->default(true);
             $table->unsignedSmallInteger('sort_order')->default(0);

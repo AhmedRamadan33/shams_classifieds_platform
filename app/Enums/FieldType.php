@@ -16,9 +16,6 @@ enum FieldType: string
         return __('app.field_types.'.$this->value);
     }
 
-    /**
-     * @return array<string, string> value => Arabic label, for select inputs
-     */
     public static function options(): array
     {
         return collect(self::cases())

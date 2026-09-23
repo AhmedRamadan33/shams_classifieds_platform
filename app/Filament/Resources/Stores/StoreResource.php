@@ -15,10 +15,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-/**
- * Sellers manage their own store from the public site (/store); this is admin oversight only
- * (list, open the public page, delete an abusive one).
- */
 class StoreResource extends Resource
 {
     use AdminOnlyResource;

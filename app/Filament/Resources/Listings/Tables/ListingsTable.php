@@ -64,7 +64,6 @@ class ListingsTable
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                // The moderation queue: pending listings by default.
                 SelectFilter::make('status')
                     ->label(__('app.admin.status'))
                     ->options(ListingStatus::options())

@@ -120,9 +120,6 @@ it('logs out and revokes the token so it can no longer be used', function () {
 
     expect(PersonalAccessToken::count())->toBe(0);
 
-    // Sanctum's request guard caches the resolved user on itself for the lifetime of the container;
-    // within a single test that container persists across calls (unlike separate real requests), so
-    // it has to be told to re-resolve to actually re-check the (now deleted) token.
     $this->app['auth']->forgetGuards();
 
     $this->withToken($token)->getJson('/api/v1/auth/me')->assertUnauthorized();

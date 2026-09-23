@@ -13,14 +13,14 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // the reporter
-            $table->string('reason', 20); // scam | duplicate | prohibited | sold | other
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('reason', 20);
             $table->text('note')->nullable();
-            $table->string('status', 20)->default('open'); // open | resolved | dismissed
+            $table->string('status', 20)->default('open');
             $table->foreignId('handled_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 
-            $table->unique(['listing_id', 'user_id']); // one report per user per listing
+            $table->unique(['listing_id', 'user_id']);
             $table->index('status');
         });
     }

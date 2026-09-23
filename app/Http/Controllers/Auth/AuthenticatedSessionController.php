@@ -30,12 +30,10 @@ class AuthenticatedSessionController extends Controller
             throw ValidationException::withMessages(['phone' => __('app.auth.banned')]);
         }
 
-        // Unverified accounts are sent to the OTP page instead of getting a session.
         if (! $user->hasVerifiedPhone()) {
             try {
                 $otp->issue($user->phone, OtpPurpose::Register);
             } catch (OtpCooldownException) {
-                // Reuse the code that was just sent.
             }
 
             $request->session()->put('verify_phone', $user->phone);

@@ -17,11 +17,6 @@ use App\Models\Listing;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * The signed-in user's own listings (auth:sanctum + phone.verified, see routes/api.php). Reuses the
- * exact same form requests/actions/policies as the website (App\Http\Requests\Store/UpdateListingRequest,
- * App\Actions\CreateListing/UpdateListing), so validation and business rules never diverge between them.
- */
 class MyListingController extends Controller
 {
     public function index(Request $request): JsonResponse

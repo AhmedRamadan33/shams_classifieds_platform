@@ -12,9 +12,6 @@ use Filament\Schemas\Schema;
 use Illuminate\Validation\ValidationException;
 use SensitiveParameter;
 
-/**
- * The staff panel signs in with the phone number, exactly like the public site.
- */
 class Login extends BaseLogin
 {
     public function form(Schema $schema): Schema
@@ -38,10 +35,6 @@ class Login extends BaseLogin
             ->extraInputAttributes(['dir' => 'ltr']);
     }
 
-    /**
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     */
     protected function getCredentialsFromFormData(#[SensitiveParameter] array $data): array
     {
         return [

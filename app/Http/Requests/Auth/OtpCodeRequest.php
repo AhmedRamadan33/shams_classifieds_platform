@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Requests\Auth;
 
 use App\Services\ArabicText;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * The 6-digit code typed on the verification pages.
- */
 class OtpCodeRequest extends FormRequest
 {
     public function authorize(): bool
@@ -18,9 +14,6 @@ class OtpCodeRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         $length = (int) config('classifieds.otp.length');
@@ -30,9 +23,6 @@ class OtpCodeRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [

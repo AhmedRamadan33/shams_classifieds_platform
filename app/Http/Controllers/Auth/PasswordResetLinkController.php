@@ -17,10 +17,6 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
-/**
- * Steps 1 and 2 of the phone based password reset: request a code, then verify it.
- * (Step 3, choosing the new password, is NewPasswordController.)
- */
 class PasswordResetLinkController extends Controller
 {
     public function create(): View
@@ -28,10 +24,6 @@ class PasswordResetLinkController extends Controller
         return view('auth.forgot-password');
     }
 
-    /**
-     * The response is identical whether or not the number is registered, so the form cannot be
-     * used to discover which numbers have accounts.
-     */
     public function store(PhoneRequest $request, OtpService $otp): RedirectResponse
     {
         $phone = $request->validated('phone');
@@ -42,7 +34,6 @@ class PasswordResetLinkController extends Controller
             try {
                 $otp->issue($phone, OtpPurpose::Reset);
             } catch (OtpCooldownException) {
-                // Silently reuse the code that was just sent.
             }
         }
 
@@ -76,7 +67,6 @@ class PasswordResetLinkController extends Controller
             throw ValidationException::withMessages(['code' => $result->message()]);
         }
 
-        // The code is consumed; this short-lived flag lets the user choose a new password.
         $request->session()->put('reset_verified', ['phone' => $phone, 'at' => now()->timestamp]);
 
         return redirect()->route('password.reset');

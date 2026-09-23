@@ -1,11 +1,3 @@
-/**
- * Alpine component behind the "create / edit listing" form.
- *
- * Steps: 1 category, 2 details, 3 images, 4 review. All inputs live in one regular multipart
- * <form>, so submitting works like any other form; this component only drives the UI:
- * category drill-down, dynamic fields fetched per category, image previews, cover selection
- * and light client-side validation (the server always validates again).
- */
 export default (config) => ({
     mode: config.mode,
     step: config.mode === 'edit' ? 2 : 1,
@@ -55,13 +47,10 @@ export default (config) => ({
             this.coverKey = 'e' + config.values.cover.split(':')[1];
         }
 
-        // After a server-side validation error, open the earliest step that has an error.
         if (Object.keys(this.errors).length) {
             this.step = this.stepForErrors();
         }
     },
-
-    // ------------------------------------------------------------- category
 
     findPath(id, nodes = this.tree, trail = []) {
         for (const node of nodes) {
@@ -143,8 +132,6 @@ export default (config) => ({
         }
     },
 
-    // -------------------------------------------------------------- details
-
     needsPrice() {
         const type = this.priceTypes.find((item) => item.value === this.priceType);
 
@@ -192,8 +179,6 @@ export default (config) => ({
 
         return field.unit ? `${value} ${field.unit}` : value;
     },
-
-    // --------------------------------------------------------------- images
 
     imageList() {
         return [
@@ -266,14 +251,11 @@ export default (config) => ({
         }
     },
 
-    // The native file input must hold exactly the images we keep, so the browser submits them.
     syncFileInput() {
         const transfer = new DataTransfer();
         this.newImages.forEach((image) => transfer.items.add(image.file));
         this.$refs.fileInput.files = transfer.files;
     },
-
-    // ----------------------------------------------------------- navigation
 
     validate(step) {
         const errors = {};
@@ -371,7 +353,6 @@ export default (config) => ({
         return this.errors[key] || '';
     },
 
-    // Server errors for uploads come back per file ("images.0"); show the first one.
     imagesError() {
         if (this.imageError) {
             return this.imageError;

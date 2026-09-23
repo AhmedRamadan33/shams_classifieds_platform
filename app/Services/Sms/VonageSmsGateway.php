@@ -7,12 +7,6 @@ namespace App\Services\Sms;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-/**
- * Vonage (Nexmo) SMS API (https://developer.vonage.com/en/api/sms).
- *
- * Configure with VONAGE_KEY, VONAGE_SECRET and VONAGE_FROM (sender id). Arabic text is sent as
- * unicode so it is not garbled.
- */
 final class VonageSmsGateway implements SmsGateway
 {
     public function __construct(
@@ -40,7 +34,6 @@ final class VonageSmsGateway implements SmsGateway
             throw SmsDeliveryException::provider('vonage', 'HTTP '.$response->status());
         }
 
-        // Vonage answers 200 even for rejected messages: status "0" means accepted.
         $status = (string) $response->json('messages.0.status', '0');
 
         if ($status !== '0') {

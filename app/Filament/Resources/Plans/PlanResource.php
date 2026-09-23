@@ -18,9 +18,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-/**
- * The store subscription plans sellers can buy (App\Models\Plan, "الاشتراك" page).
- */
 class PlanResource extends Resource
 {
     use AdminOnlyResource;

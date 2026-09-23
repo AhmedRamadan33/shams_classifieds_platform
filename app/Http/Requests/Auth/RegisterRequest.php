@@ -6,7 +6,6 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\Concerns\NormalizesPhone;
 use App\Rules\PhoneNumber;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -20,14 +19,10 @@ class RegisterRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
             'name' => ['required', 'string', 'min:2', 'max:100'],
-            // An unverified account with the same number (abandoned sign-up) may be registered again.
             'phone' => [
                 'required',
                 'string',
@@ -38,9 +33,6 @@ class RegisterRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [

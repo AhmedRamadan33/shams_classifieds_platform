@@ -1,5 +1,3 @@
-// Shared by playwright.config.js and global-setup.js: the isolated environment the browser tests run in.
-// Nothing here touches the development database (shams) or its uploads (storage/app/public).
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -20,7 +18,7 @@ export const appEnv = {
     DB_DATABASE: 'shams_e2e',
     SESSION_DRIVER: 'file',
     CACHE_STORE: 'file',
-    QUEUE_CONNECTION: 'sync', // image conversions run inside the upload request
+    QUEUE_CONNECTION: 'sync',
     SMS_DRIVER: 'log',
     CAPTCHA_DRIVER: 'null',
     LOG_CHANNEL: 'single',

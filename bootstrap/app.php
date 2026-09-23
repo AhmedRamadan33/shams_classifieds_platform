@@ -25,13 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->appendToGroup('web', EnsureUserIsNotBanned::class);
 
-        // Security headers on every response, including the Filament panel.
         $middleware->append(SecurityHeaders::class);
 
-        // Paymob calls this server-to-server; it carries no session/CSRF token, only its own HMAC
-        // signature, which PaymobWebhookController verifies before trusting anything in the payload.
         $middleware->validateCsrfTokens(except: ['payments/webhook/paymob']);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+    ->withExceptions(function (Exceptions $exceptions) {})->create();

@@ -7,10 +7,6 @@ namespace App\Policies;
 use App\Models\Review;
 use App\Models\User;
 
-/**
- * Moderating reviews (hide/show/delete in the admin panel) is for staff only. Leaving, editing or
- * deleting your OWN review is handled directly in ReviewController, not through this policy.
- */
 class ReviewPolicy
 {
     public function before(User $user, string $ability): ?bool

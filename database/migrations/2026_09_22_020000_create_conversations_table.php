@@ -18,7 +18,6 @@ return new class extends Migration
             $table->timestamp('last_message_at')->nullable();
             $table->timestamps();
 
-            // One conversation per buyer per listing; they keep messaging in it instead of starting a new one.
             $table->unique(['listing_id', 'buyer_id']);
             $table->index('seller_id');
         });

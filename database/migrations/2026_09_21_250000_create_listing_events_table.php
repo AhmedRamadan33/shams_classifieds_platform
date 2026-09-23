@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('listing_events', function (Blueprint $table) {
             $table->id();
             $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
-            $table->string('type', 20); // view | phone_click | whatsapp_click
+            $table->string('type', 20);
             $table->timestamp('created_at')->useCurrent();
 
             $table->index(['listing_id', 'type', 'created_at']);

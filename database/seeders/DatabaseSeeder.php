@@ -8,10 +8,6 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database. Every seeder is idempotent, so running
-     * `php artisan migrate:fresh --seed` (or `db:seed`) repeatedly is safe.
-     */
     public function run(): void
     {
         $this->call([

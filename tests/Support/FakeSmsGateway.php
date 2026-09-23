@@ -6,12 +6,8 @@ namespace Tests\Support;
 
 use App\Services\Sms\SmsGateway;
 
-/**
- * Captures outgoing SMS messages so tests can read the OTP that would have been sent.
- */
 final class FakeSmsGateway implements SmsGateway
 {
-    /** @var list<array{phone: string, message: string}> */
     public array $messages = [];
 
     public function send(string $phone, string $message): void

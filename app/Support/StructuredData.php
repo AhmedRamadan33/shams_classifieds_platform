@@ -9,17 +9,8 @@ use App\Enums\PriceType;
 use App\Models\Listing;
 use Illuminate\Support\Str;
 
-/**
- * schema.org JSON-LD blocks. The advertiser's phone number is never part of them.
- */
 final class StructuredData
 {
-    /**
-     * Product + Offer for a listing page.
-     *
-     * @param  list<array{large: string}>  $images
-     * @return array<string, mixed>
-     */
     public static function product(Listing $listing, array $images): array
     {
         $offer = [
@@ -31,7 +22,6 @@ final class StructuredData
                 : 'https://schema.org/SoldOut',
         ];
 
-        // "Call for price" listings simply have no price in the offer.
         if ($listing->price_type === PriceType::Free) {
             $offer['price'] = '0';
         } elseif ($listing->price !== null) {
@@ -60,12 +50,6 @@ final class StructuredData
         return $product;
     }
 
-    /**
-     * BreadcrumbList; the last item is the current page and carries no link.
-     *
-     * @param  list<array{label: string, url: ?string}>  $items
-     * @return array<string, mixed>
-     */
     public static function breadcrumbs(array $items): array
     {
         $list = [];

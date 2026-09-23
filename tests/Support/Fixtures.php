@@ -12,17 +12,8 @@ use App\Models\Governorate;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 
-/**
- * Shared builders for the listing tests.
- */
 final class Fixtures
 {
-    /**
-     * A "cars" parent with a leaf child. Parent fields: brand (select, required), model (text),
-     * year (number, required, filterable), mileage (number, unit كم), warranty (boolean).
-     *
-     * @return array{parent: Category, leaf: Category}
-     */
     public static function carsTree(): array
     {
         $parent = Category::factory()->create(['name' => 'سيارات', 'slug' => 'cars']);
@@ -61,12 +52,6 @@ final class Fixtures
         ]);
     }
 
-    /**
-     * A verified user plus a valid submission for a cars listing.
-     *
-     * @param  array<string, mixed>  $overrides
-     * @return array<string, mixed>
-     */
     public static function listingPayload(Category $leaf, Governorate $governorate, ?City $city = null, array $overrides = []): array
     {
         return array_replace_recursive([
@@ -92,9 +77,6 @@ final class Fixtures
         return UploadedFile::fake()->image($name, $width, $height);
     }
 
-    /**
-     * A real JPEG that carries an EXIF block with Orientation = 6 (rotate 90° clockwise).
-     */
     public static function jpegWithExifOrientation(int $width, int $height): UploadedFile
     {
         $image = imagecreatetruecolor($width, $height);
@@ -104,7 +86,6 @@ final class Fixtures
         imagejpeg($image);
         $jpeg = (string) ob_get_clean();
 
-        // APP1 segment: "Exif\0\0" + little-endian TIFF header + one IFD entry (Orientation = 6).
         $exif = "\xFF\xE1\x00\x22Exif\x00\x00II\x2A\x00\x08\x00\x00\x00\x01\x00\x12\x01\x03\x00\x01\x00\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00";
 
         $path = sys_get_temp_dir().DIRECTORY_SEPARATOR.'exif-'.bin2hex(random_bytes(6)).'.jpg';

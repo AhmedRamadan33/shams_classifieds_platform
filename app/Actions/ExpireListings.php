@@ -9,11 +9,6 @@ use App\Models\Listing;
 
 final class ExpireListings
 {
-    /**
-     * Flag every active listing whose expiry date has passed as expired.
-     *
-     * @return int number of listings that were expired
-     */
     public function __invoke(): int
     {
         $expired = Listing::query()
@@ -23,7 +18,7 @@ final class ExpireListings
             ->update(['status' => ListingStatus::Expired->value]);
 
         if ($expired > 0) {
-            Listing::flushHomeCache(); // a bulk update fires no model events
+            Listing::flushHomeCache();
         }
 
         return $expired;

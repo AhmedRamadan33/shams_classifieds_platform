@@ -8,9 +8,6 @@ use App\Enums\ListingEventType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * A tracked interaction with a listing (page view, phone reveal, WhatsApp click).
- */
 class ListingEvent extends Model
 {
     public const UPDATED_AT = null;

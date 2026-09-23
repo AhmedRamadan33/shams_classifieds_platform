@@ -6,14 +6,12 @@ import { root } from './env.js';
 
 const LOG = path.join(root, 'storage', 'logs', 'laravel.log');
 
-/** A unique Egyptian mobile number per call, so tests never collide with seeded users or each other. */
 export function freshPhone() {
     const tail = String(Math.floor(Math.random() * 1e8)).padStart(8, '0');
 
     return `010${tail}`;
 }
 
-/** The last OTP the app "sent" to this phone (SMS_DRIVER=log writes it to storage/logs/laravel.log). */
 export async function otpFor(phone, { timeout = 10_000 } = {}) {
     const e164 = `+20${phone.replace(/^0/, '')}`;
     const started = Date.now();
@@ -24,8 +22,6 @@ export async function otpFor(phone, { timeout = 10_000 } = {}) {
         const hits = lines.filter((line) => line.includes(marker));
 
         if (hits.length) {
-            // Search only the message text, not the "SMS to <phone>:" prefix (the phone number
-            // itself is a run of digits and would otherwise be matched instead of the code).
             const message = hits.at(-1).split(marker)[1] ?? '';
             const match = message.match(/(\d{6})/);
 
@@ -40,7 +36,6 @@ export async function otpFor(phone, { timeout = 10_000 } = {}) {
     throw new Error(`No OTP was logged for ${e164}`);
 }
 
-/** A valid PNG (solid colour with a diagonal stripe) so uploads work without binary fixtures. */
 export function makePng(width, height, [r, g, b]) {
     const raw = Buffer.alloc((width * 3 + 1) * height);
 
@@ -79,8 +74,8 @@ export function makePng(width, height, [r, g, b]) {
     const header = Buffer.alloc(13);
     header.writeUInt32BE(width, 0);
     header.writeUInt32BE(height, 4);
-    header[8] = 8; // bit depth
-    header[9] = 2; // RGB
+    header[8] = 8;
+    header[9] = 2;
 
     return Buffer.concat([
         Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
@@ -102,7 +97,6 @@ export function imageFixtures(dir, count = 3) {
     });
 }
 
-/** Fails when the page can be scrolled sideways: the classic symptom of a broken mobile layout. */
 export async function expectNoHorizontalScroll(page, label = '') {
     const { scrollWidth, clientWidth } = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,

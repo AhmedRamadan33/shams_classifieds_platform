@@ -27,7 +27,6 @@ class CategoryField extends Model
 
     protected static function booted(): void
     {
-        // Only select fields keep a list of options; a stale list would confuse validation.
         static::saving(function (CategoryField $field): void {
             if ($field->type !== FieldType::Select) {
                 $field->options = null;
@@ -55,11 +54,6 @@ class CategoryField extends Model
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Allowed values of a select field (empty for any other type).
-     *
-     * @return list<string>
-     */
     public function optionValues(): array
     {
         return $this->type === FieldType::Select
@@ -67,11 +61,6 @@ class CategoryField extends Model
             : [];
     }
 
-    /**
-     * Definition sent to the listing form (see CategoryFieldsController).
-     *
-     * @return array<string, mixed>
-     */
     public function toFormArray(): array
     {
         return [

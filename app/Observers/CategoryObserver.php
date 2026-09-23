@@ -7,10 +7,6 @@ namespace App\Observers;
 use App\Services\CategoryTree;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Keeps the cached category tree in sync: any change to a category or one of its fields flushes it.
- * Registered on both Category and CategoryField through #[ObservedBy].
- */
 class CategoryObserver
 {
     public function saved(Model $model): void

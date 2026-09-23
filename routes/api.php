@@ -15,20 +15,7 @@ use App\Http\Controllers\Api\V1\SavedSearchController;
 use App\Http\Controllers\ListingContactController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Public API v1
-|--------------------------------------------------------------------------
-|
-| A token-based (Sanctum personal access tokens) JSON API for a future mobile app — see
-| docs/openapi.yaml for the full contract. Every route here is versioned under /api/v1 so a
-| breaking v2 can be added later without touching these. Read endpoints reuse the exact same
-| Actions/FormRequests/Policies as the website, so behaviour never diverges between the two.
-|
-*/
-
 Route::prefix('v1')->name('api.v1.')->group(function () {
-    // ------------------------------------------------------------------- auth
     Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:otp')->name('auth.register');
     Route::post('/auth/verify-otp', [AuthController::class, 'verifyOtp'])->middleware('throttle:otp')->name('auth.verify-otp');
     Route::post('/auth/resend-otp', [AuthController::class, 'resendOtp'])->middleware('throttle:otp')->name('auth.resend-otp');
@@ -39,7 +26,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('/auth/me', [AuthController::class, 'me'])->name('auth.me');
     });
 
-    // --------------------------------------------------------------- browsing
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('/categories/{category:slug}/fields', [CategoryController::class, 'fields'])->name('categories.fields');
     Route::get('/governorates', [GeographyController::class, 'index'])->name('governorates.index');
@@ -47,24 +33,16 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
     Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
 
-    // Phone reveal is public on the website too (throttled, not authenticated) — same controller.
     Route::post('/listings/{listing}/contact', ListingContactController::class)
         ->middleware('throttle:phone-reveal')
         ->name('listings.contact');
 
-    // --------------------------------------------------------------- account
-    //
-    // No phone.verified middleware here (unlike the website): it manipulates the session and
-    // redirects, neither of which apply to a stateless token request, and it would be redundant
-    // anyway — AuthController only ever issues a token for an already phone-verified user.
-    // api.not-banned is the token-based equivalent of the website's session-based ban check.
     Route::middleware(['auth:sanctum', 'api.not-banned'])->group(function () {
         Route::get('/my/listings', [MyListingController::class, 'index'])->name('my.listings.index');
         Route::post('/my/listings', [MyListingController::class, 'store'])
             ->middleware(['honeypot', 'throttle:listings-create'])
             ->name('my.listings.store');
         Route::get('/my/listings/{listing}', [MyListingController::class, 'show'])->name('my.listings.show');
-        // POST, not PUT: multipart image uploads on an update are far more reliably parsed as POST.
         Route::post('/my/listings/{listing}/update', [MyListingController::class, 'update'])->name('my.listings.update');
         Route::delete('/my/listings/{listing}', [MyListingController::class, 'destroy'])->name('my.listings.destroy');
         Route::post('/my/listings/{listing}/renew', [MyListingController::class, 'renew'])->name('my.listings.renew');

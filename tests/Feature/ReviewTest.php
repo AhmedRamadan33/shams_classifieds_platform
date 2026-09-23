@@ -77,8 +77,6 @@ it('throttles review submissions', function () {
     $this->post("/seller/{$seller->id}/reviews", ['rating' => 5])->assertStatus(429);
 });
 
-// -------------------------------------------------------- average rating & visibility
-
 it('computes the average rating and count from visible reviews only', function () {
     Review::factory()->create(['seller_id' => $this->seller->id, 'rating' => 5]);
     Review::factory()->create(['seller_id' => $this->seller->id, 'rating' => 3]);
@@ -115,8 +113,6 @@ it('shows the average rating on the listing page too', function () {
 
     $this->get($listing->url())->assertOk()->assertSee('5');
 });
-
-// ------------------------------------------------------------------- moderation
 
 it('lets a signed-in user prefill and edit their own review from the seller page', function () {
     Review::factory()->create(['reviewer_id' => $this->reviewer->id, 'seller_id' => $this->seller->id, 'rating' => 3, 'comment' => 'تعليقي القديم']);

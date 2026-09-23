@@ -9,16 +9,6 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
-/**
- * Paymob (accept.paymob.com), the common gateway for Egyptian merchants. Three chained calls are
- * needed to charge a card: an auth token, an order, then a payment key; the browser is then sent to
- * an iframe hosted by Paymob. See PaymobWebhookController for the server-to-server confirmation and
- * its HMAC verification.
- *
- * Needs real sandbox/production credentials (PAYMOB_API_KEY, PAYMOB_INTEGRATION_ID, PAYMOB_IFRAME_ID,
- * PAYMOB_HMAC_SECRET) to actually charge a card; nothing here can be exercised end-to-end without them,
- * only unit-tested against the documented request/response shapes (see tests/Feature/Payments).
- */
 final class PaymobGateway implements PaymentGateway
 {
     private const BASE = 'https://accept.paymob.com/api';
@@ -87,8 +77,6 @@ final class PaymobGateway implements PaymentGateway
         return (string) $this->require($response, 'token');
     }
 
-    // ------------------------------------------------------------------ http
-
     private function post(string $path, array $payload): Response
     {
         try {
@@ -112,7 +100,6 @@ final class PaymobGateway implements PaymentGateway
         return (int) round(((float) $payment->amount) * 100);
     }
 
-    /** @return array{0: string, 1: string} */
     private function splitName(string $name): array
     {
         $parts = preg_split('/\s+/u', trim($name), 2) ?: [$name];

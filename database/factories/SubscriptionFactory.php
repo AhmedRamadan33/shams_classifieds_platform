@@ -9,16 +9,10 @@ use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Subscription>
- */
 class SubscriptionFactory extends Factory
 {
     protected $model = Subscription::class;
 
-    /**
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [

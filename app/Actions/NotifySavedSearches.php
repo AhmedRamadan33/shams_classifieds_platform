@@ -7,17 +7,8 @@ namespace App\Actions;
 use App\Models\SavedSearch;
 use App\Notifications\SavedSearchMatched;
 
-/**
- * For every saved search with notify=true, checks for listings published since it was last checked
- * (or since it was created, the first time) and notifies the owner once if there are any.
- * last_notified_at only advances on an actual notification, so a quiet run never causes a later
- * batch of new listings to be missed.
- */
 final class NotifySavedSearches
 {
-    /**
-     * @return int number of notifications sent
-     */
     public function __invoke(): int
     {
         $sent = 0;

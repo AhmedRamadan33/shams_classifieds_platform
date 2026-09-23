@@ -16,17 +16,11 @@ enum PriceType: string
         return __('app.listing.price_types.'.$this->value);
     }
 
-    /**
-     * Whether a numeric price must be entered for this type.
-     */
     public function needsPrice(): bool
     {
         return $this === self::Fixed || $this === self::Negotiable;
     }
 
-    /**
-     * @return array<string, string> value => Arabic label
-     */
     public static function options(): array
     {
         return collect(self::cases())

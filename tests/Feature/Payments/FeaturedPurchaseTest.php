@@ -48,7 +48,6 @@ it('extends the remaining time instead of restarting it when already featured', 
     $this->actingAs($this->owner)->post(route('listings.feature.store', $this->listing), ['package_id' => $this->package->id]);
 
     $this->listing->refresh();
-    // 3 remaining + 7 bought = 10, not just 7 from now
     expect($this->listing->featured_until->isBetween(now()->addDays(9), now()->addDays(11)))->toBeTrue();
 });
 

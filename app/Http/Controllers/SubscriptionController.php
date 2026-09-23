@@ -11,11 +11,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-/**
- * Buying a store subscription (higher daily listing limit; see App\Services\ListingLimits and
- * App\Models\Store::isActive()). Shares the payment gateway, webhook and result page with
- * FeaturedPurchaseController — see App\Models\Payment.
- */
 class SubscriptionController extends Controller
 {
     public function create(Request $request): View

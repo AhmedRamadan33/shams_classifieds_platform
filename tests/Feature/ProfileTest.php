@@ -45,7 +45,6 @@ it('saves an optional e-mail and the notification preferences', function () {
         ->and($user->notify_email)->toBeTrue()
         ->and($user->notify_whatsapp)->toBeTrue();
 
-    // unchecking both (they are simply omitted by an HTML form) turns them back off
     $this->actingAs($user)->patch('/profile', ['name' => $user->name, 'email' => 'me@example.com']);
 
     expect($user->fresh()->notify_email)->toBeFalse()

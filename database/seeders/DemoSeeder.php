@@ -19,29 +19,18 @@ use App\Services\ArabicText;
 use App\Services\ListingSearchText;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Spatie\Permission\Models\Role;
 
-/**
- * Local demo data: ~200 listings across every category with realistic dynamic field values and
- * generated placeholder images, demo users, a moderator, favorites and sample reports.
- *
- * Only runs in the "local" (or "testing") environment: `php artisan db:seed --class=DemoSeeder`.
- * Image conversions are queued, so run `php artisan queue:work` to generate the WebP versions
- * (until then the original placeholder is served).
- */
 class DemoSeeder extends Seeder
 {
-    /** Number of listings to create (tests lower it). */
     public static int $listingCount = 200;
 
     private const DEMO_PASSWORD = 'password';
 
     private const MODERATOR_PHONE = '01111111111';
 
-    /** leaf slug => [price range, title pool]. Categories not listed use the fallback below. */
     private const CATALOG = [
         'cars-for-sale' => [[90_000, 1_800_000], ['تويوتا كورولا فبريكا بالكامل', 'هيونداي إلنترا حالة ممتازة', 'كيا سبورتاج موديل حديث', 'نيسان صني بحالة الزيرو', 'شيفروليه أوبترا ماشية قليل', 'مرسيدس C180 فل الفل']],
         'cars-for-rent' => [[600, 4_000], ['سيارة للإيجار اليومي مع سائق', 'إيجار سيارات لحفلات الزفاف', 'تأجير ميكروباص رحلات', 'سيارة اقتصادية للإيجار الشهري']],
@@ -103,7 +92,6 @@ class DemoSeeder extends Seeder
             return;
         }
 
-        // The demo data needs the reference data (idempotent seeders).
         $this->call([RoleSeeder::class, GeographySeeder::class, CategorySeeder::class, PageSeeder::class]);
 
         if (User::where('phone', $this->demoPhone(1))->exists()) {
@@ -124,11 +112,6 @@ class DemoSeeder extends Seeder
         $this->command?->info(count($listings).' demo listings created. Run `php artisan queue:work` to generate the image conversions.');
     }
 
-    // ------------------------------------------------------------------ users
-
-    /**
-     * @return Collection<int, User>
-     */
     private function createUsers(): Collection
     {
         return collect(range(1, 12))->map(function (int $i) {
@@ -161,13 +144,6 @@ class DemoSeeder extends Seeder
         return '+2012'.str_pad((string) $i, 8, '0', STR_PAD_LEFT);
     }
 
-    // ----------------------------------------------------------------- images
-
-    /**
-     * Generates a handful of colourful 800x600 JPEGs (gradient plus a few shapes) with GD.
-     *
-     * @return list<string> absolute file paths
-     */
     private function createPlaceholderImages(): array
     {
         $directory = storage_path('app/demo-placeholders');
@@ -208,13 +184,6 @@ class DemoSeeder extends Seeder
         return $files;
     }
 
-    // --------------------------------------------------------------- listings
-
-    /**
-     * @param  Collection<int, User>  $users
-     * @param  list<string>  $imageFiles
-     * @return Collection<int, Listing>
-     */
     private function createListings(Collection $users, array $imageFiles): Collection
     {
         $leaves = Category::query()->whereDoesntHave('children')->get();
@@ -287,13 +256,10 @@ class DemoSeeder extends Seeder
         };
     }
 
-    /**
-     * @param  array{0: int, 1: int}  $range
-     */
     private function randomPriceType(array $range): PriceType
     {
         if ($range[1] === 0) {
-            return PriceType::Contact; // jobs: no price
+            return PriceType::Contact;
         }
 
         return match (true) {
@@ -304,22 +270,15 @@ class DemoSeeder extends Seeder
         };
     }
 
-    /**
-     * @param  array{0: int, 1: int}  $range
-     */
     private function randomPrice(array $range): int
     {
         $price = random_int($range[0], $range[1]);
 
-        // Round to a "human" number: 50 / 500 / 5,000 depending on magnitude.
         $step = $price >= 100_000 ? 5_000 : ($price >= 5_000 ? 500 : 50);
 
         return max($range[0], (int) (round($price / $step) * $step));
     }
 
-    /**
-     * @return array<string, Carbon|null>
-     */
     private function datesFor(ListingStatus $status): array
     {
         $duration = (int) config('classifieds.listing_duration_days');
@@ -337,18 +296,11 @@ class DemoSeeder extends Seeder
         };
     }
 
-    // ------------------------------------------------------------ field values
-
-    /**
-     * @param  Collection<int, CategoryField>  $fields
-     * @return array<string, string>
-     */
     private function fieldValues(Collection $fields, string $governorateName): array
     {
         $values = [];
 
         foreach ($fields as $field) {
-            // Required fields are always filled, optional ones most of the time.
             if (! $field->is_required && random_int(1, 100) > 75) {
                 continue;
             }
@@ -389,12 +341,6 @@ class DemoSeeder extends Seeder
         };
     }
 
-    // --------------------------------------------------- favorites and reports
-
-    /**
-     * @param  Collection<int, User>  $users
-     * @param  Collection<int, Listing>  $listings
-     */
     private function createFavoritesAndReports(Collection $users, Collection $listings): void
     {
         $active = $listings->filter(fn (Listing $listing) => $listing->status === ListingStatus::Active)->values();

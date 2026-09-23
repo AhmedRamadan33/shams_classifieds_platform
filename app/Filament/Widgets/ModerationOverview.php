@@ -13,14 +13,10 @@ use App\Models\Report;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-/**
- * Dashboard widget for the moderation team: what is waiting for them.
- */
 class ModerationOverview extends StatsOverviewWidget
 {
     protected static ?int $sort = -1;
 
-    // Rendered with the page (not lazily) so the counts are there immediately.
     protected static bool $isLazy = false;
 
     protected function getStats(): array

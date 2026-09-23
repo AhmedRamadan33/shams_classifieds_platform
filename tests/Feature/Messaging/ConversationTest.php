@@ -31,7 +31,6 @@ it('starts a conversation from the listing page and reuses it on a second messag
 
     Notification::assertSentTo($this->seller, NewMessageReceived::class);
 
-    // messaging again reuses the same conversation
     $this->actingAs($this->buyer)->post(route('listings.message', $this->listing), ['body' => 'رسالة ثانية']);
 
     expect(Conversation::count())->toBe(1)

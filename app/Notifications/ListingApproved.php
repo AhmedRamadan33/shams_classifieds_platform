@@ -10,26 +10,17 @@ use App\Notifications\Concerns\HasUserPreferredChannels;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-/**
- * Sent to the owner when a moderator approves their listing.
- */
 class ListingApproved extends Notification
 {
     use HasUserPreferredChannels;
 
     public function __construct(public readonly Listing $listing) {}
 
-    /**
-     * @return list<string>
-     */
     public function via(object $notifiable): array
     {
         return $this->preferredChannels($notifiable);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function toArray(object $notifiable): array
     {
         return [

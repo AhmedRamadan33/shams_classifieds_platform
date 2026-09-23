@@ -10,9 +10,6 @@ use App\Models\Listing;
 
 final class MarkListingSold
 {
-    /**
-     * @throws ListingActionException when the listing is not currently live
-     */
     public function __invoke(Listing $listing): Listing
     {
         if ($listing->status !== ListingStatus::Active) {

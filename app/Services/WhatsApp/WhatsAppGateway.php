@@ -6,8 +6,5 @@ namespace App\Services\WhatsApp;
 
 interface WhatsAppGateway
 {
-    /**
-     * @throws WhatsAppDeliveryException
-     */
     public function send(string $phone, string $message): void;
 }

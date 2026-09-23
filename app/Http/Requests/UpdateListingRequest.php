@@ -23,9 +23,6 @@ class UpdateListingRequest extends FormRequest
         $this->prepareListingInput();
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function rules(): array
     {
         return [
@@ -35,9 +32,6 @@ class UpdateListingRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function attributes(): array
     {
         return $this->listingAttributes();
@@ -47,7 +41,6 @@ class UpdateListingRequest extends FormRequest
     {
         $this->validateListingExtras($validator, creating: false);
 
-        // Existing images that stay + newly uploaded ones must fit the limit.
         $validator->after(function (Validator $validator): void {
             if ($validator->errors()->isNotEmpty()) {
                 return;

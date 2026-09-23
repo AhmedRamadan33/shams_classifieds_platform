@@ -15,15 +15,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-/**
- * In-app messaging between a buyer and a listing's seller ("راسل المعلن"). One thread per
- * (listing, buyer) pair; see App\Models\Conversation.
- */
 class ConversationController extends Controller
 {
-    /**
-     * /messages: every conversation the user is a part of, newest activity first.
-     */
     public function index(Request $request): View
     {
         $user = $request->user();
@@ -38,10 +31,6 @@ class ConversationController extends Controller
         return view('messages.index', ['conversations' => $conversations]);
     }
 
-    /**
-     * POST /ad/{listing}/message: finds or opens the buyer's conversation about this listing and
-     * sends them straight to it (an optional first message can be posted in the same request).
-     */
     public function start(Request $request, Listing $listing, StartConversation $start, SendMessage $send): RedirectResponse
     {
         try {
@@ -63,9 +52,6 @@ class ConversationController extends Controller
         return redirect()->route('messages.show', $conversation);
     }
 
-    /**
-     * Opening the thread marks every message the other participant sent as read.
-     */
     public function show(Request $request, Conversation $conversation): View
     {
         $this->authorize('view', $conversation);
@@ -97,10 +83,6 @@ class ConversationController extends Controller
         return redirect()->route('messages.show', $conversation);
     }
 
-    /**
-     * Lightweight polling used by the thread view: messages with an id greater than "after",
-     * marked read immediately since the viewer is on the page.
-     */
     public function poll(Request $request, Conversation $conversation): JsonResponse
     {
         $this->authorize('view', $conversation);

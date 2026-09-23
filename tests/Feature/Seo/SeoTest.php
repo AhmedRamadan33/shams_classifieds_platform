@@ -11,11 +11,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Tests\Support\Fixtures;
 
-/**
- * Extract every JSON-LD block of a page as an array.
- *
- * @return list<array<string, mixed>>
- */
 function jsonLdBlocks(string $html): array
 {
     preg_match_all('#<script type="application/ld\+json">(.*?)</script>#s', $html, $matches);
@@ -28,8 +23,6 @@ beforeEach(function () {
     $this->leaf = $this->tree['leaf'];
     $this->cairo = Governorate::factory()->create(['name' => 'القاهرة', 'slug' => 'cairo']);
 });
-
-// --------------------------------------------------------------- <head> tags
 
 it('renders title, description, canonical, Open Graph and Twitter tags on every public page', function (string $url) {
     $this->get($url)
@@ -59,8 +52,6 @@ it('marks private and auth pages noindex', function () {
     $this->actingAs(User::factory()->create())->get('/dashboard')->assertSee('<meta name="robots" content="noindex,nofollow">', false);
 });
 
-// ---------------------------------------------------------- listing structured data
-
 it('adds Product + Offer and BreadcrumbList JSON-LD to a listing page', function () {
     $listing = Listing::factory()->create([
         'category_id' => $this->leaf->id,
@@ -88,7 +79,6 @@ it('adds Product + Offer and BreadcrumbList JSON-LD to a listing page', function
         ->and($breadcrumbs['itemListElement'][0]['name'])->toBe(__('app.nav.home'))
         ->and($breadcrumbs['itemListElement'][3]['position'])->toBe(4);
 
-    // structured data must never leak the advertiser's phone number
     expect($html)->not->toContain('99887766');
 });
 
@@ -131,10 +121,8 @@ it('escapes hostile characters inside JSON-LD', function () {
     $html = $this->get($listing->url())->getContent();
 
     expect($html)->not->toContain('</script><script>alert(1)')
-        ->and(jsonLdBlocks($html))->not->toBeEmpty();   // still valid JSON
+        ->and(jsonLdBlocks($html))->not->toBeEmpty();
 });
-
-// ------------------------------------------------- category / search indexing rules
 
 it('indexes an unfiltered category page with a JSON-LD breadcrumb', function () {
     Listing::factory()->create(['category_id' => $this->leaf->id]);
@@ -180,7 +168,6 @@ it('gives page 2+ of an unfiltered listing a self canonical and stays indexable'
         ->assertSee('<link rel="canonical" href="'.route('categories.show', 'cars-for-sale').'?page=2">', false)
         ->assertSee(__('app.browse.page_n', ['page' => 2]));
 
-    // a page past the end is not worth indexing
     $this->get('/category/cars-for-sale?page=9')->assertSee('<meta name="robots" content="noindex,follow">', false);
 });
 
@@ -196,7 +183,6 @@ it('indexes category + governorate pages only when they have an active listing',
         ->assertSee('<meta name="robots" content="index,follow">', false)
         ->assertSee('<link rel="canonical" href="'.route('categories.governorate', ['cars-for-sale', 'cairo']).'">', false);
 
-    // pending listings do not count
     Governorate::factory()->create(['slug' => 'giza']);
     Listing::factory()->pending()->create(['category_id' => $this->leaf->id, 'governorate_id' => Governorate::where('slug', 'giza')->value('id')]);
     $this->get('/category/cars-for-sale/giza')->assertSee('<meta name="robots" content="noindex,follow">', false);

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Validator;
 
 it('uses our field names in validation messages regardless of lang/ar/validation.php', function () {
-    // "phone" is also defined by the laravel-lang package as «الهاتف»; ours must win.
     $validator = Validator::make([], ['phone' => 'required']);
 
     $validator->fails();
@@ -26,7 +25,6 @@ it('survives a lang:update that rewrites lang/ar/validation.php', function () {
     $original = file_get_contents($path);
 
     try {
-        // what the package does: replace its own keys, including "phone"
         $rewritten = str_replace("'phone' => 'رقم الهاتف'", "'phone' => 'الهاتف'", $original);
         file_put_contents($path, $rewritten);
         app('translator')->setLoaded([]);

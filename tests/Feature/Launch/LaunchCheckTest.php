@@ -8,9 +8,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Tests\Support\Fixtures;
 
-/**
- * @return array{failed: int, warnings: int, results: list<array{status: string, check: string, detail: string}>}
- */
 function launchCheck(array $options = []): array
 {
     Artisan::call('launch:check', ['--json' => true, ...$options]);
@@ -125,8 +122,6 @@ it('verifies the database and PHP requirements of this machine', function () {
 it('exits with an error on warnings only in strict mode', function () {
     config(['classifieds.blocked_words' => []]);
 
-    // Failures on this machine (admin missing in an empty test database) already make it fail, so
-    // create the admin and satisfy every hard requirement first.
     User::factory()->admin()->create(['password' => 'a-real-strong-password']);
     $report = launchCheck();
 
@@ -134,7 +129,6 @@ it('exits with an error on warnings only in strict mode', function () {
         expect(Artisan::call('launch:check', ['--json' => true]))->toBe(0)
             ->and(Artisan::call('launch:check', ['--json' => true, '--strict' => true]))->toBe(1);
     } else {
-        // e.g. no public/storage link on this machine: strict mode is irrelevant, it fails anyway.
         expect(Artisan::call('launch:check', ['--json' => true, '--strict' => true]))->toBe(1);
     }
 });
@@ -144,7 +138,6 @@ it('ships a useful default blocked words list and lets .env extend it', function
 
     expect($words)->toContain('مخدرات')->and($words)->toContain('سلاح ناري')->and($words)->toBe(array_values(array_unique($words)));
 
-    // the default list rejects a matching listing (spelling variants included)
     $governorate = Governorate::factory()->create();
     $leaf = Fixtures::carsTree()['leaf'];
 

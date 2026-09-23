@@ -15,9 +15,6 @@ class SaveSearchRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function rules(): array
     {
         return [
@@ -39,11 +36,6 @@ class SaveSearchRequest extends FormRequest
         });
     }
 
-    /**
-     * Everything the results page's filters sent along, minus the fields this form itself defines.
-     *
-     * @return array<string, mixed>
-     */
     public function filters(): array
     {
         return $this->except(['name', 'notify', 'category_slug', 'governorate_slug', '_token']);

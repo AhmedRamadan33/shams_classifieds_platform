@@ -19,10 +19,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
-/**
- * Read-only view of featured-package payments (created by App\Actions\InitiateFeaturedPayment,
- * settled by the configured gateway). Nothing is created or edited here.
- */
 class PaymentResource extends Resource
 {
     use AdminOnlyResource;

@@ -26,14 +26,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ListingController extends Controller
 {
-    /**
-     * Public listing page (/ad/{id}/{slug}).
-     *
-     * Visibility: only live listings of non-banned owners are public. Everything else is a 404 for
-     * visitors (expired listings: 410 Gone), except the owner and staff, who see it with a status banner.
-     * The visibility check runs BEFORE the canonical redirect so the slug (= the title) of an
-     * unpublished listing never leaks through a 301.
-     */
     public function show(Request $request, Listing $listing, ?string $slug = null): View|RedirectResponse
     {
         $listing->load(['category', 'governorate', 'city', 'user', 'fieldValues', 'media']);
@@ -81,9 +73,6 @@ class ListingController extends Controller
         ]);
     }
 
-    /**
-     * Count a view once per listing per session and store it as an event.
-     */
     private function recordView(Request $request, Listing $listing): void
     {
         $viewed = $request->session()->get('viewed_listings', []);
@@ -98,11 +87,6 @@ class ListingController extends Controller
         $listing->events()->create(['type' => ListingEventType::View]);
     }
 
-    /**
-     * Dynamic field values in the category's field order (parent fields first), ready to display.
-     *
-     * @return Collection<int, array{name: string, value: string}>
-     */
     private function fieldRows(Listing $listing): Collection
     {
         $values = $listing->fieldValues->keyBy('category_field_id');
@@ -126,12 +110,8 @@ class ListingController extends Controller
             ->values();
     }
 
-    /**
-     * @return list<array{thumb: string, medium: string, large: string}>
-     */
     private function images(Listing $listing): array
     {
-        // Conversions are queued: until one exists the original is served instead.
         $url = fn (Media $media, string $conversion) => $media->hasGeneratedConversion($conversion)
             ? $media->getUrl($conversion)
             : $media->getUrl();

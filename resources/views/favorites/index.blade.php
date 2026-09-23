@@ -13,7 +13,6 @@
                         <div class="flex flex-col gap-2">
                             <x-listing-card :listing="$listing" />
 
-                            {{-- Works without JavaScript too: a plain form that removes it and comes back here. --}}
                             <form method="POST" action="{{ route('listings.favorite', $listing) }}">
                                 @csrf
                                 <input type="hidden" name="favorite" value="0">

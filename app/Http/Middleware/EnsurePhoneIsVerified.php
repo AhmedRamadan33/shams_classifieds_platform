@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Accounts that never confirmed their phone (for example created by hand) must verify it first.
- */
 class EnsurePhoneIsVerified
 {
     public function handle(Request $request, Closure $next): Response

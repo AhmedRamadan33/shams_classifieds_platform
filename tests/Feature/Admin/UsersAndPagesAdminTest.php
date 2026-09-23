@@ -23,8 +23,6 @@ beforeEach(function () {
     $this->actingAs($this->admin);
 });
 
-// --------------------------------------------------------------------- access
-
 it('keeps users and pages admin only', function () {
     foreach (['users', 'pages'] as $resource) {
         $this->get("/admin/{$resource}")->assertOk();
@@ -36,8 +34,6 @@ it('keeps users and pages admin only', function () {
         $this->get("/admin/{$resource}")->assertForbidden();
     }
 });
-
-// ---------------------------------------------------------------------- users
 
 it('shows users with roles and listing counts', function () {
     $user = User::factory()->create(['name' => 'مستخدم عادي']);
@@ -66,7 +62,6 @@ it('bans and unbans a user; banned users lose access and their listings disappea
     $this->get('/')->assertDontSee($listing->title);
     $this->get("/seller/{$user->id}")->assertNotFound();
 
-    // the banned user is signed out on their next request and cannot log in
     $this->actingAs($user->fresh())->get('/dashboard')->assertRedirect(route('login'));
 
     $this->actingAs($this->admin);
@@ -111,7 +106,6 @@ it('validates the user form', function () {
         ->call('create')
         ->assertHasFormErrors(['phone', 'password', 'roles']);
 
-    // the same number in another format is a duplicate
     Livewire::test(CreateUser::class)
         ->fillForm(['name' => 'مكرر', 'phone' => '01011112222', 'password' => 'a-strong-pass-1', 'roles' => [$role->id]])
         ->call('create')
@@ -133,8 +127,6 @@ it('changes a user\'s role and keeps the password when the field is left empty',
         ->and($user->isStaff())->toBeTrue()
         ->and(Hash::check('original-pass-1', $user->password))->toBeTrue();
 });
-
-// ---------------------------------------------------------------------- pages
 
 it('creates, edits and deletes static pages', function () {
     Livewire::test(CreatePage::class)

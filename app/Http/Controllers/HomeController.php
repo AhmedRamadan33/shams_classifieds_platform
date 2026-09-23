@@ -11,7 +11,6 @@ use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    /** Home page sections are cached for 5 minutes. */
     private const CACHE_SECONDS = 300;
 
     public function __invoke(): View

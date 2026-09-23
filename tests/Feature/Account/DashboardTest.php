@@ -91,8 +91,8 @@ it('offers actions according to the listing state', function () {
     expect($html)->toContain(route('listings.edit', $active))
         ->and($html)->toContain(route('listings.sold', $active))
         ->and($html)->toContain(route('listings.destroy', $active))
-        ->and($html)->not->toContain(route('listings.renew', $active))   // 20 days left: not renewable yet
-        ->and($html)->toContain(route('listings.renew', $expiring));     // within 7 days: renewable
+        ->and($html)->not->toContain(route('listings.renew', $active))
+        ->and($html)->toContain(route('listings.renew', $expiring));
 });
 
 it('offers renewal for expired listings and no "sold" action', function () {

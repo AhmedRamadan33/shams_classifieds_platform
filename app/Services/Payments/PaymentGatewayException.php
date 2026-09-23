@@ -6,11 +6,6 @@ namespace App\Services\Payments;
 
 use RuntimeException;
 
-/**
- * Thrown when a payment gateway cannot be reached or rejects the request. Caught by
- * FeaturedPurchaseController, which shows a friendly error and leaves the payment "pending" (the
- * user can try again; nothing was charged).
- */
 final class PaymentGatewayException extends RuntimeException
 {
     public static function provider(string $provider, string $reason): self

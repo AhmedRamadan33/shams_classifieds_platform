@@ -17,9 +17,6 @@ enum ReportReason: string
         return __('app.report.reasons.'.$this->value);
     }
 
-    /**
-     * @return array<string, string> value => Arabic label
-     */
     public static function options(): array
     {
         return collect(self::cases())

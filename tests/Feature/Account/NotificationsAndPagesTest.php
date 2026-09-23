@@ -15,8 +15,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\Support\Fixtures;
 
-// ------------------------------------------------------------- notifications
-
 it('notifies the owner when a listing is approved or rejected', function () {
     $owner = User::factory()->create();
     $pending = Listing::factory()->for($owner)->pending()->titled('إعلان سيُوافق عليه')->create();
@@ -40,13 +38,11 @@ it('notifies the owner when a listing is approved or rejected', function () {
 
 it('shows notifications, highlights unread ones and marks them read afterwards', function () {
     $user = User::factory()->create();
-    // A fixed title: random factory titles may contain the word used for the badge ("جديد").
     $listing = Listing::factory()->for($user)->pending()->titled('إعلان لاختبار الإشعارات')->create();
     app(ApproveListing::class)($listing);
 
     $this->actingAs($user);
 
-    // The header badge shows the unread count on any page.
     $this->get('/')->assertSee('data-testid="unread-badge"', false);
 
     $this->get('/notifications')
@@ -94,8 +90,6 @@ it('requires login for notifications', function () {
     $this->get('/notifications')->assertRedirect(route('login'));
 });
 
-// ------------------------------------------------------------------- pages
-
 it('seeds the six Arabic static pages without overwriting edits', function () {
     $this->seed(PageSeeder::class);
 
@@ -117,7 +111,7 @@ it('shows a published page at /p/{slug} and 404s for unknown or unpublished ones
         ->assertOk()
         ->assertSee('من نحن')
         ->assertSee('السطر الأول<br />', false)
-        ->assertSee('&lt;b&gt;مهم&lt;/b&gt;', false);   // page bodies are escaped, never raw HTML
+        ->assertSee('&lt;b&gt;مهم&lt;/b&gt;', false);
 
     $this->get('/p/draft')->assertNotFound();
     $this->get('/p/missing')->assertNotFound();
@@ -139,8 +133,6 @@ it('links the published pages from the footer, in order, and updates when they c
     $this->get('/')->assertSee('مسودة مخفية');
 });
 
-// -------------------------------------------------------------------- avatar
-
 it('uploads a sanitized avatar and shows it in the header', function () {
     Storage::fake('public');
     $user = User::factory()->create();
@@ -155,7 +147,6 @@ it('uploads a sanitized avatar and shows it in the header', function () {
     expect($user->avatar)->toStartWith('avatars/')->and($user->avatar)->toEndWith('.jpg');
     Storage::disk('public')->assertExists($user->avatar);
 
-    // re-encoded: EXIF orientation applied (200x100 -> 100x200) and the tag removed
     [$width, $height] = getimagesize(Storage::disk('public')->path($user->avatar));
     expect([$width, $height])->toBe([100, 200]);
 

@@ -13,12 +13,8 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
-/**
- * Step 3 of the password reset: choose the new password after the OTP was verified.
- */
 class NewPasswordController extends Controller
 {
-    /** How long (minutes) a verified code allows choosing a new password. */
     private const WINDOW_MINUTES = 10;
 
     public function create(Request $request): View|RedirectResponse

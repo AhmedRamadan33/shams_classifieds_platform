@@ -56,7 +56,6 @@ it('creates a pending listing with field values, slug and normalized search text
             'brand' => 'تويوتا', 'model' => 'كورولا', 'year' => '2020', 'mileage' => '55000', 'warranty' => '1',
         ]);
 
-    // Diacritic/variant free: ة -> ه, أ -> ا; includes field values and the boolean field name.
     expect($listing->search_text)->toContain('بحاله')
         ->and($listing->search_text)->toContain('ممتازه')
         ->and($listing->search_text)->toContain('تويوتا')
@@ -116,7 +115,6 @@ it('requires a price for fixed and negotiable listings but not for free or conta
     ($this->submit)(['price_type' => 'free', 'price' => '999', 'title' => 'سيارة للتبرع مجاناً'])->assertSessionHasNoErrors();
     ($this->submit)(['price_type' => 'contact', 'price' => '999', 'title' => 'سيارة اتصل بنا للسعر'])->assertSessionHasNoErrors();
 
-    // The price is dropped for types that do not use it.
     expect(Listing::where('price_type', 'free')->sole()->price)->toBeNull()
         ->and(Listing::where('price_type', 'contact')->sole()->price)->toBeNull();
 });
@@ -140,20 +138,15 @@ it('checks that the city belongs to the chosen governorate', function () {
 });
 
 it('generates dynamic rules from the category fields', function () {
-    // required field missing
     ($this->submit)(['fields' => ['brand' => '']])->assertSessionHasErrors('fields.brand');
 
-    // invalid select option
     ($this->submit)(['fields' => ['brand' => 'ماركة غير موجودة']])->assertSessionHasErrors('fields.brand');
 
-    // required number missing / not numeric
     ($this->submit)(['fields' => ['year' => '']])->assertSessionHasErrors('fields.year');
     ($this->submit)(['fields' => ['year' => 'abcd']])->assertSessionHasErrors('fields.year');
 
-    // boolean must be a boolean
     ($this->submit)(['fields' => ['warranty' => 'maybe']])->assertSessionHasErrors('fields.warranty');
 
-    // optional fields may be omitted entirely
     ($this->submit)(['fields' => ['brand' => 'كيا', 'year' => '2019', 'model' => null, 'mileage' => null, 'warranty' => null]])
         ->assertSessionHasNoErrors();
 
@@ -185,7 +178,6 @@ it('detects the same title in the same category within 24 hours', function () {
 
     expect(Listing::count())->toBe(1);
 
-    // after 24 hours the same title is allowed again
     $this->travel(25)->hours();
     ($this->submit)()->assertSessionHasNoErrors();
 
@@ -206,7 +198,7 @@ it('enforces the daily listing limit, counting deleted listings too', function (
     ($this->submit)(['title' => 'الإعلان الأول للتجربة'])->assertSessionHasNoErrors();
     ($this->submit)(['title' => 'الإعلان الثاني للتجربة'])->assertSessionHasNoErrors();
 
-    Listing::first()->delete(); // deleting must not reset the counter
+    Listing::first()->delete();
 
     ($this->submit)(['title' => 'الإعلان الثالث للتجربة'])
         ->assertSessionHasErrors(['limit' => __('app.listing.daily_limit', ['limit' => 2])]);

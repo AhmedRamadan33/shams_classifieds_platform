@@ -31,7 +31,6 @@ class UserForm
                     ->required()
                     ->rules([
                         new PhoneNumber,
-                        // Unique after normalization ("010..." and "+2010..." are the same number).
                         fn (?User $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($record): void {
                             $normalized = app(PhoneNormalizer::class)->tryNormalize((string) $value);
 
@@ -65,7 +64,6 @@ class UserForm
                 Toggle::make('is_banned')
                     ->label(__('app.admin.is_banned'))
                     ->helperText(__('app.admin.ban_help'))
-                    // Nobody can lock themselves out of the panel by mistake.
                     ->disabled(fn (?User $record): bool => $record?->is(auth()->user()) ?? false),
             ]);
     }

@@ -108,18 +108,16 @@ it('keeps the upload order when no cover is chosen', function () {
 it('strips EXIF metadata and applies the orientation to the stored original', function () {
     $upload = Fixtures::jpegWithExifOrientation(120, 60);
 
-    // Sanity check of the fixture: the EXIF block is really readable before sanitizing.
     expect(@exif_read_data($upload->getRealPath())['Orientation'] ?? null)->toBe(6);
 
     $clean = app(ImageSanitizer::class)->sanitize($upload);
 
-    // GD only writes its own JPEG comment: no EXIF/IFD0/GPS sections and no Orientation tag survive.
     $after = @exif_read_data($clean['path']);
     $sections = is_array($after) ? (string) ($after['SectionsFound'] ?? '') : '';
 
     expect($after['Orientation'] ?? null)->toBeNull()
         ->and($sections)->not->toContain('EXIF')->not->toContain('IFD0')->not->toContain('GPS')
-        ->and(getimagesize($clean['path'])[0])->toBe(60)   // 120x60 rotated by orientation 6
+        ->and(getimagesize($clean['path'])[0])->toBe(60)
         ->and(getimagesize($clean['path'])[1])->toBe(120);
 
     @unlink($clean['path']);

@@ -9,10 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * One buyer's conversation with a listing's seller ("راسل المعلن"): exactly one per (listing, buyer)
- * pair, see the unique index. Both sides keep using the same thread instead of starting a new one.
- */
 class Conversation extends Model
 {
     protected $fillable = ['listing_id', 'buyer_id', 'seller_id', 'last_message_at'];

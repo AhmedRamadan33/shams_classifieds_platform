@@ -8,14 +8,12 @@ use App\Actions\RenewListing;
 use App\Enums\ListingEventType;
 use App\Enums\ListingStatus;
 use App\Models\Listing;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    /** Tabs, in display order. "expired" also covers active listings whose date passed. */
     private const TABS = ['pending', 'active', 'expired', 'rejected', 'sold'];
 
     public function __invoke(Request $request, RenewListing $renew): View
@@ -28,12 +26,10 @@ class DashboardController extends Controller
             fn (string $status) => [$status => $this->tabQuery($user->listings(), $status)->count()],
         );
 
-        // With no explicit tab, open the first one that has listings (active by default).
         if (! $request->has('status') && $counts['active'] === 0) {
             $tab = collect(self::TABS)->first(fn (string $status) => $counts[$status] > 0) ?? 'active';
         }
 
-        /** @var LengthAwarePaginator $listings */
         $listings = $this->tabQuery($user->listings(), $tab)
             ->with(['category', 'governorate', 'city', 'media'])
             ->withCount([

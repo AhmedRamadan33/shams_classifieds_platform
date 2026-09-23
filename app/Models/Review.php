@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * A 1-5 star review a user leaves for a seller, optionally about one of their listings. Moderatable
- * (is_hidden) rather than always deleted, so a removed review still shows in the admin panel.
- */
 class Review extends Model
 {
-    /** @use HasFactory<ReviewFactory> */
     use HasFactory;
 
     protected $fillable = ['reviewer_id', 'seller_id', 'listing_id', 'rating', 'comment', 'is_hidden'];

@@ -18,9 +18,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-/**
- * The featured-ad packages sellers can buy (App\Models\Package, "ميّز إعلانك" on the dashboard).
- */
 class PackageResource extends Resource
 {
     use AdminOnlyResource;

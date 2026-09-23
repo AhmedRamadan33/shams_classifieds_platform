@@ -8,9 +8,6 @@ use App\Services\PhoneNormalizer;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-/**
- * Passes when the value can be normalized to a valid E.164 phone number.
- */
 final class PhoneNumber implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void

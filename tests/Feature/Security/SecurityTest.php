@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Tests\Support\Fixtures;
 
-// ------------------------------------------------------------------ headers
-
 it('sends the baseline security headers on public, auth and admin pages', function (string $url) {
     $response = $this->get($url);
 
@@ -39,8 +37,6 @@ it('sends security headers on error responses too', function () {
         ->assertHeader('X-Content-Type-Options', 'nosniff');
 });
 
-// ----------------------------------------------------------- rate limiting
-
 it('defines the named limiters', function (string $name) {
     expect(RateLimiter::limiter($name))->not->toBeNull();
 })->with(['otp', 'login', 'listings-create', 'phone-reveal', 'reports', 'messages', 'reviews']);
@@ -49,24 +45,20 @@ it('limits OTP requests per phone number regardless of its format', function () 
     fakeSms();
     User::factory()->create(['phone' => '+201012345678']);
 
-    // 10 requests for the same number, written in 3 different formats, use up the per-phone budget...
     foreach (['01012345678' => 4, '+201012345678' => 3, '٠١٠١٢٣٤٥٦٧٨' => 3] as $format => $times) {
         foreach (range(1, $times) as $ignored) {
             $this->post('/forgot-password', ['phone' => (string) $format])->assertRedirect(route('password.verify'));
         }
     }
 
-    // ... so the 11th is blocked.
     $this->post('/forgot-password', ['phone' => '01012345678'])->assertStatus(429);
 
-    // another number is unaffected
     $this->post('/forgot-password', ['phone' => '01099999999'])->assertRedirect(route('password.verify'));
 });
 
 it('limits OTP requests per IP address', function () {
     fakeSms();
 
-    // 30 different numbers from one IP in a minute...
     foreach (range(1, 30) as $i) {
         $this->post('/forgot-password', ['phone' => '0101000'.str_pad((string) $i, 4, '0', STR_PAD_LEFT)]);
     }
@@ -132,8 +124,6 @@ it('limits chat messages per user', function () {
     $this->actingAs($buyer)->post("/ad/{$listing->id}/message", ['body' => 'رسالة زائدة عن الحد'])->assertStatus(429);
 });
 
-// ------------------------------------------------------ honeypot and captcha
-
 it('rejects a registration with the honeypot field filled and creates no user', function () {
     fakeSms();
 
@@ -197,22 +187,13 @@ it('uses a pass-through CAPTCHA by default and a swapped verifier can block requ
     expect(User::count())->toBe(0);
 });
 
-// --------------------------------------------------------------- route audit
-
 it('protects every state-changing route with CSRF and authentication or an explicit public allowlist', function () {
-    // POST routes that guests are meant to use.
     $publicPost = [
         'register', 'login', 'forgot-password', 'forgot-password/verify', 'forgot-password/resend',
         'reset-password', 'verify-phone', 'verify-phone/resend', 'ad/{listing}/contact',
-        // Called by Paymob's servers, not a browser; verified by its own HMAC signature instead
-        // (see PaymobWebhookController and tests/Feature/Payments/PaymobGatewayTest).
         'payments/webhook/paymob',
     ];
 
-    // The token-based JSON API (routes/api.php) is deliberately CSRF-exempt like every Laravel API:
-    // CSRF protects cookie/session auth from being silently reused by another site, which does not
-    // apply to a bearer token a malicious page has no way to attach. It is checked separately below,
-    // for auth:sanctum instead of the session "auth" guard.
     $publicApiPost = [
         'api/v1/auth/register', 'api/v1/auth/login', 'api/v1/auth/verify-otp', 'api/v1/auth/resend-otp',
         'api/v1/listings/{listing}/contact',
@@ -238,7 +219,6 @@ it('protects every state-changing route with CSRF and authentication or an expli
             continue;
         }
 
-        // CSRF comes with the "web" group.
         if (! in_array('web', $middleware, true)) {
             $unprotected[] = "{$uri} (no web/CSRF)";
         }
@@ -273,9 +253,6 @@ it('never renders user data with unescaped Blade output', function () {
     $offenders = [];
 
     foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(resource_path('views'))) as $file) {
-        // resources/views/vendor/mail is Laravel's own published markdown-mail template (patched
-        // here only for RTL/branding, see docs/DEPLOY.md): its {!! !!} slots carry Markdown::parse()
-        // output and our own Blade component slots, never raw request/user input directly.
         if (str_contains($file->getPathname(), DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'mail'.DIRECTORY_SEPARATOR)) {
             continue;
         }

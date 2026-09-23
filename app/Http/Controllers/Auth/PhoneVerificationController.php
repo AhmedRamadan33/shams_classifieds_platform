@@ -17,9 +17,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
-/**
- * Confirms a phone number with the OTP sent at registration (or at login for unverified accounts).
- */
 class PhoneVerificationController extends Controller
 {
     public function create(Request $request): View|RedirectResponse

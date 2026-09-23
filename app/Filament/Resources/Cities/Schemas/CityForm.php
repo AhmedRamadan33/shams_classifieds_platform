@@ -32,7 +32,6 @@ class CityForm
                     ->required()
                     ->maxLength(255)
                     ->regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/')
-                    // Unique inside its governorate only.
                     ->unique(
                         ignoreRecord: true,
                         modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('governorate_id', $get('governorate_id')),

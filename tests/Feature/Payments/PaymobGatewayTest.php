@@ -37,8 +37,6 @@ function fakePaymobChain(): void
     ]);
 }
 
-// ---------------------------------------------------------------- charge()
-
 it('chains auth, order and payment key requests and returns the iframe URL', function () {
     fakePaymobChain();
     $payment = paymentFor();
@@ -88,12 +86,8 @@ it('never leaves an orphan pending payment when the gateway fails', function () 
     expect(Payment::count())->toBe(0);
 });
 
-// ------------------------------------------------------------------ webhook HMAC
-
 function paymobHmacPayload(array $overrides = []): array
 {
-    // Field values chosen arbitrarily; what matters is that the HMAC is computed over the documented
-    // field order (see PaymobWebhookVerifier::FIELDS) with the given secret.
     return array_merge([
         'amount_cents' => 6000, 'created_at' => '2026-01-01T00:00:00.000000', 'currency' => 'EGP',
         'error_occured' => false, 'has_parent_transaction' => false, 'id' => 987654,
@@ -163,7 +157,6 @@ it('marks the payment failed when Paymob reports success=false, without touching
     $this->postJson(route('payments.webhook.paymob', ['hmac' => $hmac]), ['obj' => $transaction])->assertOk();
     expect($payment->fresh()->status)->toBe(PaymentStatus::Failed);
 
-    // a stray failure callback after the payment already succeeded must not undo it
     app(CompletePayment::class)($payment->fresh());
     $paid = $payment->fresh();
     expect($paid->status)->toBe(PaymentStatus::Paid);

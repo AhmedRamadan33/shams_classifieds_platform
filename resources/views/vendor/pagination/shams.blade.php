@@ -5,7 +5,6 @@
         </p>
 
         <ul class="flex flex-wrap items-center justify-center gap-1">
-            {{-- Previous page: the chevron flips automatically in RTL. --}}
             @if ($paginator->onFirstPage())
                 <li aria-disabled="true">
                     <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400" aria-hidden="true">
@@ -42,7 +41,6 @@
                 @endif
             @endforeach
 
-            {{-- Next page --}}
             @if ($paginator->hasMorePages())
                 <li>
                     <a href="{{ $paginator->nextPageUrl() }}" rel="next" aria-label="{{ __('app.pagination.next') }}"

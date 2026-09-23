@@ -4,16 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Payments;
 
-/**
- * Verifies a Paymob "transaction processed" webhook using its documented HMAC-SHA512 scheme: a fixed,
- * ordered concatenation of fields from the transaction object, hashed with the integration's HMAC
- * secret and compared (constant time) against the `hmac` query parameter Paymob sends.
- *
- * @see https://docs.paymob.com/docs/transaction-callbacks (field order for the transaction callback)
- */
 final class PaymobWebhookVerifier
 {
-    /** Field order Paymob's docs specify for the transaction processed callback, dot paths into the payload. */
     private const FIELDS = [
         'amount_cents', 'created_at', 'currency', 'error_occured', 'has_parent_transaction', 'id',
         'integration_id', 'is_3d_secure', 'is_auth', 'is_capture', 'is_refunded', 'is_standalone_payment',
@@ -23,9 +15,6 @@ final class PaymobWebhookVerifier
 
     public function __construct(private readonly string $secret) {}
 
-    /**
-     * @param  array<string, mixed>  $transaction  the "obj" payload of the webhook
-     */
     public function verify(array $transaction, string $providedHmac): bool
     {
         if ($this->secret === '' || $providedHmac === '') {

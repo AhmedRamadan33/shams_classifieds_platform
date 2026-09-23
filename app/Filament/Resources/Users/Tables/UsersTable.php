@@ -66,10 +66,6 @@ class UsersTable
             ]);
     }
 
-    /**
-     * Ban / unban. A banned user's listings disappear from the public site (Listing::visible()) and
-     * the account is signed out on its next request. Admins cannot ban themselves.
-     */
     private static function banToggle(): Action
     {
         return Action::make('toggle_ban')

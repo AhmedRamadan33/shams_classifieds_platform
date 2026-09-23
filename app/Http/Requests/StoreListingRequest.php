@@ -23,17 +23,11 @@ class StoreListingRequest extends FormRequest
         $this->prepareListingInput();
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function rules(): array
     {
         return $this->listingRules();
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function attributes(): array
     {
         return $this->listingAttributes();

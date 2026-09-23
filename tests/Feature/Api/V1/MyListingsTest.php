@@ -30,7 +30,7 @@ it('creates a listing with uploaded images', function () {
     $listing = Listing::sole();
     expect($listing->user_id)->toBe($this->user->id)
         ->and($listing->title)->toBe($payload['title'])
-        ->and($listing->status->value)->toBe('pending') // require_review defaults on
+        ->and($listing->status->value)->toBe('pending')
         ->and($listing->media()->count())->toBe(2);
 
     expect($response->json('data.images'))->toHaveCount(2);
@@ -45,7 +45,7 @@ it('validates a new listing the same way the website does', function () {
 
 it('lists only the caller\'s own listings', function () {
     Listing::factory()->create(['user_id' => $this->user->id]);
-    Listing::factory()->create(); // someone else's
+    Listing::factory()->create();
 
     $response = $this->withToken($this->token)->getJson('/api/v1/my/listings')->assertOk();
 

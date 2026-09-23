@@ -12,20 +12,10 @@ use App\Services\Sms\SmsGateway;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-/**
- * Issues and verifies phone one-time codes. Codes are only ever stored hashed.
- */
 final class OtpService
 {
     public function __construct(private readonly SmsGateway $sms) {}
 
-    /**
-     * Create a new code, invalidate older ones and send it by SMS.
-     *
-     * @return string the plain code (only for the caller/tests; it is never persisted)
-     *
-     * @throws OtpCooldownException when a code was issued less than the cooldown ago
-     */
     public function issue(string $phone, OtpPurpose $purpose): string
     {
         $cooldown = (int) config('classifieds.otp.resend_cooldown_seconds');
@@ -72,7 +62,6 @@ final class OtpService
         } catch (SmsDeliveryException $e) {
             report($e);
 
-            // A code nobody received must not block the next attempt with the resend cooldown.
             $otp->delete();
 
             throw new OtpDeliveryException($e);
@@ -81,10 +70,6 @@ final class OtpService
         return $code;
     }
 
-    /**
-     * Check a submitted code. A correct code is consumed; wrong guesses count against the
-     * attempt limit, after which the code is locked and a new one must be requested.
-     */
     public function verify(string $phone, OtpPurpose $purpose, string $code): OtpResult
     {
         $code = ArabicText::toLatinDigits(trim($code));

@@ -8,10 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * A featured-ad package a seller can buy: pay {price} to have a listing featured for {days}.
- * Managed from the admin panel (App\Filament\Resources\Packages).
- */
 class Package extends Model
 {
     protected $fillable = ['name', 'days', 'price', 'is_active', 'sort_order'];

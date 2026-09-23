@@ -9,13 +9,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-/**
- * Re-encodes an uploaded image with GD before it is stored.
- *
- * This proves the file really is a decodable image (not just a renamed file), applies the EXIF
- * orientation, and drops every metadata block (EXIF/GPS, ICC, comments) from the stored original.
- * The generated conversions are re-encoded again by the media library.
- */
 final class ImageSanitizer
 {
     private const TYPES = [
@@ -24,11 +17,6 @@ final class ImageSanitizer
         'image/webp' => 'webp',
     ];
 
-    /**
-     * @return array{path: string, extension: string} a temporary file the caller should hand to the media library
-     *
-     * @throws InvalidArgumentException when the upload is not a supported, decodable image
-     */
     public function sanitize(UploadedFile $file): array
     {
         $realPath = $file->getRealPath();
@@ -80,10 +68,6 @@ final class ImageSanitizer
         return imagewebp($image, $path, 88);
     }
 
-    /**
-     * Rotate the pixels according to the EXIF orientation flag so the image looks right once
-     * the flag itself is gone.
-     */
     private function applyOrientation(GdImage $image, string $path): GdImage
     {
         if (! function_exists('exif_read_data')) {

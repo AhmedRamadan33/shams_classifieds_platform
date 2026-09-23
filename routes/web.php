@@ -26,8 +26,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-// ------------------------------------------------------------------ browsing
-
 Route::get('/category/{category:slug}/{governorate:slug}', [CategoryController::class, 'show'])
     ->withoutScopedBindings()
     ->name('categories.governorate');
@@ -39,31 +37,21 @@ Route::get('/seller/{user}', SellerController::class)->name('sellers.show');
 
 Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 
-// Static pages managed from the admin panel.
 Route::get('/p/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 
-// Public listing page: /ad/{id}/{slug}. The slug is cosmetic and canonicalized with a 301.
 Route::get('/ad/{listing}/{slug?}', [ListingController::class, 'show'])->name('listings.show');
 
-// Reveals the advertiser's phone number (never present in the page HTML) and records the event.
 Route::post('/ad/{listing}/contact', ListingContactController::class)
     ->middleware('throttle:phone-reveal')
     ->name('listings.contact');
 
-// JSON used by the listing form to render a category's dynamic fields.
 Route::get('/api/categories/{category:id}/fields', [CategoryFieldsController::class, 'show'])
     ->middleware('throttle:60,1')
     ->name('categories.fields');
 
-// Server-to-server confirmation from Paymob; verified by its own HMAC signature (see
-// PaymobWebhookController and the CSRF exemption in bootstrap/app.php), never by a session.
 Route::post('/payments/webhook/paymob', PaymobWebhookController::class)->name('payments.webhook.paymob');
 
-// Where Paymob's iframe sends the browser back to (set as the integration's "Transaction redirection
-// URL" in the Paymob dashboard: no per-payment id in this URL, only query parameters Paymob appends).
 Route::get('/payments/return', [FeaturedPurchaseController::class, 'returnFromGateway'])->name('payments.return-from-gateway');
-
-// ------------------------------------------------------------------ account
 
 Route::middleware(['auth', 'phone.verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
@@ -81,7 +69,6 @@ Route::middleware(['auth', 'phone.verified'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
 
-    // Creating and managing the signed-in user's own listings.
     Route::get('/ads/create', [ListingController::class, 'create'])->name('listings.create');
     Route::post('/ads', [ListingController::class, 'store'])
         ->middleware(['honeypot', 'throttle:listings-create'])
@@ -92,12 +79,10 @@ Route::middleware(['auth', 'phone.verified'])->group(function () {
     Route::post('/ads/{listing}/renew', [ListingController::class, 'renew'])->name('listings.renew');
     Route::post('/ads/{listing}/sold', [ListingController::class, 'sold'])->name('listings.sold');
 
-    // Buying a featured package ("ميّز إعلانك").
     Route::get('/ads/{listing}/feature', [FeaturedPurchaseController::class, 'create'])->name('listings.feature');
     Route::post('/ads/{listing}/feature', [FeaturedPurchaseController::class, 'store'])->name('listings.feature.store');
     Route::get('/payments/{payment}', [FeaturedPurchaseController::class, 'show'])->name('payments.show');
 
-    // In-app messaging ("راسل المعلن").
     Route::get('/messages', [ConversationController::class, 'index'])->name('messages.index');
     Route::post('/ad/{listing}/message', [ConversationController::class, 'start'])
         ->middleware('throttle:messages')
@@ -110,21 +95,17 @@ Route::middleware(['auth', 'phone.verified'])->group(function () {
         ->middleware('throttle:60,1')
         ->name('messages.poll');
 
-    // Saved searches.
     Route::get('/saved-searches', [SavedSearchController::class, 'index'])->name('saved-searches.index');
     Route::post('/saved-searches', [SavedSearchController::class, 'store'])->name('saved-searches.store');
     Route::patch('/saved-searches/{savedSearch}', [SavedSearchController::class, 'update'])->name('saved-searches.update');
     Route::delete('/saved-searches/{savedSearch}', [SavedSearchController::class, 'destroy'])->name('saved-searches.destroy');
 
-    // Seller store.
     Route::get('/store', [StoreController::class, 'edit'])->name('store.edit');
     Route::post('/store', [StoreController::class, 'save'])->name('store.save');
 
-    // Store subscriptions (higher daily listing limit).
     Route::get('/subscribe', [SubscriptionController::class, 'create'])->name('subscribe');
     Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe.store');
 
-    // Seller reviews.
     Route::post('/seller/{seller}/reviews', [ReviewController::class, 'store'])
         ->middleware('throttle:reviews')
         ->name('reviews.store');

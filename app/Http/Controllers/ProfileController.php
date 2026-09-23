@@ -33,7 +33,6 @@ class ProfileController extends Controller
         ];
 
         if ($request->hasFile('avatar')) {
-            // Re-encoded like listing images: real image, no EXIF/GPS, generated file name.
             $clean = $sanitizer->sanitize($request->file('avatar'));
             $path = Storage::disk('public')->putFileAs('avatars', new File($clean['path']), Str::random(32).'.'.$clean['extension']);
             @unlink($clean['path']);

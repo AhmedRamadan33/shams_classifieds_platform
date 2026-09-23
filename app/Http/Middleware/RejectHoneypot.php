@@ -9,10 +9,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Spam protection for public forms. Real users never see the hidden honeypot input, so a filled
- * value means a bot: the request is rejected. The CAPTCHA verifier (a no-op by default) runs too.
- */
 class RejectHoneypot
 {
     public function __construct(private readonly CaptchaVerifier $captcha) {}

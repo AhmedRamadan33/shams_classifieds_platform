@@ -18,15 +18,15 @@ return new class extends Migration
             $table->foreignId('city_id')->nullable()->constrained()->nullOnDelete();
 
             $table->string('title', 150);
-            $table->string('slug'); // deliberately NOT unique: the id identifies the listing, the slug is cosmetic
+            $table->string('slug');
             $table->text('description');
-            $table->text('search_text'); // Arabic-normalized title + description + field values
+            $table->text('search_text');
 
             $table->decimal('price', 12, 2)->nullable();
-            $table->string('price_type', 20)->default('fixed'); // fixed | negotiable | free | contact
+            $table->string('price_type', 20)->default('fixed');
             $table->string('phone', 20);
 
-            $table->string('status', 20)->default('pending'); // pending | active | rejected | expired | sold
+            $table->string('status', 20)->default('pending');
             $table->text('rejection_reason')->nullable();
 
             $table->timestamp('published_at')->nullable();

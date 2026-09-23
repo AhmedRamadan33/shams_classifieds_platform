@@ -23,7 +23,6 @@ it('resets the password through the request -> verify -> new password flow', fun
 
     expect($this->sms->count())->toBe(1);
 
-    // Cannot skip straight to choosing a password.
     $this->get('/reset-password')->assertRedirect(route('password.request'));
 
     $this->post('/forgot-password/verify', ['code' => $this->sms->lastCode()])
@@ -69,7 +68,6 @@ it('rejects a wrong reset code', function () {
 });
 
 it('does not accept a registration code for the reset flow', function () {
-    // Codes are bound to their purpose: a code issued for another purpose cannot reset a password.
     $user = User::factory()->unverified()->create(['phone' => '+201012345678']);
     app(OtpService::class)->issue($user->phone, OtpPurpose::Register);
     $registerCode = $this->sms->lastCode();

@@ -8,16 +8,10 @@ use App\Models\SavedSearch;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<SavedSearch>
- */
 class SavedSearchFactory extends Factory
 {
     protected $model = SavedSearch::class;
 
-    /**
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [

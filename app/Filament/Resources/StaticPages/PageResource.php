@@ -18,9 +18,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-/**
- * Static pages (about, terms, privacy...) served at /p/{slug}. Admin only.
- */
 class PageResource extends Resource
 {
     use AdminOnlyResource;
@@ -33,7 +30,6 @@ class PageResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    // The resource lives in a StaticPages folder: without this the URL would be /admin/static-pages/pages.
     protected static ?string $slug = 'pages';
 
     public static function getModelLabel(): string

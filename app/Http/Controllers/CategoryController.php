@@ -15,16 +15,11 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    /**
-     * /category/{category} and /category/{category}/{governorate}
-     */
     public function show(Request $request, Category $category, ?Governorate $governorate = null): View|RedirectResponse
     {
-        // Only categories reachable in the active tree (the category and all its ancestors are active).
         $node = CategoryTree::find($category->id);
         abort_if($node === null, 404);
 
-        // The filter form sends ?governorate=slug; the canonical, indexable form is the path URL.
         if ($governorate === null && $request->filled('governorate')) {
             $chosen = Governorate::query()->where('slug', (string) $request->query('governorate'))->first();
 
@@ -45,7 +40,6 @@ class CategoryController extends Controller
             : route('categories.show', $category->slug);
 
         return view('listings.index', [
-            // A category + governorate page is only indexable when it actually has listings.
             'seo' => ListingsSeo::for($request, $baseUrl, $listings, requiresListings: $governorate !== null),
             'heading' => $governorate
                 ? __('app.browse.category_in', ['category' => $node->name, 'governorate' => $governorate->name])

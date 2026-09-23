@@ -11,9 +11,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // In-app notifications always fire; these two add e-mail and WhatsApp copies of the same
-            // events (listing approved/rejected, new message, expiring soon, saved search matches).
-            // E-mail needs an address on the profile; WhatsApp uses the verified phone number.
             $table->boolean('notify_email')->default(false)->after('avatar');
             $table->boolean('notify_whatsapp')->default(false)->after('notify_email');
         });

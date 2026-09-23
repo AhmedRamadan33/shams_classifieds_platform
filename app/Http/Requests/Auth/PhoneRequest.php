@@ -6,12 +6,8 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\Concerns\NormalizesPhone;
 use App\Rules\PhoneNumber;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * A request that only carries a phone number (start of the password reset flow).
- */
 class PhoneRequest extends FormRequest
 {
     use NormalizesPhone;
@@ -21,9 +17,6 @@ class PhoneRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [

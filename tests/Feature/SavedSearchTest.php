@@ -64,8 +64,6 @@ it('validates the name and enforces the per-user limit', function () {
 });
 
 it('lists the user\'s saved searches with a live result count, newest first', function () {
-    // A category filter (unlike a "q" FULLTEXT search) is visible to a query within the same test
-    // transaction, so the live count below can be asserted without the tests/Search suite's setup.
     Listing::factory()->create(['category_id' => $this->tree['leaf']->id]);
 
     $old = SavedSearch::factory()->for($this->user)->create(['name' => 'الأقدم', 'created_at' => now()->subDays(2)]);
@@ -102,11 +100,7 @@ it('requires authentication to save, list or manage searches', function () {
     $this->get('/saved-searches')->assertRedirect('/login');
 });
 
-// -------------------------------------------------------------- searches:notify
-
 it('notifies the owner only when there are new matches since the search was last checked', function () {
-    // A category filter, not "q": FULLTEXT only sees committed rows, and this whole test runs
-    // inside one RefreshDatabase transaction (see tests/Search for the suite that covers "q").
     Notification::fake();
     $search = SavedSearch::factory()->for($this->user)->create([
         'name' => 'سيارات', 'notify' => true, 'category_slug' => $this->tree['leaf']->slug,

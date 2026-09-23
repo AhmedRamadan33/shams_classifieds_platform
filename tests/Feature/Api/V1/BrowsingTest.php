@@ -54,7 +54,7 @@ it('lists only visible listings, paginated', function () {
 it('filters listings by category through the flat API', function () {
     $tree = Fixtures::carsTree();
     $inCategory = Listing::factory()->create(['category_id' => $tree['leaf']->id, 'status' => 'active']);
-    Listing::factory()->create(['status' => 'active']); // different, random category
+    Listing::factory()->create(['status' => 'active']);
 
     $response = $this->getJson('/api/v1/listings?category='.$tree['leaf']->slug)->assertOk();
 
@@ -83,7 +83,6 @@ it('counts a view once per requester', function () {
     $this->getJson("/api/v1/listings/{$listing->id}");
     $this->getJson("/api/v1/listings/{$listing->id}");
 
-    // Anonymous API requests have no session to dedupe against, unlike the website — each call counts.
     expect($listing->fresh()->views)->toBe(2);
 });
 

@@ -30,9 +30,6 @@ class FavoriteController extends Controller
         return response()->json(['data' => ListingResource::collection($listings)]);
     }
 
-    /**
-     * Send `favorite=1|0` for an explicit state (idempotent); without it the current state toggles.
-     */
     public function toggle(Request $request, Listing $listing): JsonResponse
     {
         $user = $request->user();

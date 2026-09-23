@@ -51,7 +51,7 @@ it('extends the remaining time instead of restarting it when already subscribed 
 
     $this->actingAs($this->user)->post('/subscribe', ['plan_id' => $this->plan->id]);
 
-    expect(Subscription::count())->toBe(1); // the existing row is reused, not duplicated
+    expect(Subscription::count())->toBe(1);
     expect($subscription->fresh()->expires_at->isBetween(now()->addDays(34), now()->addDays(36)))->toBeTrue();
 });
 
@@ -111,8 +111,6 @@ it('requires authentication to subscribe', function () {
     $this->post('/subscribe', ['plan_id' => $this->plan->id])->assertRedirect('/login');
 });
 
-// -------------------------------------------------------------- ListingLimits
-
 it('uses the site default when the user has no active subscription', function () {
     config(['classifieds.daily_listing_limit' => 10]);
 
@@ -142,7 +140,7 @@ it('ignores an expired subscription', function () {
 
 it('actually raises the daily listing limit enforced when posting ads', function () {
     config(['classifieds.daily_listing_limit' => 2]);
-    Subscription::factory()->for($this->user)->for($this->plan, 'plan')->active()->create(); // limit 25
+    Subscription::factory()->for($this->user)->for($this->plan, 'plan')->active()->create();
     $tree = Fixtures::carsTree();
     $governorate = Governorate::factory()->create();
 
@@ -152,8 +150,6 @@ it('actually raises the daily listing limit enforced when posting ads', function
             ->assertSessionHasNoErrors();
     }
 });
-
-// ------------------------------------------------------------ Paymob webhook (subscriptions)
 
 it('activates a subscription through the Paymob webhook, same as the fake gateway', function () {
     config(['services.payments.driver' => 'paymob', 'services.paymob.hmac_secret' => 'sub-secret']);

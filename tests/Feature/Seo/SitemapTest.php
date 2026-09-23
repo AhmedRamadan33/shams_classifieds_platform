@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\File;
 use Tests\Support\Fixtures;
 
 beforeEach(function () {
-    // Write into a scratch "public" directory so the real public/robots.txt is never touched.
     $this->publicDir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'shams-public-'.bin2hex(random_bytes(4));
     File::ensureDirectoryExists($this->publicDir);
     File::copy(base_path('public/robots.txt'), $this->publicDir.'/robots.txt');
@@ -52,10 +51,8 @@ it('lists the home page, static pages, categories, category+governorate pages wi
         ->and($locs)->toContain(route('categories.show', 'cars'))
         ->and($locs)->toContain(route('categories.show', 'cars-for-sale'))
         ->and($locs)->not->toContain(route('categories.show', 'hidden-cat'))
-        // the listing counts for its category AND its parent category
         ->and($locs)->toContain(route('categories.governorate', ['cars-for-sale', 'cairo']))
         ->and($locs)->toContain(route('categories.governorate', ['cars', 'cairo']))
-        // no active listing in Giza: no page for it
         ->and($locs)->not->toContain(route('categories.governorate', ['cars-for-sale', 'giza']))
         ->and($locs)->toContain($active->url())
         ->and($locs)->not->toContain($pending->url())
@@ -86,7 +83,6 @@ it('updates the Sitemap line of robots.txt with the absolute URL and keeps the r
         ->and(substr_count($robots, 'Sitemap:'))->toBe(1)
         ->and($robots)->toContain('Disallow: /admin');
 
-    // idempotent
     $this->artisan('sitemap:generate');
     expect(substr_count(file_get_contents($this->publicDir.'/robots.txt'), 'Sitemap:'))->toBe(1);
 });

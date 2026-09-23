@@ -37,22 +37,18 @@ beforeEach(function () {
     };
 });
 
-// -------------------------------------------------------------------- pages
-
 it('lists active listings of a category including all descendant categories', function () {
     $other = Category::factory()->childOf($this->parent)->create(['name' => 'دراجات', 'slug' => 'bikes']);
     ($this->car)('سيارة في القسم الفرعي الأول');
     Listing::factory()->titled('دراجة في القسم الفرعي الثاني')->create(['category_id' => $other->id]);
     Listing::factory()->titled('إعلان من قسم مستقل')->create();
 
-    // the parent category page shows both children...
     $this->get('/category/cars')
         ->assertOk()
         ->assertSee('سيارة في القسم الفرعي الأول')
         ->assertSee('دراجة في القسم الفرعي الثاني')
         ->assertDontSee('إعلان من قسم مستقل');
 
-    // ... a leaf only its own listings
     $this->get('/category/bikes')
         ->assertOk()
         ->assertSee('دراجة في القسم الفرعي الثاني')
@@ -81,7 +77,6 @@ it('returns 404 for unknown or inactive categories', function () {
     $this->leaf->update(['is_active' => false]);
     $this->get('/category/cars-for-sale')->assertNotFound();
 
-    // children of an inactive parent are unreachable too
     $this->leaf->update(['is_active' => true]);
     $this->parent->update(['is_active' => false]);
     $this->get('/category/cars-for-sale')->assertNotFound();
@@ -112,11 +107,8 @@ it('redirects the governorate filter to the canonical path URL and keeps the oth
     $this->get('/category/cars-for-sale?governorate=cairo&price_max=500000&page=3')
         ->assertRedirect('/category/cars-for-sale/cairo?price_max=500000');
 
-    // unknown governorate slugs are simply ignored
     $this->get('/category/cars-for-sale?governorate=atlantis')->assertOk();
 });
-
-// ------------------------------------------------------------------ filters
 
 it('filters by city, price range and price type', function () {
     $nasrCity = City::factory()->create(['governorate_id' => $this->cairo->id]);
@@ -149,7 +141,7 @@ it('filters by select and boolean dynamic fields', function () {
         ->and($names(['warranty' => '1']))->toBe(['تويوتا مضمونة'])
         ->and($names(['warranty' => '0']))->toBe(['كيا بدون ضمان'])
         ->and($names(['brand' => 'تويوتا', 'warranty' => '0']))->toBe([])
-        ->and($names(['brand' => '']))->toHaveCount(3); // empty value = no filter
+        ->and($names(['brand' => '']))->toHaveCount(3);
 });
 
 it('filters numeric dynamic fields by range, comparing numbers rather than strings', function () {
@@ -160,7 +152,6 @@ it('filters numeric dynamic fields by range, comparing numbers rather than strin
 
     $names = fn (array $year) => ListingSearch::make(['f' => ['year' => $year]], $this->leaf)->query()->pluck('title')->all();
 
-    // As strings "999" > "2005"; numerically it must not match a minimum of 1000.
     expect($names(['min' => 1000]))->toEqualCanonicalizing(['موديل 2005', 'موديل 2020'])
         ->and($names(['max' => 2005]))->toEqualCanonicalizing(['موديل 999', 'موديل 2005'])
         ->and($names(['min' => 2000, 'max' => 2010]))->toEqualCanonicalizing(['موديل 2005'])
@@ -173,7 +164,6 @@ it('ignores unknown and non-filterable field keys', function () {
     ($this->car)('سيارة أولى', [], ['model' => 'كورولا']);
     ($this->car)('سيارة ثانية', [], ['model' => 'يارس']);
 
-    // "model" is a real field but not marked filterable; "hacked" does not exist.
     $count = fn (array $f) => ListingSearch::make(['f' => $f], $this->leaf)->query()->count();
 
     expect($count(['model' => 'كورولا']))->toBe(2)
@@ -194,11 +184,9 @@ it('renders the filters for the category and marks the selected values', functio
         ->assertSee('name="f[year][min]"', false)
         ->assertSee('name="f[year][max]"', false)
         ->assertSee('name="f[warranty]"', false)
-        ->assertDontSee('name="f[model]"', false)   // not filterable
+        ->assertDontSee('name="f[model]"', false)
         ->assertSee('value="1000"', false);
 });
-
-// -------------------------------------------------------------------- sorting
 
 it('sorts newest first by default and supports price sorting', function () {
     ($this->car)('الأقدم والأرخص', ['price' => 100, 'published_at' => now()->subDays(5)]);
@@ -227,8 +215,6 @@ it('always puts featured listings first within the chosen sort', function () {
         ->and($order('price_desc'))->toBe(['مميز غالي', 'عادي رخيص', 'كان مميزاً وانتهى']);
 });
 
-// ----------------------------------------------------------------- pagination
-
 it('paginates 24 per page and keeps the query string on the links', function () {
     Listing::factory()->count(30)->create(['category_id' => $this->leaf->id, 'governorate_id' => $this->cairo->id, 'price' => 1000]);
 
@@ -240,8 +226,6 @@ it('paginates 24 per page and keeps the query string on the links', function () 
     $page2 = $this->get('/category/cars-for-sale?price_min=1&page=2');
     expect(substr_count($page2->getContent(), 'class="group relative'))->toBe(6);
 });
-
-// ---------------------------------------------------------------------- home
 
 it('shows the categories, featured and latest listings on the home page', function () {
     Listing::factory()->featured()->titled('إعلان مميز في الرئيسية')->create();
@@ -262,13 +246,11 @@ it('caches the home page sections and rebuilds them when a listing changes', fun
     $this->get('/')->assertSee('إعلان موجود قبل التخزين');
     expect(Cache::has('home.latest'))->toBeTrue();
 
-    // served from the cache: no query for the sections
     DB::enableQueryLog();
     $this->get('/')->assertSee('إعلان موجود قبل التخزين');
     expect(collect(DB::getQueryLog())->pluck('query')->filter(fn ($q) => str_contains($q, 'from `listings`')))->toBeEmpty();
     DB::disableQueryLog();
 
-    // a change is visible immediately, not after the 5 minute TTL
     Listing::factory()->titled('إعلان جديد بعد التخزين')->create();
     $this->get('/')->assertSee('إعلان جديد بعد التخزين');
 
@@ -277,14 +259,11 @@ it('caches the home page sections and rebuilds them when a listing changes', fun
 });
 
 it('flushes the home page cache when listings expire in bulk or their owner is banned', function () {
-    // Frozen so the 1-second expiry margin below is exact regardless of how long the requests take
-    // in real wall-clock time (a flake this test hit once the suite grew large enough to matter).
     $this->freezeTime();
 
     $listing = Listing::factory()->titled('إعلان سينتهي قريباً')->create(['expires_at' => now()->subMinute()]);
     $ownerListing = Listing::factory()->titled('إعلان صاحبه سيُحظر')->create();
 
-    // the expired one is already excluded by scopes; warm the cache with a fresh, valid one
     $live = Listing::factory()->titled('إعلان ساري')->create(['expires_at' => now()->addSecond()]);
     $this->get('/')->assertSee('إعلان ساري')->assertSee('إعلان صاحبه سيُحظر');
     expect(Cache::has('home.latest'))->toBeTrue();

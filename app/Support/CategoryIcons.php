@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-/**
- * Icons a category can use. The value stored in categories.icon is the key; the SVG path data
- * (24x24, stroke based) is rendered by the <x-category-icon> Blade component.
- */
 final class CategoryIcons
 {
-    /** @var array<string, array{label: string, path: string}> */
     private const ICONS = [
         'car' => [
             'label' => 'سيارة',
@@ -50,17 +45,11 @@ final class CategoryIcons
         ],
     ];
 
-    /**
-     * @return array<string, string> key => Arabic label, for select inputs
-     */
     public static function options(): array
     {
         return array_map(fn (array $icon) => $icon['label'], self::ICONS);
     }
 
-    /**
-     * SVG path data for an icon key (falls back to the "tag" icon for unknown keys).
-     */
     public static function path(?string $key): string
     {
         return self::ICONS[$key ?? 'tag']['path'] ?? self::ICONS['tag']['path'];

@@ -36,7 +36,6 @@
                 @endif
             </div>
 
-            {{-- Reviews --}}
             <aside class="space-y-4">
                 <section class="rounded-2xl border border-slate-200 bg-white p-5">
                     <h2 class="text-base font-bold text-slate-900">{{ __('app.reviews.title') }}</h2>

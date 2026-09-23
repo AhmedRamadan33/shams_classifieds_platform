@@ -34,9 +34,6 @@ class Message extends Model
         return $query->whereNull('read_at');
     }
 
-    /**
-     * Messages the given user still has to read: sent by the other participant, unread.
-     */
     public function scopeUnreadFor(Builder $query, User $user): Builder
     {
         return $query->unread()->where('sender_id', '!=', $user->id);

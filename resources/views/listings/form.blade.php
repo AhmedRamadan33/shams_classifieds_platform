@@ -4,7 +4,6 @@
             {{ $listing ? __('app.listing_form.edit_title') : __('app.listing_form.create_title') }}
         </h1>
 
-        {{-- Progress --}}
         <ol class="mt-6 grid grid-cols-4 gap-2" aria-label="{{ __('app.listing_form.progress') }}">
             <template x-for="n in totalSteps" :key="n">
                 <li>
@@ -37,7 +36,6 @@
 
             <div x-show="error('limit')" x-cloak role="alert" class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" x-text="error('limit')"></div>
 
-            {{-- STEP 1: category --}}
             <section x-show="step === 1" x-cloak class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                 <h2 class="text-lg font-bold text-slate-900" x-text="msg.choose_category"></h2>
 
@@ -69,7 +67,6 @@
                 </p>
             </section>
 
-            {{-- STEP 2: details --}}
             <section x-show="step === 2" x-cloak class="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <h2 class="text-lg font-bold text-slate-900" x-text="msg.details_title"></h2>
@@ -156,7 +153,6 @@
                     <p class="mt-1 text-sm text-red-700" role="alert" x-show="error('phone')" x-text="error('phone')"></p>
                 </div>
 
-                {{-- Category specific fields, fetched from /api/categories/{id}/fields --}}
                 <div x-show="loadingFields" class="text-sm text-slate-500" x-text="msg.loading_fields"></div>
                 <div x-show="fieldsError" role="alert" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
                     <span x-text="msg.fields_failed"></span>
@@ -214,7 +210,6 @@
                 </div>
             </section>
 
-            {{-- STEP 3: images --}}
             <section x-show="step === 3" x-cloak class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                 <h2 class="text-lg font-bold text-slate-900" x-text="msg.images_title"></h2>
                 <p class="mt-1 text-sm text-slate-600"
@@ -251,7 +246,6 @@
                 </ul>
             </section>
 
-            {{-- STEP 4: review --}}
             <section x-show="step === 4" x-cloak class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                 <h2 class="text-lg font-bold text-slate-900" x-text="msg.review_title"></h2>
                 <p class="mt-1 text-sm text-slate-600" x-text="msg.review_hint"></p>
@@ -276,12 +270,10 @@
                 @endif
             </section>
 
-            {{-- Bot check (only when a provider is configured) on the last step of a new listing --}}
             @unless ($listing)
                 <div x-show="step === totalSteps" x-cloak class="mt-4"><x-captcha /></div>
             @endunless
 
-            {{-- Navigation --}}
             <div class="mt-6 flex items-center justify-between gap-3">
                 <button type="button" x-show="step > 1" @click="back()"
                         class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50" x-text="msg.back"></button>

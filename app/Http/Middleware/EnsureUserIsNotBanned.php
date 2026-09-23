@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Signs out banned users on their very next request, even if they were already logged in.
- */
 class EnsureUserIsNotBanned
 {
     public function handle(Request $request, Closure $next): Response

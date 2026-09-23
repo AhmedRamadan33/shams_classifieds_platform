@@ -12,7 +12,6 @@ use App\Models\User;
 use App\Services\ArabicText;
 use App\Services\ListingImages;
 use App\Services\ListingSearchText;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -23,10 +22,6 @@ final class CreateListing
         private readonly ListingImages $images,
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data  validated listing data (see StoreListingRequest::listingData())
-     * @param  array<int, UploadedFile>  $uploads
-     */
     public function __invoke(User $user, array $data, array $uploads = [], ?string $cover = null): Listing
     {
         return DB::transaction(function () use ($user, $data, $uploads, $cover): Listing {

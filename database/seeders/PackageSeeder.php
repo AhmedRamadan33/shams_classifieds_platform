@@ -7,10 +7,6 @@ namespace Database\Seeders;
 use App\Models\Package;
 use Illuminate\Database\Seeder;
 
-/**
- * Default featured-ad packages. Editable from the admin panel afterwards; re-seeding never
- * overwrites a package that already exists (matched by name).
- */
 class PackageSeeder extends Seeder
 {
     public function run(): void

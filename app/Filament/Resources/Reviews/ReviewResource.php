@@ -14,10 +14,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-/**
- * Seller reviews; moderated by admins and moderators (ReviewPolicy). Reviews are left by users on
- * the seller's public page, never created here.
- */
 class ReviewResource extends Resource
 {
     protected static ?string $model = Review::class;

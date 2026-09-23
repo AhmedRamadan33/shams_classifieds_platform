@@ -9,23 +9,11 @@ use App\Enums\SubscriptionStatus;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Marks a payment paid and applies what it paid for, counted from whichever is later: now, or the
- * thing's current expiry (so buying again while still active/featured adds to the remaining time
- * instead of restarting it):
- *
- * - a featured-listing payment (listing_id + package_id) extends the listing's featured_until;
- * - a subscription payment (subscription_id) activates/extends the subscription's expires_at.
- *
- * Idempotent: calling it twice for an already-paid payment (a retried webhook, or the gateway calling
- * both the return URL and the webhook) does nothing the second time.
- */
 final class CompletePayment
 {
     public function __invoke(Payment $payment, ?string $gatewayTransactionId = null, ?array $meta = null): Payment
     {
         return DB::transaction(function () use ($payment, $gatewayTransactionId, $meta): Payment {
-            /** @var Payment $payment */
             $payment = Payment::query()->whereKey($payment->getKey())->lockForUpdate()->firstOrFail();
 
             if ($payment->isPaid()) {

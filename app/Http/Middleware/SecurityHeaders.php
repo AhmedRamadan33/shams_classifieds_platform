@@ -8,15 +8,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Baseline security headers on every response.
- *
- * No Content-Security-Policy is sent, not even report-only: Alpine.js evaluates its inline
- * expressions with `new Function` (needs 'unsafe-eval') and Filament/Livewire inject inline
- * scripts, so a meaningful policy would either break them or be too loose to matter. Adopting
- *
- * @alpinejs/csp and nonces is the path if a strict CSP is required later.
- */
 class SecurityHeaders
 {
     public function handle(Request $request, Closure $next): Response

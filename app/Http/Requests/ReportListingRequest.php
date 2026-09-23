@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\Enums\ReportReason;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class ReportListingRequest extends FormRequest
 {
-    /** Errors are shown inside the report modal, so they live in their own bag. */
     protected $errorBag = 'report';
 
     public function authorize(): bool
@@ -19,9 +17,6 @@ class ReportListingRequest extends FormRequest
         return $this->user() !== null;
     }
 
-    /**
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -35,9 +30,6 @@ class ReportListingRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function attributes(): array
     {
         return ['reason' => __('app.report.reason'), 'note' => __('app.report.note')];

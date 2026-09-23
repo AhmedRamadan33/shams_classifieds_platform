@@ -70,7 +70,6 @@ it('knows leaves, descendants and whether a category can receive listings', func
         ->and($grandchild->isPostable())->toBeTrue()
         ->and($child->isPostable())->toBeFalse();
 
-    // An inactive ancestor makes the whole branch unpostable.
     $root->update(['is_active' => false]);
     expect($grandchild->fresh()->isPostable())->toBeFalse();
 });
@@ -133,7 +132,7 @@ it('flushes the cached tree when a category or a field is created, updated or de
 });
 
 it('makes a newly created category with a select field visible in the cached tree', function () {
-    CategoryTree::get(); // warm the cache before the change
+    CategoryTree::get();
 
     $category = Category::create(['name' => 'أجهزة', 'slug' => 'gadgets']);
     makeField($category, 'color', 1, 'select', ['options' => ['أحمر', 'أزرق']]);

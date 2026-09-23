@@ -11,7 +11,6 @@ use App\Models\Listing;
 use App\Services\ArabicText;
 use App\Services\ListingImages;
 use App\Services\ListingSearchText;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -22,11 +21,6 @@ final class UpdateListing
         private readonly ListingImages $images,
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data  validated listing data
-     * @param  array<int, UploadedFile>  $uploads  new images
-     * @param  array<int, int|string>  $removeImageIds  ids of existing images to delete
-     */
     public function __invoke(Listing $listing, array $data, array $uploads = [], array $removeImageIds = [], ?string $cover = null): Listing
     {
         return DB::transaction(function () use ($listing, $data, $uploads, $removeImageIds, $cover): Listing {
@@ -54,10 +48,6 @@ final class UpdateListing
         });
     }
 
-    /**
-     * With moderation on, any edit sends the listing back to the review queue. With moderation
-     * off, an edit of a rejected listing publishes it right away.
-     */
     private function applyStatusAfterEdit(Listing $listing): void
     {
         if (config('classifieds.require_review')) {

@@ -8,9 +8,6 @@ use App\Enums\ListingStatus;
 use App\Models\Listing;
 use App\Notifications\ListingApproved;
 
-/**
- * Publishes a listing: active now, a fresh expiry date, and the owner is told.
- */
 final class ApproveListing
 {
     public function __invoke(Listing $listing): Listing

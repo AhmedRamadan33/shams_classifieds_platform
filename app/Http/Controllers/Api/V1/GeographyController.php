@@ -11,9 +11,6 @@ use Illuminate\Http\JsonResponse;
 
 class GeographyController extends Controller
 {
-    /**
-     * GET /api/v1/governorates: every governorate with its cities.
-     */
     public function index(): JsonResponse
     {
         return response()->json(['data' => GovernorateResource::collection(Geography::all())]);

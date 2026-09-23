@@ -17,7 +17,6 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:login');
 
-    // Password reset by phone: request code -> verify code -> new password.
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->middleware('throttle:otp')->name('password.email');
 
@@ -29,8 +28,6 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
-// Phone verification is reachable by guests (right after registering/logging in) and by
-// signed-in users whose number is still unverified.
 Route::get('verify-phone', [PhoneVerificationController::class, 'create'])->name('phone.verification.notice');
 Route::post('verify-phone', [PhoneVerificationController::class, 'store'])->middleware('throttle:otp')->name('phone.verification.verify');
 Route::post('verify-phone/resend', [PhoneVerificationController::class, 'resend'])->middleware('throttle:otp')->name('phone.verification.resend');

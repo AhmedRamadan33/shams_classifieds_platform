@@ -1,7 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
-/** @type {import('tailwindcss').Config} */
 export default {
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
@@ -18,7 +17,6 @@ export default {
                 sans: ['Tajawal', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                // "Shams" (sun) palette. brand-700 on white passes WCAG AA for text and buttons.
                 brand: {
                     50: '#fff7ed',
                     100: '#ffedd5',

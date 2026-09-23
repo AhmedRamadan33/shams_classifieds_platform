@@ -16,10 +16,6 @@ use App\Models\Listing;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * In-app messaging ("راسل المعلن"). Reuses the same actions/policy as the website
- * (App\Actions\StartConversation/SendMessage, App\Policies\ConversationPolicy).
- */
 class ConversationController extends Controller
 {
     public function index(Request $request): JsonResponse
@@ -36,10 +32,6 @@ class ConversationController extends Controller
         return response()->json(['data' => ConversationResource::collection($conversations)]);
     }
 
-    /**
-     * POST /api/v1/listings/{listing}/messages: finds or opens the buyer's conversation about this
-     * listing; `body` (optional) posts a first message in the same request.
-     */
     public function start(Request $request, Listing $listing, StartConversation $start, SendMessage $send): JsonResponse
     {
         try {

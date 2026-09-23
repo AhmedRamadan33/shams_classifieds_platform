@@ -18,14 +18,12 @@ async function register(page, name, phone) {
     await page.locator('#password_confirmation').fill(PASSWORD);
     await page.getByRole('button', { name: 'إنشاء الحساب' }).click();
 
-    // the OTP "SMS" is written to the log by the log gateway
     await expect(page).toHaveURL(/verify/);
     await page.locator('#code').fill(await otpFor(phone));
     await page.getByRole('button', { name: 'تأكيد' }).click();
     await expect(page).not.toHaveURL(/verify/);
 }
 
-// One journey per viewport, in order: the tests share the listing the third one creates.
 test.describe.configure({ mode: 'serial' });
 
 let state;
@@ -81,11 +79,9 @@ test.describe('full journey', () => {
         await expectNoHorizontalScroll(page, 'form step 1');
         await page.screenshot({ path: path.join(shots, `${info.project.name}-form-1-category.png`), fullPage: true });
 
-        // Step 1: category tree
         await page.getByRole('button', { name: 'سيارات', exact: true }).click();
         await page.getByRole('button', { name: 'سيارات للبيع', exact: true }).click();
 
-        // Step 2: details + the category's dynamic fields
         await expect(page.locator('#title')).toBeVisible();
         await page.locator('#title').fill(state.title);
         await page.locator('#description').fill('سيارة بحالة ممتازة، صيانة دورية بالتوكيل، ترخيص ساري، السعر قابل للتفاوض مع الجادين فقط.');
@@ -93,7 +89,7 @@ test.describe('full journey', () => {
         await page.locator('#governorate_id').selectOption({ index: 1 });
         await page.locator('#phone').fill(state.seller);
 
-        await expect(page.locator('#field_brand')).toBeVisible(); // loaded from /api/categories/{id}/fields
+        await expect(page.locator('#field_brand')).toBeVisible();
         await page.locator('#field_brand').selectOption({ index: 1 });
         await page.locator('#field_model').fill('كورولا');
         await page.locator('#field_year').fill('2019');
@@ -101,14 +97,12 @@ test.describe('full journey', () => {
         await page.screenshot({ path: path.join(shots, `${info.project.name}-form-2-details.png`), fullPage: true });
         await page.getByRole('button', { name: 'التالي' }).click();
 
-        // Step 3: photos
         await page.locator('input[type=file][name="images[]"]').setInputFiles(photos);
         await expect(page.locator('img[src^="blob:"]')).toHaveCount(3);
         await expectNoHorizontalScroll(page, 'form step 3');
         await page.screenshot({ path: path.join(shots, `${info.project.name}-form-3-images.png`), fullPage: true });
         await page.getByRole('button', { name: 'التالي' }).click();
 
-        // Step 4: review and publish
         await expect(page.getByText(state.title).first()).toBeVisible();
         await expectNoHorizontalScroll(page, 'form step 4');
         await page.getByRole('button', { name: 'نشر الإعلان' }).click();
@@ -129,7 +123,6 @@ test.describe('full journey', () => {
         expect((await page.goto(state.listingUrl)).status()).toBe(404);
 
         await page.goto('/search?q=' + encodeURIComponent(state.title));
-        // the query itself is echoed back into the search boxes, so check the results list, not the whole page
         await expect(page.getByText('0 إعلان')).toBeVisible();
         await expect(page.locator('article')).toHaveCount(0);
     });
@@ -159,7 +152,6 @@ test.describe('full journey', () => {
         await expect(page.getByText('كورولا').first()).toBeVisible();
         await expectNoHorizontalScroll(page, 'public listing');
 
-        // the number is not in the delivered HTML at all
         const html = await response.text();
         expect(html).not.toContain(state.seller.replace(/^0/, ''));
 
@@ -167,7 +159,6 @@ test.describe('full journey', () => {
         await expect(page.locator('a[href^="tel:"]')).toContainText(state.seller.replace(/^0/, ''));
         await page.screenshot({ path: path.join(shots, `${info.project.name}-listing-revealed.png`), fullPage: true });
 
-        // and it appears in search
         await page.goto('/search?q=' + encodeURIComponent('كورولا'));
         await expect(page.getByText(state.title).first()).toBeVisible();
     });
@@ -187,7 +178,6 @@ test.describe('full journey', () => {
         await page.goto('/favorites');
         await expect(page.getByText(state.title)).toBeVisible();
 
-        // report modal
         await page.goto(state.listingUrl);
         await page.getByRole('button', { name: 'إبلاغ عن الإعلان' }).click();
         const dialog = page.getByRole('dialog', { name: 'الإبلاغ عن الإعلان' });
@@ -199,7 +189,6 @@ test.describe('full journey', () => {
         await dialog.getByRole('button', { name: 'إرسال البلاغ' }).click();
         await expect(page.getByText('شكراً لك، تم استلام بلاغك')).toBeVisible();
 
-        // a second report by the same person is refused politely
         await page.getByRole('button', { name: 'إبلاغ عن الإعلان' }).click();
         await page.getByRole('dialog').getByLabel('إعلان مكرر').check();
         await page.getByRole('dialog').getByRole('button', { name: 'إرسال البلاغ' }).click();

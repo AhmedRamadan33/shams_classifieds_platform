@@ -1,5 +1,4 @@
 @props(['items'])
-{{-- $items: list of ['label' => string, 'url' => ?string]. The last item is the current page. --}}
 <nav aria-label="{{ __('app.breadcrumbs') }}" {{ $attributes->merge(['class' => 'text-sm text-slate-600']) }}>
     <ol class="flex flex-wrap items-center gap-1.5">
         @foreach ($items as $item)

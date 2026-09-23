@@ -9,9 +9,6 @@ use Illuminate\View\View;
 
 class AppLayout extends Component
 {
-    /**
-     * @param  array<int, array<string, mixed>>  $jsonLd  schema.org blocks rendered as JSON-LD
-     */
     public function __construct(
         public ?string $title = null,
         public ?string $description = null,

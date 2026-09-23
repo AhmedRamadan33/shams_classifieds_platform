@@ -14,8 +14,6 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 
-// ---------------------------------------------------------- channel selection
-
 it('only creates an in-app notification by default', function () {
     $user = User::factory()->create();
 
@@ -63,7 +61,6 @@ it('calls the WhatsApp channel only when opted in, and never when not', function
     $optedIn->notify(new ListingApproved($listing));
     $optedOut->notify(new ListingApproved(Listing::factory()->create(['user_id' => $optedOut->id])));
 
-    // The instance captured $calls by reference at binding time; read it back from the container.
     $gateway = app(WhatsAppGateway::class);
     $reflection = new ReflectionProperty($gateway, 'calls');
 
@@ -82,12 +79,10 @@ it('swallows a WhatsApp delivery failure instead of breaking the request', funct
         }
     });
 
-    $user->notify(new ListingApproved($listing)); // must not throw
+    $user->notify(new ListingApproved($listing));
 
     expect($user->notifications()->count())->toBe(1);
 });
-
-// -------------------------------------------------------------- mail content
 
 it('renders the approval e-mail in Arabic with an RTL layout', function () {
     $user = User::factory()->create(['email' => 'user@example.com', 'notify_email' => true, 'name' => 'أحمد']);
@@ -114,8 +109,6 @@ it('renders the new-message e-mail with the message body', function () {
         ->and($html)->toContain('مشتري مهتم')
         ->and($html)->toContain('هل السيارة متاحة؟');
 });
-
-// ---------------------------------------------------------- WhatsApp Cloud API
 
 it('sends a WhatsApp Cloud API text message with the access token', function () {
     Http::fake(['graph.facebook.com/*' => Http::response(['messages' => [['id' => 'wamid.1']]])]);

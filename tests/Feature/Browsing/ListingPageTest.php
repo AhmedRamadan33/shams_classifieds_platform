@@ -20,8 +20,6 @@ beforeEach(function () {
     ]);
 });
 
-// -------------------------------------------------------------- visibility
-
 it('shows an active listing to guests', function () {
     $this->get($this->listing->url())
         ->assertOk()
@@ -72,7 +70,6 @@ it('hides the listings of a banned user', function () {
 
     $this->get($this->listing->url())->assertNotFound();
 
-    // ... even when it had expired
     $this->listing->update(['status' => ListingStatus::Expired]);
     $this->get($this->listing->url())->assertNotFound();
 });
@@ -118,8 +115,6 @@ it('lets staff open pending listings but not other regular users', function () {
     $this->actingAs(User::factory()->create())->get($this->listing->url())->assertNotFound();
 });
 
-// -------------------------------------------------------- the phone number
-
 it('never includes the phone number in the page HTML', function () {
     $html = $this->get($this->listing->url())->assertOk()->getContent();
 
@@ -164,8 +159,6 @@ it('throttles the contact endpoint', function () {
     $this->postJson("/ad/{$this->listing->id}/contact")->assertStatus(429);
 });
 
-// ---------------------------------------------------------------- view counting
-
 it('counts a view once per session and stores a view event', function () {
     $this->get($this->listing->url())->assertOk();
     $this->get($this->listing->url())->assertOk();
@@ -193,8 +186,6 @@ it('does not count the owner\'s own visits or previews of unpublished listings',
 
     expect($this->listing->fresh()->views)->toBe(0);
 });
-
-// ------------------------------------------------------------------ details
 
 it('lists the dynamic fields with units, parent fields first', function () {
     $tree = Fixtures::carsTree();
@@ -238,8 +229,6 @@ it('uses the canonical URL and Open Graph tags', function () {
         ->assertSee('<link rel="canonical" href="'.$this->listing->url().'">', false)
         ->assertSee('<meta property="og:type" content="product">', false);
 });
-
-// ------------------------------------------------------------------ seller
 
 it('lists a seller\'s active listings only', function () {
     Listing::factory()->for($this->owner)->titled('إعلان نشط ثاني للمعلن')->create();

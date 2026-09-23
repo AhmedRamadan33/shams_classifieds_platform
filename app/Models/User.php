@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,7 +19,6 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     public const ROLE_ADMIN = 'admin';
@@ -29,11 +27,6 @@ class User extends Authenticatable implements FilamentUser
 
     public const ROLE_USER = 'user';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'phone',
@@ -46,21 +39,11 @@ class User extends Authenticatable implements FilamentUser
         'notify_whatsapp',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -75,14 +58,12 @@ class User extends Authenticatable implements FilamentUser
 
     protected static function booted(): void
     {
-        // Every new account is a regular user until an admin promotes it.
         static::created(function (User $user): void {
             if ($user->roles()->doesntExist()) {
                 $user->assignRole(Role::findOrCreate(self::ROLE_USER, 'web'));
             }
         });
 
-        // Banning hides (unbanning restores) all of the user's listings, including on the cached home page.
         static::updated(function (User $user): void {
             if ($user->wasChanged('is_banned')) {
                 Listing::flushHomeCache();
@@ -100,9 +81,6 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Favorite::class);
     }
 
-    /**
-     * Every conversation this user is a part of, as either buyer or seller.
-     */
     public function conversations(): Builder
     {
         return Conversation::query()->forUser($this);
@@ -118,17 +96,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Store::class);
     }
 
-    /**
-     * Reviews this user has left for other sellers.
-     */
     public function reviewsGiven(): HasMany
     {
         return $this->hasMany(Review::class, 'reviewer_id');
     }
 
-    /**
-     * Reviews other users have left for this seller.
-     */
     public function reviewsReceived(): HasMany
     {
         return $this->hasMany(Review::class, 'seller_id');
@@ -151,9 +123,6 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Subscription::class);
     }
 
-    /**
-     * The subscription giving this user their current (higher) listing limit, if any.
-     */
     public function activeSubscription(): ?Subscription
     {
         return $this->relationLoaded('subscriptions')
@@ -181,9 +150,6 @@ class User extends Authenticatable implements FilamentUser
         }
     }
 
-    /**
-     * Admins and moderators.
-     */
     public function isStaff(): bool
     {
         return $this->hasAnyRole([self::ROLE_ADMIN, self::ROLE_MODERATOR]);
@@ -199,9 +165,6 @@ class User extends Authenticatable implements FilamentUser
         return $this->avatar ? Storage::disk('public')->url($this->avatar) : null;
     }
 
-    /**
-     * Only staff that are not banned can enter the Filament panel.
-     */
     public function canAccessPanel(Panel $panel): bool
     {
         return ! $this->is_banned && $this->isStaff();

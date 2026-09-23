@@ -13,18 +13,10 @@ use App\Services\Payments\PaymentGateway;
 use App\Services\Payments\PaymentGatewayException;
 use App\Services\Payments\PaymentRedirect;
 
-/**
- * Creates a pending Payment for a listing/package and asks the configured PaymentGateway to charge
- * it. If the gateway cannot be reached, the payment row is removed (nothing was charged, so nothing
- * should be left "pending" forever) and the exception is re-thrown for the controller to handle.
- */
 final class InitiateFeaturedPayment
 {
     public function __construct(private readonly PaymentGateway $gateway) {}
 
-    /**
-     * @throws PaymentGatewayException
-     */
     public function __invoke(User $user, Listing $listing, Package $package): PaymentRedirect
     {
         $payment = Payment::create([

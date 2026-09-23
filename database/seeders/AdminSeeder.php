@@ -8,9 +8,6 @@ use App\Models\User;
 use App\Services\PhoneNormalizer;
 use Illuminate\Database\Seeder;
 
-/**
- * Creates (or refreshes) the administrator from ADMIN_PHONE / ADMIN_PASSWORD in .env.
- */
 class AdminSeeder extends Seeder
 {
     public function run(): void

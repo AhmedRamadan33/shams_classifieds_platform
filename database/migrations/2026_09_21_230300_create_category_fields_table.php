@@ -14,9 +14,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('key'); // ASCII snake_case, used in form input names and filter URLs
-            $table->string('type', 20); // text | number | select | boolean
-            $table->json('options')->nullable(); // list of allowed values for "select"
+            $table->string('key');
+            $table->string('type', 20);
+            $table->json('options')->nullable();
             $table->string('unit', 20)->nullable();
             $table->boolean('is_required')->default(false);
             $table->boolean('is_filterable')->default(false);

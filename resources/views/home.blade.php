@@ -14,7 +14,6 @@
     </section>
 
     <div class="mx-auto max-w-7xl space-y-12 px-4 pb-4 sm:px-6 lg:px-8">
-        {{-- Categories --}}
         <section aria-labelledby="home-categories" class="-mt-2">
             <h2 id="home-categories" class="text-xl font-bold text-slate-900">{{ __('app.home.categories_title') }}</h2>
             <ul class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
@@ -32,7 +31,6 @@
             </ul>
         </section>
 
-        {{-- Featured --}}
         @if ($featured->isNotEmpty())
             <section aria-labelledby="home-featured">
                 <div class="flex items-center justify-between">
@@ -46,7 +44,6 @@
             </section>
         @endif
 
-        {{-- Latest --}}
         <section aria-labelledby="home-latest">
             <div class="flex items-center justify-between">
                 <h2 id="home-latest" class="text-xl font-bold text-slate-900">{{ __('app.home.latest_title') }}</h2>
@@ -66,7 +63,6 @@
             @endif
         </section>
 
-        {{-- Call to action --}}
         <section class="rounded-2xl bg-brand-700 px-6 py-8 text-center text-white sm:py-10">
             <h2 class="text-2xl font-bold">{{ __('app.home.cta_title') }}</h2>
             <p class="mx-auto mt-2 max-w-xl text-brand-50">{{ __('app.home.cta_text') }}</p>

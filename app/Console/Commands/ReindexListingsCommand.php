@@ -32,7 +32,6 @@ class ReindexListingsCommand extends Command
                     $total++;
 
                     if ($searchText !== $listing->search_text) {
-                        // Bypass model events and timestamps: this is maintenance, not an edit.
                         DB::table('listings')->where('id', $listing->id)->update(['search_text' => $searchText]);
                         $changed++;
                     }

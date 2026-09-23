@@ -8,9 +8,6 @@ use App\Enums\ListingStatus;
 use App\Models\Listing;
 use App\Notifications\ListingRejected;
 
-/**
- * Takes a listing off the site with a mandatory reason the owner can read.
- */
 final class RejectListing
 {
     public function __invoke(Listing $listing, string $reason): Listing

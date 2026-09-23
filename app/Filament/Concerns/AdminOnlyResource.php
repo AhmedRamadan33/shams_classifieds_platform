@@ -6,10 +6,6 @@ namespace App\Filament\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Restricts a Filament resource to users with the "admin" role. Moderators can still enter the
- * panel (ListingResource, ReportResource) but never see or reach these resources.
- */
 trait AdminOnlyResource
 {
     public static function canViewAny(): bool

@@ -7,16 +7,6 @@ namespace App\Services\WhatsApp;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-/**
- * Meta's WhatsApp Cloud API (graph.facebook.com), sending a free-form text message.
- *
- * Note (real-world limitation, not something code can work around): Meta only allows free-form text
- * outside an approved message template within the 24-hour window after the customer last messaged
- * the business number. A notification like "your listing was approved" sent to a customer who never
- * initiated a WhatsApp conversation will usually need a pre-approved template message instead — set
- * that up in the Meta Business dashboard for production use; this gateway sends whichever $message it
- * is given either way.
- */
 final class WhatsAppCloudApiGateway implements WhatsAppGateway
 {
     public function __construct(

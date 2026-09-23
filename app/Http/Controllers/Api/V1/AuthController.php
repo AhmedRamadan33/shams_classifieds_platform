@@ -20,18 +20,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-/**
- * Phone + password token authentication (Sanctum personal access tokens), mirroring the web OTP
- * flow: register (unverified) -> verify-otp (verifies AND returns a token) -> or log in directly
- * once verified. See docs/openapi.yaml for the full contract.
- */
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request, OtpService $otp): JsonResponse
     {
         $phone = $request->validated('phone');
 
-        // An abandoned, still unverified sign-up with the same number is simply re-used (same as the web flow).
         $user = User::firstOrNew(['phone' => $phone]);
         $user->fill([
             'name' => $request->validated('name'),
@@ -41,7 +35,6 @@ class AuthController extends Controller
         try {
             $otp->issue($phone, OtpPurpose::Register);
         } catch (OtpCooldownException) {
-            // A code was sent moments ago; the client can just call /auth/resend-otp once it expires.
         } catch (OtpDeliveryException) {
             return response()->json(['message' => __('app.otp.delivery_failed')], 503);
         }
@@ -62,9 +55,6 @@ class AuthController extends Controller
         return response()->json(['message' => __('app.auth.code_sent')]);
     }
 
-    /**
-     * Verifies the code and, on success, returns a token straight away (no separate login step).
-     */
     public function verifyOtp(VerifyOtpRequest $request, OtpService $otp): JsonResponse
     {
         $phone = $request->validated('phone');

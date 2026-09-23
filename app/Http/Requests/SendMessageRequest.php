@@ -10,12 +10,9 @@ class SendMessageRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // the controller checks participation through the policy
+        return true;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function rules(): array
     {
         return [

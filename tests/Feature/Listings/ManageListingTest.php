@@ -21,7 +21,6 @@ beforeEach(function () {
     $this->owner = User::factory()->create(['phone' => '+201012345678']);
     $this->other = User::factory()->create();
 
-    // An existing listing created through the real flow, then approved.
     $this->actingAs($this->owner)->post('/ads', Fixtures::listingPayload($this->leaf, $this->governorate, null, [
         'images' => [Fixtures::image('one.jpg', 400, 300), Fixtures::image('two.jpg', 500, 400)],
     ]));
@@ -32,14 +31,11 @@ beforeEach(function () {
         ->put("/ads/{$this->listing->id}", Fixtures::listingPayload($this->leaf, $this->governorate, null, $overrides));
 });
 
-// ------------------------------------------------------------------- edit
-
 it('shows the edit form only to the owner', function () {
     $response = $this->actingAs($this->owner)->get("/ads/{$this->listing->id}/edit")
         ->assertOk()
         ->assertSee(__('app.listing_form.edit_title'));
 
-    // The form is hydrated with the listing's current values and images.
     $payload = $response->viewData('payload');
 
     expect($payload['mode'])->toBe('edit')
@@ -78,7 +74,6 @@ it('updates the listing, slug, field values and search text', function () {
         ->toBe(['brand' => 'هيونداي', 'model' => 'إلنترا', 'year' => '2022', 'warranty' => '0'])
         ->and($listing->search_text)->toContain('النترا')->not->toContain('الضمان');
 
-    // the "mileage" row was removed because it was emptied
     expect(ListingFieldValue::where('listing_id', $listing->id)->count())->toBe(4);
 });
 
@@ -128,11 +123,8 @@ it('can change the category and drops the values of fields that no longer apply'
 it('does not require the duplicate check or daily limit when editing', function () {
     config(['classifieds.daily_listing_limit' => 1]);
 
-    // The listing itself already exists (limit reached), yet editing must still work.
     ($this->update)()->assertSessionHasNoErrors();
 });
-
-// ----------------------------------------------------------------- images
 
 it('removes selected images and adds new ones', function () {
     [$first, $second] = $this->listing->getMedia(Listing::IMAGES)->all();
@@ -151,7 +143,7 @@ it('removes selected images and adds new ones', function () {
 
 it('cannot delete media that belongs to another listing', function () {
     $foreign = Listing::factory()->create();
-    $file = Fixtures::image('x.jpg'); // keep a reference: the fake temp file is deleted when it is garbage collected
+    $file = Fixtures::image('x.jpg');
     $foreign->addMedia($file->getRealPath())->preservingOriginal()->toMediaCollection(Listing::IMAGES);
     $foreignMedia = $foreign->getFirstMedia(Listing::IMAGES);
 
@@ -171,19 +163,15 @@ it('lets the owner pick an existing image as the cover', function () {
 it('counts existing images when enforcing the maximum', function () {
     config(['classifieds.max_images' => 3]);
 
-    // 2 existing + 2 new = 4 > 3
     ($this->update)(['images' => [Fixtures::image('a.jpg', 300, 300), Fixtures::image('b.jpg', 300, 300)]])
         ->assertSessionHasErrors('images');
 
-    // removing one first makes it fit
     [$first] = $this->listing->getMedia(Listing::IMAGES)->all();
     ($this->update)([
         'remove_images' => [$first->id],
         'images' => [Fixtures::image('a.jpg', 300, 300), Fixtures::image('b.jpg', 300, 300)],
     ])->assertSessionHasNoErrors();
 });
-
-// ----------------------------------------------------------------- delete
 
 it('soft deletes a listing for its owner only', function () {
     $this->actingAs($this->other)->delete("/ads/{$this->listing->id}")->assertForbidden();
@@ -194,8 +182,6 @@ it('soft deletes a listing for its owner only', function () {
     expect(Listing::count())->toBe(0)
         ->and(Listing::withTrashed()->count())->toBe(1);
 });
-
-// ------------------------------------------------------------------ renew
 
 it('renews an expired listing', function () {
     $this->listing->update(['status' => ListingStatus::Expired, 'expires_at' => now()->subDays(3), 'expiry_reminded_at' => now()->subDays(10)]);
@@ -217,7 +203,7 @@ it('renews an active listing that is within 7 days of expiring', function () {
 });
 
 it('renews an active listing whose date passed before the expiry command ran', function () {
-    $this->listing->update(['expires_at' => now()->subHour()]); // still flagged "active"
+    $this->listing->update(['expires_at' => now()->subHour()]);
 
     $this->actingAs($this->owner)->post("/ads/{$this->listing->id}/renew")->assertSessionHas('success');
 });
@@ -240,8 +226,6 @@ it('only lets the owner renew', function () {
 
     $this->actingAs($this->other)->post("/ads/{$this->listing->id}/renew")->assertForbidden();
 });
-
-// ------------------------------------------------------------------- sold
 
 it('marks an active listing as sold', function () {
     $this->actingAs($this->owner)->post("/ads/{$this->listing->id}/sold")->assertSessionHas('success');

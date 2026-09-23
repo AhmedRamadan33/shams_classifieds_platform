@@ -36,7 +36,6 @@
                 <p class="mt-1 text-sm text-slate-600">{{ __('app.browse.results_count', ['count' => number_format($listings->total())]) }}</p>
             </div>
 
-            {{-- Quick sort: keeps every current filter as hidden inputs --}}
             <form method="GET" action="{{ $formAction }}" class="flex items-center gap-2 text-sm">
                 @foreach (\App\Support\QueryFields::flatten($currentQuery, ['sort', 'page']) as [$name, $value])
                     <input type="hidden" name="{{ $name }}" value="{{ $value }}">

@@ -8,16 +8,10 @@ use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Review>
- */
 class ReviewFactory extends Factory
 {
     protected $model = Review::class;
 
-    /**
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [

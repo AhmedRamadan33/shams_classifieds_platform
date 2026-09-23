@@ -10,10 +10,6 @@ use Illuminate\View\View;
 
 class NotificationController extends Controller
 {
-    /**
-     * /notifications: the user's in-site notifications. Unread ones are highlighted on this
-     * view and marked as read afterwards, so the header badge clears on the next page.
-     */
     public function index(Request $request): View
     {
         $user = $request->user();

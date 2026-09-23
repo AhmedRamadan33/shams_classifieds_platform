@@ -16,12 +16,6 @@ use Illuminate\Http\Request;
 
 class ListingController extends Controller
 {
-    /**
-     * GET /api/v1/listings?q=&category=slug&governorate=slug&city=id&price_min=&price_max=
-     * &price_type=&sort=&f[key]=...&page= — same filters and FULLTEXT search as the website's
-     * /search and /category pages (see App\Queries\ListingSearch), flattened into query parameters
-     * since the API has no per-category path.
-     */
     public function index(Request $request): JsonResponse
     {
         $category = $request->filled('category')
@@ -46,10 +40,6 @@ class ListingController extends Controller
         ]);
     }
 
-    /**
-     * GET /api/v1/listings/{listing}: only live listings of non-banned owners (same visibility rule
-     * as the public listing page). Counts a view once per token/session, same as the website.
-     */
     public function show(Request $request, Listing $listing): JsonResponse
     {
         abort_unless(Listing::query()->visible()->whereKey($listing->id)->exists(), 404);

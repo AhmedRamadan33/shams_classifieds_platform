@@ -8,7 +8,6 @@
             <x-button :href="route('listings.create')">{{ __('app.my_listings.add') }}</x-button>
         </div>
 
-        {{-- Tabs by status --}}
         <nav class="mt-6 overflow-x-auto border-b border-slate-200" aria-label="{{ __('app.my_listings.title') }}">
             <ul class="flex min-w-max gap-1">
                 @foreach ($tabs as $item)

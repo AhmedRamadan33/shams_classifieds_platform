@@ -18,10 +18,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-/**
- * The moderation queue. Visible to admins and moderators (ListingPolicy grants staff everything);
- * listings are created by users on the public site, never here.
- */
 class ListingResource extends Resource
 {
     protected static ?string $model = Listing::class;
@@ -64,9 +60,6 @@ class ListingResource extends Resource
         return false;
     }
 
-    /**
-     * Everything the table and the view page render is loaded up front (lazy loading is disabled).
-     */
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with(['user', 'category', 'governorate', 'city', 'media', 'fieldValues.field']);

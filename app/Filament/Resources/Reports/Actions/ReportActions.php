@@ -10,9 +10,6 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 
-/**
- * Handling a report: resolve it, dismiss it, or remove the reported listing and resolve.
- */
 final class ReportActions
 {
     public static function resolve(): Action
@@ -35,9 +32,6 @@ final class ReportActions
             ->action(fn (Report $record) => self::close($record, ReportStatus::Dismissed));
     }
 
-    /**
-     * Soft-delete the reported listing and mark every open report about it as resolved.
-     */
     public static function removeListing(): Action
     {
         return Action::make('remove_listing')

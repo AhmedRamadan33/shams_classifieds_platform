@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Database\Factories\PlanFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * A store subscription plan sellers can buy: pay {price} for {duration_days} days at
- * {daily_listing_limit} listings/day instead of the site default. Managed from the admin panel.
- */
 class Plan extends Model
 {
-    /** @use HasFactory<PlanFactory> */
     use HasFactory;
 
     protected $fillable = ['name', 'price', 'duration_days', 'daily_listing_limit', 'is_active', 'sort_order'];

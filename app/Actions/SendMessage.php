@@ -11,10 +11,6 @@ use App\Models\User;
 use App\Notifications\NewMessageReceived;
 use App\Services\BlockedWords;
 
-/**
- * Posts a message into a conversation the sender is a participant of, and notifies the other
- * participant (in-app always; e-mail/WhatsApp per their preferences, see NewMessageReceived).
- */
 final class SendMessage
 {
     public function __invoke(User $sender, Conversation $conversation, string $body): Message

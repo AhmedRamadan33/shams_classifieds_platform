@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 
 class ProfileUpdateRequest extends FormRequest
 {
@@ -16,9 +14,6 @@ class ProfileUpdateRequest extends FormRequest
         return $this->user() !== null;
     }
 
-    /**
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -46,9 +41,6 @@ class ProfileUpdateRequest extends FormRequest
         }
     }
 
-    /**
-     * @param  Validator  $validator
-     */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator): void {

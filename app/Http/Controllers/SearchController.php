@@ -14,9 +14,6 @@ use Illuminate\View\View;
 
 class SearchController extends Controller
 {
-    /**
-     * /search?q=&category=&governorate=&...
-     */
     public function __invoke(Request $request): View
     {
         $q = Str::limit(trim((string) $request->query('q', '')), 100, '');
@@ -33,7 +30,6 @@ class SearchController extends Controller
         $listings = $search->paginate();
 
         return view('listings.index', [
-            // Search results are never indexed; the canonical is always the bare /search URL.
             'seo' => ListingsSeo::for($request, route('search'), $listings, neverIndex: true),
             'heading' => $q !== '' ? __('app.browse.search_results_for', ['q' => $q]) : __('app.browse.all_listings'),
             'category' => $category,

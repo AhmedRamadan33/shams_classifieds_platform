@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete(); // one store per user
+            $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
             $table->string('bio', 500)->nullable();

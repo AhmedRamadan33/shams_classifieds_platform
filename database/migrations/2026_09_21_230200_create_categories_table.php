@@ -14,7 +14,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('parent_id')->nullable()->constrained('categories')->cascadeOnDelete();
             $table->string('name');
-            $table->string('slug')->unique(); // ASCII/English: stable URLs
+            $table->string('slug')->unique();
             $table->string('icon')->nullable();
             $table->unsignedInteger('sort_order')->default(0);
             $table->boolean('is_active')->default(true);

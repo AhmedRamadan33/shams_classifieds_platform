@@ -11,10 +11,6 @@ use Illuminate\Http\RedirectResponse;
 
 class ReportController extends Controller
 {
-    /**
-     * POST /ad/{listing}/report: one report per user per listing, on public listings, never on
-     * your own listing.
-     */
     public function store(ReportListingRequest $request, Listing $listing): RedirectResponse
     {
         $user = $request->user();

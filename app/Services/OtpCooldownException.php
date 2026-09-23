@@ -6,9 +6,6 @@ namespace App\Services;
 
 use RuntimeException;
 
-/**
- * Thrown when a new code is requested before the resend cooldown has elapsed.
- */
 final class OtpCooldownException extends RuntimeException
 {
     public function __construct(public readonly int $secondsRemaining)

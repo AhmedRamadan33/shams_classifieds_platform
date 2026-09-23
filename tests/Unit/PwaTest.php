@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * public/manifest.json and public/sw.js are plain static files: a real webserver (or
- * `php artisan serve`'s dev router, see docs/DEPLOY.md) serves them directly and never routes them
- * through the Laravel kernel, so they cannot be requested through Pest's $this->get() (which only
- * exercises the kernel and would 404 on them, static file serving not being part of it). These
- * checks read them straight off disk instead; resources/views/components/seo.blade.php linking to
- * them is covered by a Feature test.
- */
-
 it('ships a valid, installable web app manifest', function () {
     $path = public_path('manifest.json');
     expect($path)->toBeFile();

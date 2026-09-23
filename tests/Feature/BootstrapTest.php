@@ -18,7 +18,7 @@ it('is configured for an Arabic Egyptian market', function () {
         ->and(config('app.timezone'))->toBe('Africa/Cairo')
         ->and(config('classifieds.phone_country_code'))->toBe('+20')
         ->and(config('classifieds.currency_label'))->toBe('ج.م')
-        ->and(config('queue.default'))->toBe('sync'); // phpunit.xml override; .env uses "database"
+        ->and(config('queue.default'))->toBe('sync');
 });
 
 it('exposes every configuration key required by the plan', function () {

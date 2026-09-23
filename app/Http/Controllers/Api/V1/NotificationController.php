@@ -16,9 +16,6 @@ class NotificationController extends Controller
         $notifications = $user->notifications()->paginate(20);
         $unreadIds = $notifications->getCollection()->whereNull('read_at')->pluck('id')->all();
 
-        // Counted before marking read below, so it reflects "how many of these were unread until
-        // now" — reading the list marks them read (like the website), so this would otherwise
-        // always report 0.
         $response = response()->json([
             'data' => $notifications->getCollection()->map(fn ($n) => [
                 'id' => $n->id,

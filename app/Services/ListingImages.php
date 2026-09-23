@@ -5,21 +5,13 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Listing;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-/**
- * Attaches, removes and orders a listing's images.
- */
 final class ListingImages
 {
     public function __construct(private readonly ImageSanitizer $sanitizer) {}
 
-    /**
-     * @param  array<int, UploadedFile>  $uploads
-     * @return array<int, Media> the created media, in upload order
-     */
     public function attach(Listing $listing, array $uploads): array
     {
         $created = [];
@@ -27,7 +19,6 @@ final class ListingImages
         foreach ($uploads as $upload) {
             $clean = $this->sanitizer->sanitize($upload);
 
-            // The original file name is never used: it is user controlled.
             $created[] = $listing->addMedia($clean['path'])
                 ->usingName($listing->title)
                 ->usingFileName(Str::random(24).'.'.$clean['extension'])
@@ -37,11 +28,6 @@ final class ListingImages
         return $created;
     }
 
-    /**
-     * Delete some of the listing's own images (ids of other listings' media are ignored).
-     *
-     * @param  array<int, int|string>  $ids
-     */
     public function remove(Listing $listing, array $ids): void
     {
         if ($ids === []) {
@@ -57,12 +43,6 @@ final class ListingImages
             ->each(fn (Media $media) => $media->delete());
     }
 
-    /**
-     * Put the chosen cover first. $cover is "existing:{mediaId}" or "new:{index}" where the index
-     * is the position of the image among $newMedia; anything else keeps the current order.
-     *
-     * @param  array<int, Media>  $newMedia
-     */
     public function applyCover(Listing $listing, ?string $cover, array $newMedia): void
     {
         $ids = $listing->media()

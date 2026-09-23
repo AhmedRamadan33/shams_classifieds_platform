@@ -20,15 +20,10 @@ class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-    /**
-     * Create an unverified account and send the OTP. The user is only logged in once the
-     * code has been confirmed on the verification page.
-     */
     public function store(RegisterRequest $request, OtpService $otp): RedirectResponse
     {
         $phone = $request->validated('phone');
 
-        // An abandoned, still unverified sign-up with the same number is simply re-used.
         $user = User::firstOrNew(['phone' => $phone]);
         $user->fill([
             'name' => $request->validated('name'),
@@ -38,7 +33,6 @@ class RegisteredUserController extends Controller
         try {
             $otp->issue($phone, OtpPurpose::Register);
         } catch (OtpCooldownException) {
-            // A code was sent moments ago; the verification page offers a resend after the cooldown.
         }
 
         $request->session()->put('verify_phone', $phone);

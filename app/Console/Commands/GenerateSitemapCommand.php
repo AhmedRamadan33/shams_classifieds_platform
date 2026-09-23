@@ -21,12 +21,10 @@ class GenerateSitemapCommand extends Command
 
     protected $description = 'Write public/sitemap.xml (static pages, categories, category+governorate pages with listings, active listings)';
 
-    /** The sitemap protocol allows 50,000 URLs per file; stay well below it. */
     private const MAX_URLS_PER_FILE = 45000;
 
     public function handle(): int
     {
-        /** @var list<Url> $urls */
         $urls = [];
 
         $urls[] = Url::create(route('home'))->setPriority(1.0)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY);
@@ -70,12 +68,6 @@ class GenerateSitemapCommand extends Command
         return self::SUCCESS;
     }
 
-    /**
-     * Category + governorate combinations that have at least one active listing. A category page
-     * includes its sub-categories, so a listing counts for its category and every ancestor.
-     *
-     * @return list<array{0: string, 1: string}> [category slug, governorate slug]
-     */
     private function categoryGovernoratePairs(): array
     {
         $slugs = Category::query()->pluck('slug', 'id');
@@ -106,11 +98,6 @@ class GenerateSitemapCommand extends Command
         return array_values($pairs);
     }
 
-    /**
-     * One file when it fits; otherwise numbered files plus a sitemap index at sitemap.xml.
-     *
-     * @param  list<Url>  $urls
-     */
     private function write(array $urls): void
     {
         $this->deleteOldChunks();
@@ -143,9 +130,6 @@ class GenerateSitemapCommand extends Command
         }
     }
 
-    /**
-     * Keep the "Sitemap:" line of robots.txt pointing at this site's absolute sitemap URL.
-     */
     private function updateRobotsTxt(): void
     {
         $path = public_path('robots.txt');

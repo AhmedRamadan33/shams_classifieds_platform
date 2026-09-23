@@ -11,10 +11,6 @@ use Illuminate\Http\RedirectResponse;
 
 class ReviewController extends Controller
 {
-    /**
-     * POST /seller/{user}/reviews: leaves a review, or updates the reviewer's existing one for this
-     * seller (one per reviewer per seller — see the unique index).
-     */
     public function store(SaveReviewRequest $request, User $seller): RedirectResponse
     {
         $reviewer = $request->user();

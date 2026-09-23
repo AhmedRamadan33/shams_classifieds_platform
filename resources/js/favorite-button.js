@@ -1,8 +1,3 @@
-/**
- * Heart button with an optimistic UI: the state flips immediately, the request states the wanted
- * value explicitly (so repeating it is harmless), and the flip is undone if the request fails.
- * Guests (401/419) are sent to the login page.
- */
 export default (config) => ({
     favorited: config.favorited,
     busy: false,

@@ -2,14 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * Egyptian governorates and their main cities / districts / centers.
- *
- * Shape: governorate slug => ['name' => Arabic name, 'cities' => [city slug => Arabic name]].
- * Slugs are ASCII so URLs stay stable. Order in this file is the display order.
- * Edit freely: GeographySeeder is idempotent (matched by slug).
- */
-
 return [
     'cairo' => [
         'name' => 'القاهرة',

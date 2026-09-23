@@ -15,14 +15,14 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('package_id')->constrained();
-            $table->string('gateway', 20); // fake | paymob
+            $table->string('gateway', 20);
             $table->decimal('amount', 10, 2);
             $table->string('currency', 3);
-            $table->string('status', 20)->default('pending'); // pending | paid | failed | cancelled
-            $table->string('gateway_order_id')->nullable(); // Paymob order id, used to match the webhook
+            $table->string('status', 20)->default('pending');
+            $table->string('gateway_order_id')->nullable();
             $table->string('gateway_transaction_id')->nullable();
             $table->timestamp('paid_at')->nullable();
-            $table->json('meta')->nullable(); // raw gateway response, for support/debugging
+            $table->json('meta')->nullable();
             $table->timestamps();
 
             $table->index('status');

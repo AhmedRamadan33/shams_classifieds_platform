@@ -7,10 +7,6 @@ namespace Database\Seeders;
 use App\Models\Plan;
 use Illuminate\Database\Seeder;
 
-/**
- * Default store subscription plans. Editable from the admin panel afterwards; re-seeding never
- * overwrites a plan that already exists (matched by name).
- */
 class PlanSeeder extends Seeder
 {
     public function run(): void

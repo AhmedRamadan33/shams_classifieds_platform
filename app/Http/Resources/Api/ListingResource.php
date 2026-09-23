@@ -9,17 +9,8 @@ use App\Models\Listing;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * @mixin Listing
- *
- * The seller's phone is deliberately never included here (same as the public listing page): call
- * POST /listings/{listing}/contact to reveal it, exactly like the website does.
- */
 class ListingResource extends JsonResource
 {
-    /**
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [

@@ -7,9 +7,6 @@ namespace App\Observers;
 use App\Services\Geography;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Registered on Governorate and City: any change flushes the cached geography.
- */
 class GeographyObserver
 {
     public function saved(Model $model): void

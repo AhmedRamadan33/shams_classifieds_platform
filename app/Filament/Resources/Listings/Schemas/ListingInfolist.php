@@ -67,7 +67,6 @@ class ListingInfolist
                         ImageEntry::make('images')
                             ->label(__('app.admin.images'))
                             ->getStateUsing(fn (Listing $record): array => $record->getMedia(Listing::IMAGES)
-                                // ImageEntry needs absolute URLs; url() leaves absolute ones untouched.
                                 ->map(fn (Media $media) => url($media->hasGeneratedConversion('medium') ? $media->getUrl('medium') : $media->getUrl()))
                                 ->all())
                             ->imageHeight(160)

@@ -90,14 +90,12 @@ it('adds a select field to a category through the fields relation manager', func
         'pageClass' => EditCategory::class,
     ]);
 
-    // A select field needs options.
     $manager()
         ->callAction(TestAction::make('create')->table(), [
             'name' => 'اللون', 'key' => 'color', 'type' => 'select', 'options' => [], 'sort_order' => 1,
         ])
         ->assertHasFormErrors(['options']);
 
-    // The key must be ASCII snake_case.
     $manager()
         ->callAction(TestAction::make('create')->table(), [
             'name' => 'اللون', 'key' => 'اللون', 'type' => 'text', 'sort_order' => 1,
@@ -117,7 +115,6 @@ it('adds a select field to a category through the fields relation manager', func
         ->and($field->optionValues())->toBe(['أحمر', 'أزرق'])
         ->and($field->is_required)->toBeTrue();
 
-    // Field keys are unique inside a category.
     $manager()
         ->callAction(TestAction::make('create')->table(), [
             'name' => 'لون آخر', 'key' => 'color', 'type' => 'text', 'sort_order' => 2,

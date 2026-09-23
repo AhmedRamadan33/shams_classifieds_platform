@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('otp_codes', function (Blueprint $table) {
             $table->id();
             $table->string('phone', 20);
-            $table->string('purpose', 20); // register | reset
+            $table->string('purpose', 20);
             $table->string('code_hash');
             $table->unsignedTinyInteger('attempts')->default(0);
             $table->timestamp('expires_at');

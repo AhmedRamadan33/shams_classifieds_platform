@@ -6,21 +6,12 @@ namespace App\Models;
 
 use App\Queries\ListingSearch;
 use App\Services\CategoryTree;
-use Database\Factories\SavedSearchFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * A search the user asked to keep, optionally with a daily "new matches" notification
- * (searches:notify, see App\Console\Commands\NotifySavedSearchesCommand).
- *
- * The category/governorate are resolved by slug at read time rather than stored as ids, so a saved
- * search degrades gracefully (site-wide) if its category is deactivated instead of erroring.
- */
 class SavedSearch extends Model
 {
-    /** @use HasFactory<SavedSearchFactory> */
     use HasFactory;
 
     protected $fillable = ['user_id', 'name', 'category_slug', 'governorate_slug', 'filters', 'notify', 'last_notified_at'];
@@ -58,9 +49,6 @@ class SavedSearch extends Model
         return ListingSearch::make((array) $this->filters, $this->category(), $this->governorate());
     }
 
-    /**
-     * The page that shows this search's results, e.g. to link to from its notification.
-     */
     public function url(): string
     {
         $category = $this->category();

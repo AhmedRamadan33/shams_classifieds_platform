@@ -13,9 +13,6 @@ use Illuminate\View\View;
 
 class FavoriteController extends Controller
 {
-    /**
-     * /favorites: the user's saved listings that are still publicly visible.
-     */
     public function index(Request $request): View
     {
         $listings = Listing::query()
@@ -33,13 +30,6 @@ class FavoriteController extends Controller
         return view('favorites.index', ['listings' => $listings]);
     }
 
-    /**
-     * POST /ad/{listing}/favorite
-     *
-     * Send `favorite=1|0` to set an explicit state (idempotent: repeating it changes nothing, which
-     * is what the optimistic UI does); without it the current state is toggled. Only publicly
-     * visible listings can be added; removing is always allowed.
-     */
     public function toggle(Request $request, Listing $listing): JsonResponse|RedirectResponse
     {
         $user = $request->user();
@@ -51,7 +41,6 @@ class FavoriteController extends Controller
         if ($wanted && $existing === null) {
             abort_unless(Listing::query()->visible()->whereKey($listing->id)->exists(), 404);
 
-            // firstOrCreate + the unique index keep concurrent requests from creating duplicates.
             Favorite::query()->firstOrCreate(['user_id' => $user->id, 'listing_id' => $listing->id]);
         }
 
@@ -59,7 +48,6 @@ class FavoriteController extends Controller
             $existing->delete();
         }
 
-        // The optimistic UI uses JSON; the plain "remove" button on /favorites posts a normal form.
         return $request->expectsJson()
             ? response()->json(['favorited' => $wanted])
             : back()->with('success', $wanted ? null : __('app.favorites.removed'));

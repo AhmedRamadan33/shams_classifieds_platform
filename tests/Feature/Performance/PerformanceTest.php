@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Tests\Support\Fixtures;
 
-/**
- * Number of SQL queries a GET request runs.
- */
 function queriesFor(object $test, string $url): int
 {
     DB::flushQueryLog();
@@ -32,7 +29,6 @@ it('runs the same number of queries whether a page lists 3 or 24 listings (no N+
     $tree = Fixtures::carsTree();
     Storage::fake('public');
 
-    // Every listing matches the short search term used below, so both measurements return results.
     Listing::factory()->count(3)->titled('إعلان لقياس الاستعلامات')->create(['category_id' => $tree['leaf']->id]);
     Cache::flush();
     $few = queriesFor($this, $url);
@@ -67,7 +63,7 @@ it('keeps the dashboard and favorites pages free of N+1 queries', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    queriesFor($this, '/dashboard'); // warm the caches (footer pages, roles) so only per-listing work is measured
+    queriesFor($this, '/dashboard');
 
     Listing::factory()->count(2)->for($user)->create();
     $few = queriesFor($this, '/dashboard');
@@ -131,14 +127,14 @@ it('renders images lazily with dimensions, and the cover with srcset once conver
 
     $page = $this->get($listing->url())->getContent();
 
-    expect($page)->toContain('fetchpriority="high"')      // the first image is the LCP element
+    expect($page)->toContain('fetchpriority="high"')
         ->and($page)->toContain('width="1600" height="1200"')
         ->and($page)->toContain('1600w');
 });
 
 it('does not send a srcset until the conversions exist', function () {
     Storage::fake('public');
-    Queue::fake();   // conversions are queued and never run: the original is all there is
+    Queue::fake();
     $tree = Fixtures::carsTree();
     $listing = Listing::factory()->create(['category_id' => $tree['leaf']->id]);
     $file = Fixtures::image('a.jpg', 1200, 900);
@@ -156,7 +152,6 @@ it('builds production assets as minified fingerprinted files', function () {
 
     $js = file_get_contents(public_path('build/'.$manifest['resources/js/app.js']['file']));
 
-    // minified: no leading indentation / comments dominate the bundle
     expect(substr_count($js, "\n"))->toBeLessThan(50)
         ->and(strlen($js))->toBeLessThan(250_000);
 });

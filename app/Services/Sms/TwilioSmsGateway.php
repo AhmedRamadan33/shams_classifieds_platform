@@ -7,12 +7,6 @@ namespace App\Services\Sms;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-/**
- * Twilio Programmable SMS (https://www.twilio.com/docs/messaging/api/message-resource).
- *
- * Configure with TWILIO_SID, TWILIO_TOKEN and either TWILIO_FROM (a number or alphanumeric
- * sender id) or TWILIO_MESSAGING_SERVICE_SID.
- */
 final class TwilioSmsGateway implements SmsGateway
 {
     public function __construct(

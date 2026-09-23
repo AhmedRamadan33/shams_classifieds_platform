@@ -7,7 +7,6 @@ import { expectNoHorizontalScroll, expectRtlArabic } from './support/helpers.js'
 const shots = path.join(root, 'e2e', 'screenshots');
 fs.mkdirSync(shots, { recursive: true });
 
-// A real listing page is added at runtime (the id depends on the seeded data).
 const staticPages = [
     ['home', '/'],
     ['category-cars', '/category/cars'],
@@ -30,7 +29,6 @@ test.describe('layout', () => {
             await expect(page.locator('h1, h2').first()).toBeVisible();
             await expectNoHorizontalScroll(page, url);
 
-            // Body text uses the bundled Tajawal font, not a system fallback.
             const font = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
             expect(font).toContain('Tajawal');
 
@@ -69,7 +67,6 @@ test.describe('mobile navigation', () => {
         await expect(drawer.getByRole('link', { name: 'تسجيل الدخول' })).toBeVisible();
         await expect(drawer.getByRole('link', { name: 'أضف إعلانك' })).toBeVisible();
 
-        // it opens from the right edge in RTL
         const box = await drawer.locator('nav').boundingBox();
         expect(box.x + box.width / 2).toBeGreaterThan(375 / 2);
 

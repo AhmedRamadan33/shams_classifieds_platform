@@ -27,7 +27,6 @@ class Category extends Model
         'is_active',
     ];
 
-    /** Mirrors the column defaults so freshly created (not reloaded) models behave the same. */
     protected $attributes = [
         'is_active' => true,
         'sort_order' => 0,
@@ -66,25 +65,16 @@ class Category extends Model
         return $query->where('is_active', true);
     }
 
-    /**
-     * A leaf has no active sub-categories; only leaves can receive listings.
-     */
     public function isLeaf(): bool
     {
         return ! $this->children()->active()->exists();
     }
 
-    /**
-     * Ancestors from the root down to (and including) this category.
-     *
-     * @return Collection<int, Category>
-     */
     public function ancestorsAndSelf(): Collection
     {
         $chain = collect([$this]);
         $current = $this;
 
-        // The counter only guards against a corrupted (cyclic) tree.
         while ($current->parent_id !== null && $chain->count() < 10) {
             $parent = self::query()->find($current->parent_id);
 
@@ -99,11 +89,6 @@ class Category extends Model
         return $chain;
     }
 
-    /**
-     * IDs of all categories below this one (children, grandchildren, ...).
-     *
-     * @return list<int>
-     */
     public function descendantIds(bool $includeSelf = false): array
     {
         $ids = $includeSelf ? [$this->id] : [];
@@ -117,12 +102,6 @@ class Category extends Model
         return $ids;
     }
 
-    /**
-     * Fields a listing in this category must/can fill: the category's own fields plus those of
-     * every ancestor, parent-first and then by sort_order.
-     *
-     * @return Collection<int, CategoryField>
-     */
     public function effectiveFields(): Collection
     {
         $chain = $this->ancestorsAndSelf();
@@ -136,9 +115,6 @@ class Category extends Model
             ->values();
     }
 
-    /**
-     * Whether a listing can be posted here: active, a leaf, and every ancestor active.
-     */
     public function isPostable(): bool
     {
         return $this->is_active

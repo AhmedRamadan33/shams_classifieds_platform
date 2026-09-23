@@ -7,7 +7,6 @@ namespace App\Http\Requests\Auth;
 use App\Http\Requests\Concerns\NormalizesPhone;
 use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -23,9 +22,6 @@ class LoginRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -39,12 +35,6 @@ class LoginRequest extends FormRequest
         $this->normalizePhoneInput();
     }
 
-    /**
-     * Check the credentials without logging anyone in yet: the controller still has to look at
-     * the account state (banned, phone not verified) before creating a session.
-     *
-     * @throws ValidationException
-     */
     public function retrieveUser(): User
     {
         $this->ensureIsNotRateLimited();
@@ -64,13 +54,9 @@ class LoginRequest extends FormRequest
 
         RateLimiter::clear($this->throttleKey());
 
-        /** @var User $user */
         return $user;
     }
 
-    /**
-     * @throws ValidationException
-     */
     public function ensureIsNotRateLimited(): void
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {

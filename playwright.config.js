@@ -1,13 +1,11 @@
 import { defineConfig } from '@playwright/test';
 import { BASE_URL, PORT, appEnv, root } from './e2e/support/env.js';
 
-// Browser tests against a throw-away database (shams_e2e) and upload folder, see e2e/support/env.js.
-// Uses the Chrome installed on the machine, so no browser download is needed:  npm run e2e
 export default defineConfig({
     testDir: './e2e',
     globalSetup: './e2e/global-setup.js',
     fullyParallel: false,
-    workers: 1, // the PHP built-in server on Windows is single threaded
+    workers: 1,
     timeout: 90_000,
     expect: { timeout: 10_000 },
     reporter: [['list'], ['html', { open: 'never' }]],

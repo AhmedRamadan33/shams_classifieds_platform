@@ -24,9 +24,6 @@ enum ReportStatus: string
         };
     }
 
-    /**
-     * @return array<string, string> value => Arabic label
-     */
     public static function options(): array
     {
         return collect(self::cases())

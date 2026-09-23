@@ -1,7 +1,3 @@
-/**
- * The message thread (resources/views/messages/show.blade.php): submits replies with fetch so the
- * page does not reload, and polls for new messages every few seconds (GET /messages/{id}/poll).
- */
 export default (config) => ({
     pollUrl: config.pollUrl,
     storeUrl: config.storeUrl,
@@ -40,7 +36,6 @@ export default (config) => ({
                 this.lastId = data.messages.at(-1).id;
             }
         } catch (e) {
-            // a missed poll is not worth surfacing; the next tick tries again
         }
     },
 

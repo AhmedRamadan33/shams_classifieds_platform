@@ -8,10 +8,6 @@ use App\Enums\ListingStatus;
 use App\Exceptions\ListingActionException;
 use App\Models\Listing;
 
-/**
- * Extends a listing for another full duration. Allowed for expired listings, and for active
- * listings that expire within the renew window (7 days by default).
- */
 final class RenewListing
 {
     public function canRenew(Listing $listing): bool
@@ -25,9 +21,6 @@ final class RenewListing
             && $listing->expires_at->lte(now()->addDays((int) config('classifieds.renew_window_days')));
     }
 
-    /**
-     * @throws ListingActionException
-     */
     public function __invoke(Listing $listing): Listing
     {
         if (! $this->canRenew($listing)) {

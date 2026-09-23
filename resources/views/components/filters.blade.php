@@ -30,7 +30,6 @@
         {{ __('app.browse.show_filters') }}
     </button>
 
-    {{-- Sidebar on desktop, slide-over drawer on mobile --}}
     <div class="fixed inset-0 z-50 lg:static lg:z-auto lg:block" :class="open ? 'block' : 'hidden'"
          role="dialog" aria-modal="true" aria-label="{{ __('app.browse.filters') }}">
         <div class="absolute inset-0 bg-slate-900/50 lg:hidden" @click="open = false"></div>
@@ -90,7 +89,6 @@
                     </select>
                 </div>
 
-                {{-- The category's filterable dynamic fields --}}
                 @foreach ($fields as $field)
                     @php $value = $current[$field->key] ?? null; @endphp
                     <div>

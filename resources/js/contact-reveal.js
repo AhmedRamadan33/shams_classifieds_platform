@@ -1,7 +1,3 @@
-/**
- * "إظهار الرقم" on the listing page. The advertiser's number is not in the page HTML: it is
- * fetched on demand from POST /ad/{listing}/contact (which throttles and records the click).
- */
 export default (config) => ({
     url: config.url,
     phone: null,
@@ -47,7 +43,6 @@ export default (config) => ({
         }
     },
 
-    // Called when the WhatsApp link is clicked: records the click without blocking the navigation.
     trackWhatsapp() {
         this.request('whatsapp').catch(() => {});
     },

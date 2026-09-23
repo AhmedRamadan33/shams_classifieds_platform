@@ -23,9 +23,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
 
-/**
- * The dynamic fields a category defines. Children categories inherit them.
- */
 class FieldsRelationManager extends RelationManager
 {
     protected static string $relationship = 'fields';

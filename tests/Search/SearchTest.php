@@ -15,11 +15,6 @@ use App\Services\ArabicText;
 use Illuminate\Support\Facades\Notification;
 use Tests\Support\Fixtures;
 
-/*
- * These tests run against committed rows (DatabaseTruncation): InnoDB FULLTEXT indexes only see
- * data after commit, so the usual transaction-per-test isolation cannot be used here.
- */
-
 beforeEach(function () {
     $this->category = Category::factory()->create();
     $this->governorate = Governorate::factory()->create();
@@ -55,7 +50,7 @@ it('matches word prefixes', function () {
     expect(($this->search)('مهن'))->toHaveCount(1)
         ->and(($this->search)('ديك'))->toHaveCount(1)
         ->and(($this->search)('مطل'))->toHaveCount(1)
-        ->and(($this->search)('هندس'))->toHaveCount(0)  // the middle of a word is not a prefix
+        ->and(($this->search)('هندس'))->toHaveCount(0)
         ->and(($this->search)('ندس'))->toHaveCount(0);
 });
 
@@ -94,7 +89,6 @@ it('falls back to LIKE for terms shorter than 3 characters', function () {
     ($this->make)('كاميرا كانون EOS R5 جديدة');
     ($this->make)('كاميرا سوني A7 مستعملة');
 
-    // "r5" and "a7" are 2 characters: below the FULLTEXT minimum token size.
     expect(($this->search)('r5'))->toBe(['كاميرا كانون EOS R5 جديدة'])
         ->and(($this->search)('a7'))->toBe(['كاميرا سوني A7 مستعملة'])
         ->and(($this->search)('كاميرا a7'))->toBe(['كاميرا سوني A7 مستعملة'])
@@ -105,15 +99,13 @@ it('escapes LIKE wildcards in short terms', function () {
     ($this->make)('عرض خاص خصم 50% على الكل');
     ($this->make)('عرض خاص بدون خصم');
 
-    // "%" is dropped by the term splitter, "_" is escaped: neither may act as a wildcard.
     expect(($this->search)('a_'))->toHaveCount(0)
-        ->and(($this->search)('%'))->toHaveCount(2); // no terms left => no restriction
+        ->and(($this->search)('%'))->toHaveCount(2);
 });
 
 it('is not broken by boolean-mode operators and quotes in the query', function (string $q) {
     ($this->make)('شقة للبيع في مدينة نصر');
 
-    // Must not throw; operators are stripped, so a valid term inside still matches.
     expect(fn () => ($this->search)($q))->not->toThrow(Throwable::class);
 })->with(['+شقة', '-شقة', '"شقة"', 'شقة*', '(شقة)', '>شقة<', '~شقة', '@شقة', '+++', '"', '())((', 'شقة AND OR NOT']);
 
@@ -199,9 +191,9 @@ it('keeps requiring all terms when the article is involved', function () {
 
 it('still finds listings indexed before the variants existed', function () {
     $old = ($this->make)('الشقة القديمة');
-    $old->update(['search_text' => ArabicText::normalize('الشقة القديمة')]); // the previous index format
+    $old->update(['search_text' => ArabicText::normalize('الشقة القديمة')]);
 
-    expect(($this->search)('الشقة'))->toBe(['الشقة القديمة']);   // the original form is still queried
+    expect(($this->search)('الشقة'))->toBe(['الشقة القديمة']);
 });
 
 it('reindexes existing listings with the new search text', function () {
@@ -228,7 +220,7 @@ it('finds committed listings through a saved search that filters by "q"', functi
     $this->travel(1)->minute();
     Notification::fake();
     app(NotifySavedSearches::class)();
-    Notification::assertNothingSent(); // published before the search existed, not "new"
+    Notification::assertNothingSent();
 
     $this->travel(1)->minute();
     $fresh = ($this->make)('شقة فاخرة أخرى للبيع', attrs: ['published_at' => now()]);

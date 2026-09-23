@@ -30,7 +30,6 @@
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <x-breadcrumbs :items="$crumbs" />
 
-        {{-- Status banner: only the owner and staff can see a listing that is not public --}}
         @unless ($publiclyVisible)
             <x-alert type="warning" class="mt-4">
                 <p class="font-bold">{{ __('app.listing_page.banner.'.$bannerKey) }}</p>
@@ -42,7 +41,6 @@
 
         <div class="mt-4 grid gap-6 lg:grid-cols-3">
             <div class="min-w-0 space-y-6 lg:col-span-2">
-                {{-- Gallery: first image is server-rendered (fast LCP), the rest load lazily --}}
                 <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white" x-data="{ index: 0, total: {{ count($images) }} }" aria-label="{{ $listing->title }}">
                     <div class="relative aspect-[4/3] bg-slate-100">
                         @forelse ($images as $i => $image)
@@ -98,7 +96,6 @@
                     @endif
                 </section>
 
-                {{-- Title, price, meta --}}
                 <section class="rounded-2xl border border-slate-200 bg-white p-5">
                     <h1 class="text-2xl font-bold leading-snug text-slate-900">{{ $listing->title }}</h1>
                     <p class="mt-3 text-2xl font-bold text-brand-700">{{ $listing->formattedPrice(withType: true) }}</p>
@@ -119,7 +116,6 @@
                     </ul>
                 </section>
 
-                {{-- Dynamic fields, with units --}}
                 @if ($fieldRows->isNotEmpty())
                     <section class="rounded-2xl border border-slate-200 bg-white p-5">
                         <h2 class="text-lg font-bold text-slate-900">{{ __('app.listing_page.details') }}</h2>
@@ -140,9 +136,7 @@
                 </section>
             </div>
 
-            {{-- Sidebar --}}
             <aside class="space-y-4">
-                {{-- Contact: the number is fetched on demand, it is NOT in the HTML --}}
                 <section class="rounded-2xl border border-slate-200 bg-white p-5"
                          x-data="contactReveal({ url: @js(route('listings.contact', $listing)) })">
                     <p class="text-2xl font-bold text-brand-700">{{ $listing->formattedPrice() }}</p>
@@ -185,7 +179,6 @@
                     </div>
                 </section>
 
-                {{-- Seller --}}
                 <section class="rounded-2xl border border-slate-200 bg-white p-5">
                     <h2 class="text-sm font-bold text-slate-500">{{ __('app.listing_page.seller') }}</h2>
                     <div class="mt-3 flex items-center gap-3">
@@ -203,7 +196,6 @@
                     </a>
                 </section>
 
-                {{-- Report: signed-in users only, never on your own listing --}}
                 @if ($publiclyVisible && auth()->id() !== $listing->user_id)
                     <section class="rounded-2xl border border-slate-200 bg-white p-4 text-center"
                              x-data="{ open: {{ $errors->hasBag('report') ? 'true' : 'false' }} }" @keydown.escape.window="open = false">
@@ -258,7 +250,6 @@
                     </section>
                 @endif
 
-                {{-- Safety tips --}}
                 <section class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
                     <h2 class="text-sm font-bold text-amber-900">{{ __('app.listing_page.safety_title') }}</h2>
                     <ul class="mt-2 list-disc space-y-1 ps-5 text-sm leading-6 text-amber-900">

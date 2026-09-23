@@ -12,9 +12,6 @@ use Illuminate\Http\JsonResponse;
 
 class ReportController extends Controller
 {
-    /**
-     * POST /api/v1/listings/{listing}/reports: one report per user per listing, never your own.
-     */
     public function store(ReportListingRequest $request, Listing $listing): JsonResponse
     {
         $user = $request->user();

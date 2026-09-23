@@ -6,9 +6,6 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-/**
- * A messaging action is not allowed. The message is already in Arabic and safe to show to the user.
- */
 final class MessagingException extends RuntimeException
 {
     public static function ownListing(): self

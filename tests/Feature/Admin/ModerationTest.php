@@ -28,8 +28,6 @@ beforeEach(function () {
     $this->actingAs($this->moderator);
 });
 
-// ---------------------------------------------------------------------- access
-
 it('lets moderators and admins in and keeps regular users out', function () {
     $this->get('/admin/listings')->assertOk();
     $this->get('/admin/reports')->assertOk();
@@ -43,8 +41,6 @@ it('does not offer creating listings in the panel', function () {
     expect(ListingResource::canCreate())->toBeFalse();
     $this->get('/admin/listings/create')->assertNotFound();
 });
-
-// ------------------------------------------------------------------ the queue
 
 it('shows the pending queue by default and other statuses through the filter', function () {
     $pending = Listing::factory()->for($this->owner)->pending()->create();
@@ -87,8 +83,6 @@ it('renders a listing with all its fields and images', function () {
         ->assertSee($listing->getFirstMedia(Listing::IMAGES)->getUrl('medium'), false);
 });
 
-// -------------------------------------------------------------------- approve
-
 it('approves a listing: active, published, new expiry, owner notified', function () {
     $listing = Listing::factory()->for($this->owner)->pending()->create();
 
@@ -103,7 +97,6 @@ it('approves a listing: active, published, new expiry, owner notified', function
         ->and((int) $listing->expires_at->diffInDays(now(), true))->toBeGreaterThanOrEqual(29)
         ->and($this->owner->notifications()->sole()->type)->toBe(ListingApproved::class);
 
-    // ... and it is now public
     auth()->logout();
     $this->get($listing->url())->assertOk();
 });
@@ -132,8 +125,6 @@ it('bulk approves the selected pending listings', function () {
         ->and($this->owner->notifications()->count())->toBe(3);
 });
 
-// --------------------------------------------------------------------- reject
-
 it('requires a reason to reject, stores it and notifies the owner with it', function () {
     $listing = Listing::factory()->for($this->owner)->pending()->create();
 
@@ -154,7 +145,6 @@ it('requires a reason to reject, stores it and notifies the owner with it', func
         ->and($this->owner->notifications()->sole()->type)->toBe(ListingRejected::class)
         ->and($this->owner->notifications()->sole()->data['message'])->toContain('الصور لا تُظهر السلعة');
 
-    // the owner can read the reason on their dashboard
     $this->actingAs($this->owner)->get('/dashboard?status=rejected')->assertSee('الصور لا تُظهر السلعة');
 });
 
@@ -169,8 +159,6 @@ it('can take down an active listing by rejecting it', function () {
     auth()->logout();
     $this->get($listing->url())->assertNotFound();
 });
-
-// ----------------------------------------------------------- feature and delete
 
 it('features a listing until a date and can clear it', function () {
     $listing = Listing::factory()->for($this->owner)->pending()->create();
@@ -210,8 +198,6 @@ it('has the moderation actions on the listing view page too', function () {
     expect($listing->fresh()->status)->toBe(ListingStatus::Active);
 });
 
-// -------------------------------------------------------------------- reports
-
 it('lists open reports by default', function () {
     $listing = Listing::factory()->for($this->owner)->create();
     $open = Report::create(['listing_id' => $listing->id, 'user_id' => User::factory()->create()->id, 'reason' => 'scam']);
@@ -237,7 +223,7 @@ it('resolves or dismisses a report and records who handled it', function () {
         ->and($one->fresh()->handled_by)->toBe($this->moderator->id)
         ->and($two->fresh()->status)->toBe(ReportStatus::Dismissed)
         ->and($two->fresh()->handled_by)->toBe($this->moderator->id)
-        ->and($listing->fresh()->status)->toBe(ListingStatus::Active);   // the listing itself is untouched
+        ->and($listing->fresh()->status)->toBe(ListingStatus::Active);
 });
 
 it('removes the reported listing and closes all its open reports', function () {
@@ -256,8 +242,6 @@ it('removes the reported listing and closes all its open reports', function () {
         ->and($unrelated->fresh()->status)->toBe(ReportStatus::Open)
         ->and(Listing::find($other->id))->not->toBeNull();
 });
-
-// --------------------------------------------------------------------- widget
 
 it('shows pending listings and open reports on the panel dashboard', function () {
     Listing::factory()->count(2)->pending()->create();

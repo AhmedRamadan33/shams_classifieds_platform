@@ -12,8 +12,6 @@ beforeEach(function () {
     $this->token = $this->user->createToken('test')->plainTextToken;
 });
 
-// -------------------------------------------------------------------- favorites
-
 it('toggles a favorite and lists it back', function () {
     $listing = Listing::factory()->create(['status' => 'active']);
 
@@ -38,8 +36,6 @@ it('requires authentication to favorite a listing', function () {
     $this->postJson("/api/v1/listings/{$listing->id}/favorite")->assertUnauthorized();
 });
 
-// ---------------------------------------------------------------------- reports
-
 it('reports a listing once, refusing a second report and a report of your own listing', function () {
     $listing = Listing::factory()->create(['status' => 'active']);
     $own = Listing::factory()->create(['status' => 'active', 'user_id' => $this->user->id]);
@@ -61,16 +57,13 @@ it('reports a listing once, refusing a second report and a report of your own li
     expect(Report::count())->toBe(1);
 });
 
-// ---------------------------------------------------------------- notifications
-
 it('lists notifications, marks them read, and can mark all as read', function () {
     $this->user->notify(new ListingApproved(Listing::factory()->create(['user_id' => $this->user->id])));
 
     $response = $this->withToken($this->token)->getJson('/api/v1/my/notifications')->assertOk();
-    expect($response->json('meta.unread_count'))->toBe(1); // how many were unread before this call marked them read
+    expect($response->json('meta.unread_count'))->toBe(1);
     expect($this->user->notifications()->sole()->read_at)->not->toBeNull();
 
-    // reading it again reports 0 new: this one is already marked read
     expect($this->withToken($this->token)->getJson('/api/v1/my/notifications')->json('meta.unread_count'))->toBe(0);
 
     $this->user->notify(new ListingApproved(Listing::factory()->create(['user_id' => $this->user->id])));

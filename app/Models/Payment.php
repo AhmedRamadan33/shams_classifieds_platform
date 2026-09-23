@@ -8,11 +8,6 @@ use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * One attempt to buy a featured-ad package (listing_id + package_id) or a store subscription
- * (subscription_id) — exactly one of the two. Created pending, then moved to paid/failed/cancelled
- * by the gateway (see App\Services\Payments and App\Actions\CompletePayment).
- */
 class Payment extends Model
 {
     protected $fillable = [

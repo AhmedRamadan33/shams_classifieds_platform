@@ -28,8 +28,6 @@ it('selects the SMS driver from configuration', function (string $driver, string
     'unknown falls back to log' => ['carrier-pigeon', LogSmsGateway::class],
 ]);
 
-// ------------------------------------------------------------------- Twilio
-
 it('sends through the Twilio REST API with basic auth', function () {
     Http::fake(['api.twilio.com/*' => Http::response(['sid' => 'SM1'], 201)]);
 
@@ -58,8 +56,6 @@ it('raises SmsDeliveryException when Twilio rejects the message', function () {
     (new TwilioSmsGateway('AC1', 't', '+1500'))->send('+201012345678', 'x');
 })->throws(SmsDeliveryException::class, 'Invalid To number');
 
-// ------------------------------------------------------------------- Vonage
-
 it('sends Arabic text as unicode through the Vonage SMS API', function () {
     Http::fake(['rest.nexmo.com/*' => Http::response(['messages' => [['status' => '0']]])]);
 
@@ -84,8 +80,6 @@ it('raises SmsDeliveryException when the provider is unreachable', function () {
     (new VonageSmsGateway('k', 's', 'Shams'))->send('+201012345678', 'x');
 })->throws(SmsDeliveryException::class);
 
-// --------------------------------------------------- what the app does on failure
-
 it('removes the unusable code and shows a friendly error when the SMS cannot be sent', function () {
     app()->instance(SmsGateway::class, new class implements SmsGateway
     {
@@ -100,7 +94,6 @@ it('removes the unusable code and shows a friendly error when the SMS cannot be 
         'password' => 'password123', 'password_confirmation' => 'password123',
     ])->assertSessionHas('error', __('app.otp.delivery_failed'));
 
-    // no orphan code that would block a retry through the 60 second cooldown
     expect(OtpCode::count())->toBe(0);
 });
 
@@ -124,7 +117,7 @@ it('lets the user retry immediately after a delivery failure', function () {
     expect(fn () => app(OtpService::class)->issue('+201012345678', OtpPurpose::Register))->toThrow(OtpDeliveryException::class);
 
     $sms->fail = false;
-    app(OtpService::class)->issue('+201012345678', OtpPurpose::Register); // no cooldown error
+    app(OtpService::class)->issue('+201012345678', OtpPurpose::Register);
 
     expect($sms->sent)->toHaveCount(1);
 });

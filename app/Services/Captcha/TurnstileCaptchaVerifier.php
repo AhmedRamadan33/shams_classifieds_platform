@@ -8,14 +8,6 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
-/**
- * Cloudflare Turnstile: the widget (see the x-captcha component) adds a `cf-turnstile-response`
- * token to the form; it is checked against Cloudflare's siteverify endpoint.
- *
- * A missing or rejected token always fails. If Cloudflare itself cannot be reached, $failOpen decides:
- * true (default) lets the request through, because the honeypot and the rate limiters still apply and
- * a Cloudflare outage should not stop every registration; false rejects it.
- */
 final class TurnstileCaptchaVerifier implements CaptchaVerifier
 {
     public const ENDPOINT = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';

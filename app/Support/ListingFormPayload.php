@@ -14,16 +14,8 @@ use App\Services\Geography;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-/**
- * Everything the Alpine listing form needs, as one JSON-serializable array: the category tree,
- * governorates with their cities, limits, translated messages, and the initial values (submitted
- * input after a validation error, the listing being edited, or defaults).
- */
 final class ListingFormPayload
 {
-    /**
-     * @return array<string, mixed>
-     */
     public static function make(User $user, ?Listing $listing = null): array
     {
         $editing = $listing !== null;
@@ -52,12 +44,6 @@ final class ListingFormPayload
         ];
     }
 
-    /**
-     * Recursive category tree: a node without children is a leaf and can receive listings.
-     *
-     * @param  Collection<int, Category>  $nodes
-     * @return list<array<string, mixed>>
-     */
     private static function tree(Collection $nodes): array
     {
         return $nodes->map(fn (Category $node) => [
@@ -68,9 +54,6 @@ final class ListingFormPayload
         ])->values()->all();
     }
 
-    /**
-     * @return list<array<string, mixed>>
-     */
     private static function governorates(): array
     {
         return Geography::all()->map(fn (Governorate $governorate) => [
@@ -80,9 +63,6 @@ final class ListingFormPayload
         ])->all();
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     private static function values(User $user, ?Listing $listing): array
     {
         $fields = $listing?->fieldValues
@@ -105,12 +85,8 @@ final class ListingFormPayload
         ];
     }
 
-    /**
-     * @return list<array{id: int, url: string}>
-     */
     private static function existingImages(Listing $listing): array
     {
-        /** @var Collection<int, Media> $media */
         $media = $listing->getMedia(Listing::IMAGES);
 
         return $media->map(fn (Media $image) => [

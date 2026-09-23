@@ -13,9 +13,6 @@ use Illuminate\View\View;
 
 class StoreController extends Controller
 {
-    /**
-     * The signed-in user's own store: a create form if they have none yet, an edit form otherwise.
-     */
     public function edit(Request $request): View
     {
         return view('stores.edit', ['store' => $request->user()->store]);
@@ -28,9 +25,6 @@ class StoreController extends Controller
         return redirect()->route('store.edit')->with('success', __('app.stores.saved'));
     }
 
-    /**
-     * /store/{slug}: the seller's branded page and their public listings.
-     */
     public function show(Store $store): View
     {
         abort_if($store->user->is_banned, 404);

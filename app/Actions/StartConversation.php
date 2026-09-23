@@ -10,10 +10,6 @@ use App\Models\Listing;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-/**
- * "راسل المعلن": finds the buyer's existing conversation about this listing, or opens a new one.
- * The listing must currently be live and the buyer cannot be the listing's own owner.
- */
 final class StartConversation
 {
     public function __invoke(User $buyer, Listing $listing): Conversation

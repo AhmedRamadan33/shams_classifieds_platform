@@ -18,9 +18,6 @@ class VerifyOtpRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function rules(): array
     {
         $length = (int) config('classifieds.otp.length');
@@ -31,9 +28,6 @@ class VerifyOtpRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [

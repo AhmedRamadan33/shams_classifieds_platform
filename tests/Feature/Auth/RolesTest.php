@@ -26,7 +26,7 @@ it('seeds an administrator from the environment configuration', function () {
 
     $this->seed(RoleSeeder::class);
     $this->seed(AdminSeeder::class);
-    $this->seed(AdminSeeder::class); // idempotent
+    $this->seed(AdminSeeder::class);
 
     $admin = User::where('phone', '+201000000000')->sole();
 

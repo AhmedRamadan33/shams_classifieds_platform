@@ -17,9 +17,6 @@ enum ListingStatus: string
         return __('app.listing.statuses.'.$this->value);
     }
 
-    /**
-     * Tailwind classes for the status badge (this file is scanned by Tailwind).
-     */
     public function badgeClasses(): string
     {
         return match ($this) {
@@ -31,9 +28,6 @@ enum ListingStatus: string
         };
     }
 
-    /**
-     * Filament badge color name.
-     */
     public function filamentColor(): string
     {
         return match ($this) {
@@ -45,9 +39,6 @@ enum ListingStatus: string
         };
     }
 
-    /**
-     * @return array<string, string> value => Arabic label
-     */
     public static function options(): array
     {
         return collect(self::cases())

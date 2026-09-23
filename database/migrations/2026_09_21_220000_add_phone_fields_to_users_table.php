@@ -16,7 +16,6 @@ return new class extends Migration
             $table->boolean('is_banned')->default(false)->after('password');
             $table->string('avatar')->nullable()->after('is_banned');
 
-            // The phone number is the login identifier; email becomes optional (still unique when present).
             $table->string('email')->nullable()->change();
         });
     }

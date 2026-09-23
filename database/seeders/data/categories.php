@@ -2,19 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * Initial category tree. Each top-level category lists its children (slug => Arabic name) and the
- * dynamic fields it defines. Children INHERIT their parent's fields, so fields are only declared
- * on the parent. Listings can only be posted in leaf categories (a parent without children, such
- * as "other", is a leaf).
- *
- * Field keys are ASCII snake_case (used in form names and filter URLs). Types:
- * text | number | select | boolean. `filterable` fields appear in the sidebar filters,
- * `required` fields must be filled when posting.
- *
- * Edit freely: CategorySeeder is idempotent (categories matched by slug, fields by category + key).
- */
-
 return [
     [
         'slug' => 'cars',

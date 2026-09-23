@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-/**
- * Outcome of checking a submitted one-time code.
- */
 enum OtpResult: string
 {
     case Valid = 'valid';
@@ -14,9 +11,6 @@ enum OtpResult: string
     case Expired = 'expired';
     case Locked = 'locked';
 
-    /**
-     * Arabic message for the failure cases (Valid has none).
-     */
     public function message(): ?string
     {
         return match ($this) {

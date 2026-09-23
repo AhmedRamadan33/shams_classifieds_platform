@@ -11,8 +11,6 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Storage;
 use Tests\Support\Fixtures;
 
-// --------------------------------------------------------------------- expire
-
 it('expires only active listings whose date has passed', function () {
     $due = Listing::factory()->create(['expires_at' => now()->subMinute()]);
     $dueToo = Listing::factory()->create(['expires_at' => now()->subDays(3)]);
@@ -48,8 +46,6 @@ it('makes an expired listing return 410 and appear under "expired" for its owner
     $this->get($listing->fresh()->url())->assertOk();
 });
 
-// --------------------------------------------------------------------- remind
-
 it('reminds owners of listings expiring within the window, once', function () {
     config(['classifieds.expiry_reminder_days' => 3]);
 
@@ -71,7 +67,6 @@ it('reminds owners of listings expiring within the window, once', function () {
         ->and($later->user->notifications()->count())->toBe(0)
         ->and($alreadyReminded->user->notifications()->count())->toBe(0);
 
-    // running it again sends nothing new
     $this->artisan('listings:remind-expiring')->expectsOutputToContain('Sent 0');
     expect($soon->user->notifications()->count())->toBe(1);
 });
@@ -83,8 +78,6 @@ it('resets the reminder when a listing is renewed', function () {
 
     expect($listing->fresh()->expiry_reminded_at)->toBeNull();
 });
-
-// ---------------------------------------------------------------------- purge
 
 it('force deletes listings expired longer than the purge window, together with their media', function () {
     Storage::fake('public');
@@ -112,8 +105,6 @@ it('force deletes listings expired longer than the purge window, together with t
         ->and(Listing::withTrashed()->find($sold->id))->not->toBeNull()
         ->and(file_exists($oldMediaPath))->toBeFalse();
 });
-
-// ------------------------------------------------------------------ scheduler
 
 it('schedules the lifecycle commands', function () {
     $events = collect(app(Schedule::class)->events())->map(fn ($event) => $event->command)->implode("\n");

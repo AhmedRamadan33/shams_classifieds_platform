@@ -8,22 +8,13 @@ use App\Enums\ListingStatus;
 use App\Enums\PriceType;
 use App\Models\Category;
 use App\Models\Governorate;
-use App\Models\Listing;
 use App\Models\User;
 use App\Services\ArabicText;
 use App\Services\ListingSearchText;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Listing>
- */
 class ListingFactory extends Factory
 {
-    /**
-     * Active by default, so tests and demo data are visible on the public site.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $title = fake()->randomElement([

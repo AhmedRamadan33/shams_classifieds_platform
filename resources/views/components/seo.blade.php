@@ -19,7 +19,6 @@
 <meta name="robots" content="{{ $robots }}">
 <link rel="canonical" href="{{ $canonicalUrl }}">
 
-{{-- PWA: installable on mobile home screens; see public/manifest.json and public/sw.js. --}}
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#c2410c">
 <meta name="mobile-web-app-capable" content="yes">

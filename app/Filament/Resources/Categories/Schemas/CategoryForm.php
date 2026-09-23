@@ -23,7 +23,6 @@ class CategoryForm
                     ->relationship(
                         'parent',
                         'name',
-                        // A category can never be its own parent.
                         modifyQueryUsing: fn (Builder $query, ?Category $record) => $record
                             ? $query->whereKeyNot($record->getKey())->orderBy('sort_order')
                             : $query->orderBy('sort_order'),
