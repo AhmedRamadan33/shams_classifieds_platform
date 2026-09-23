@@ -8,15 +8,25 @@ use App\Actions\SyncListingFieldValues;
 use App\Enums\AdBannerStatus;
 use App\Enums\FieldType;
 use App\Enums\ListingStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\PriceType;
+use App\Enums\SubscriptionStatus;
 use App\Models\AdBanner;
 use App\Models\Category;
 use App\Models\CategoryField;
+use App\Models\Conversation;
 use App\Models\Favorite;
 use App\Models\Governorate;
 use App\Models\HeroSlide;
 use App\Models\Listing;
+use App\Models\Package;
+use App\Models\Payment;
+use App\Models\Plan;
 use App\Models\Report;
+use App\Models\Review;
+use App\Models\SavedSearch;
+use App\Models\Store;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Services\ArabicText;
 use App\Services\ListingSearchText;
@@ -24,6 +34,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class DemoSeeder extends Seeder
@@ -95,7 +106,10 @@ class DemoSeeder extends Seeder
             return;
         }
 
-        $this->call([RoleSeeder::class, GeographySeeder::class, CategorySeeder::class, PageSeeder::class]);
+        $this->call([
+            RoleSeeder::class, GeographySeeder::class, CategorySeeder::class, PageSeeder::class,
+            PackageSeeder::class, PlanSeeder::class, AdPackageSeeder::class,
+        ]);
 
         if (User::where('phone', $this->demoPhone(1))->exists()) {
             $this->command?->info('Demo data already exists. Nothing was created.');
@@ -108,7 +122,12 @@ class DemoSeeder extends Seeder
         $imageFiles = $this->createPlaceholderImages();
 
         $listings = $this->createListings($users, $imageFiles);
+        $this->guaranteeFeaturedListings($listings);
         $this->createFavoritesAndReports($users, $listings);
+        $this->createStoresAndSubscriptions($users);
+        $this->createReviews($users);
+        $this->createConversations($users, $listings);
+        $this->createSavedSearches($users);
         $this->createHeroSlides($imageFiles);
         $this->createAdBanners($users, $imageFiles);
 
@@ -248,6 +267,38 @@ class DemoSeeder extends Seeder
         return $created;
     }
 
+    private function guaranteeFeaturedListings(Collection $listings): void
+    {
+        $active = $listings->filter(fn (Listing $listing) => $listing->status === ListingStatus::Active)->values();
+        $target = (int) max(6, ceil($active->count() * 0.1));
+
+        foreach ($active->whereNull('featured_until')->take($target) as $listing) {
+            $listing->update(['featured_until' => now()->addDays(random_int(3, 14))]);
+        }
+
+        $package = Package::query()->active()->inRandomOrder()->first();
+
+        if ($package === null) {
+            return;
+        }
+
+        foreach ($active->filter(fn (Listing $listing) => $listing->isFeatured()) as $listing) {
+            Payment::firstOrCreate(
+                ['listing_id' => $listing->id, 'package_id' => $package->id],
+                [
+                    'user_id' => $listing->user_id,
+                    'gateway' => 'fake',
+                    'amount' => $package->price,
+                    'currency' => config('classifieds.currency_code'),
+                    'status' => PaymentStatus::Paid,
+                    'gateway_order_id' => 'DEMO-'.Str::upper(Str::random(10)),
+                    'gateway_transaction_id' => 'DEMO-TXN-'.$listing->id,
+                    'paid_at' => now()->subDays(random_int(0, 5)),
+                ],
+            );
+        }
+    }
+
     private function randomStatus(): ListingStatus
     {
         $roll = random_int(1, 100);
@@ -370,6 +421,127 @@ class DemoSeeder extends Seeder
                 ],
             );
         }
+    }
+
+    private function createStoresAndSubscriptions(Collection $users): void
+    {
+        $suffixes = ['للإلكترونيات', 'للأثاث المنزلي', 'لقطع غيار السيارات', 'للموبايلات والإكسسوارات'];
+        $owners = $users->take(count($suffixes))->values();
+        $plan = Plan::query()->active()->inRandomOrder()->first();
+
+        foreach ($owners as $i => $owner) {
+            $store = Store::firstOrCreate(
+                ['user_id' => $owner->id],
+                [
+                    'name' => $owner->name.' '.$suffixes[$i],
+                    'slug' => 'store-'.$owner->id,
+                    'bio' => 'متجر موثوق يقدم منتجات متنوعة بأسعار مناسبة وجودة عالية، مع خدمة عملاء سريعة.',
+                ],
+            );
+
+            if ($i >= 2 || $plan === null || $store->wasRecentlyCreated === false) {
+                continue;
+            }
+
+            $subscription = Subscription::create([
+                'user_id' => $owner->id,
+                'plan_id' => $plan->id,
+                'status' => SubscriptionStatus::Active,
+                'starts_at' => now()->subDays(5),
+                'expires_at' => now()->addDays(max(1, $plan->duration_days - 5)),
+            ]);
+
+            Payment::create([
+                'user_id' => $owner->id,
+                'subscription_id' => $subscription->id,
+                'gateway' => 'fake',
+                'amount' => $plan->price,
+                'currency' => config('classifieds.currency_code'),
+                'status' => PaymentStatus::Paid,
+                'gateway_order_id' => 'DEMO-'.Str::upper(Str::random(10)),
+                'gateway_transaction_id' => 'DEMO-TXN-SUB-'.$subscription->id,
+                'paid_at' => now()->subDays(5),
+            ]);
+        }
+    }
+
+    private function createReviews(Collection $users): void
+    {
+        $comments = [
+            'بائع محترم وسريع في الرد.',
+            'تعامل ممتاز والسلعة مطابقة للوصف تماماً.',
+            'التزام بالمواعيد وجودة عالية، أنصح بالتعامل معه.',
+            'رد سريع وتفاوض مرن، تجربة جيدة.',
+            'أمانة في الوصف وسرعة في التسليم.',
+            'من أفضل من تعاملت معهم على الموقع.',
+        ];
+
+        $pairs = $users->crossJoin($users)
+            ->filter(fn (array $pair) => $pair[0]->id !== $pair[1]->id)
+            ->shuffle()
+            ->take(count($comments));
+
+        foreach ($pairs as [$reviewer, $seller]) {
+            Review::firstOrCreate(
+                ['reviewer_id' => $reviewer->id, 'seller_id' => $seller->id],
+                ['rating' => random_int(3, 5), 'comment' => Arr::random($comments)],
+            );
+        }
+    }
+
+    private function createConversations(Collection $users, Collection $listings): void
+    {
+        $thread = [
+            'هل الإعلان لسه متاح؟',
+            'أيوه متاح، تحت أمرك.',
+            'ممكن أعرف آخر سعر؟',
+            'السعر قابل للتفاوض شوية لو الاتفاق قريب.',
+            'تمام، هكلمك بكرة أأكد الاتفاق.',
+        ];
+
+        $active = $listings->filter(fn (Listing $listing) => $listing->status === ListingStatus::Active)->values();
+
+        foreach ($active->take(2) as $listing) {
+            $buyer = $users->first(fn (User $user) => $user->id !== $listing->user_id);
+
+            if ($buyer === null) {
+                continue;
+            }
+
+            $conversation = Conversation::firstOrCreate(
+                ['listing_id' => $listing->id, 'buyer_id' => $buyer->id, 'seller_id' => $listing->user_id],
+                ['last_message_at' => now()],
+            );
+
+            if ($conversation->messages()->exists()) {
+                continue;
+            }
+
+            foreach ($thread as $i => $body) {
+                $conversation->messages()->create([
+                    'sender_id' => $i % 2 === 0 ? $buyer->id : $listing->user_id,
+                    'body' => $body,
+                    'read_at' => $i < count($thread) - 1 ? now() : null,
+                ]);
+            }
+
+            $conversation->update(['last_message_at' => now()]);
+        }
+    }
+
+    private function createSavedSearches(Collection $users): void
+    {
+        $user = $users->first();
+
+        SavedSearch::firstOrCreate(
+            ['user_id' => $user->id, 'name' => 'شقق للبيع'],
+            ['category_slug' => 'apartments-for-sale', 'filters' => [], 'notify' => true],
+        );
+
+        SavedSearch::firstOrCreate(
+            ['user_id' => $user->id, 'name' => 'سيارات تويوتا'],
+            ['category_slug' => 'cars-for-sale', 'filters' => ['q' => 'تويوتا'], 'notify' => false],
+        );
     }
 
     private function createHeroSlides(array $imageFiles): void

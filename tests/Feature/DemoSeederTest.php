@@ -5,10 +5,17 @@ declare(strict_types=1);
 use App\Enums\ListingStatus;
 use App\Models\AdBanner;
 use App\Models\Category;
+use App\Models\Conversation;
 use App\Models\Favorite;
 use App\Models\HeroSlide;
 use App\Models\Listing;
+use App\Models\Message;
+use App\Models\Payment;
 use App\Models\Report;
+use App\Models\Review;
+use App\Models\SavedSearch;
+use App\Models\Store;
+use App\Models\Subscription;
 use App\Models\User;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Support\Facades\Storage;
@@ -50,6 +57,19 @@ it('creates demo listings across categories with dynamic values, images, users, 
         ->and(AdBanner::where('status', 'active')->count())->toBe(3)
         ->and(AdBanner::where('status', 'pending')->count())->toBe(1)
         ->and(AdBanner::where('status', 'rejected')->count())->toBe(1);
+
+    expect(Listing::where('status', ListingStatus::Active->value)->whereNotNull('featured_until')->count())->toBeGreaterThanOrEqual(6)
+        ->and(Payment::where('status', 'paid')->count())->toBeGreaterThan(0);
+
+    expect(Store::count())->toBe(4)
+        ->and(Subscription::where('status', 'active')->count())->toBe(2);
+
+    expect(Review::count())->toBeGreaterThan(0);
+
+    expect(Conversation::count())->toBeGreaterThan(0)
+        ->and(Message::count())->toBeGreaterThan(0);
+
+    expect(SavedSearch::count())->toBe(2);
 });
 
 it('is safe to run twice', function () {
@@ -58,7 +78,9 @@ it('is safe to run twice', function () {
 
     expect(Listing::count())->toBe(40)
         ->and(HeroSlide::count())->toBe(3)
-        ->and(AdBanner::count())->toBe(5);
+        ->and(AdBanner::count())->toBe(5)
+        ->and(Store::count())->toBe(4)
+        ->and(SavedSearch::count())->toBe(2);
 });
 
 it('refuses to run outside the local environment', function () {
@@ -69,5 +91,7 @@ it('refuses to run outside the local environment', function () {
     expect(Listing::count())->toBe(0)
         ->and(User::count())->toBe(0)
         ->and(HeroSlide::count())->toBe(0)
-        ->and(AdBanner::count())->toBe(0);
+        ->and(AdBanner::count())->toBe(0)
+        ->and(Store::count())->toBe(0)
+        ->and(SavedSearch::count())->toBe(0);
 });
