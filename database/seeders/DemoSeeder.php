@@ -45,34 +45,250 @@ class DemoSeeder extends Seeder
     private const MODERATOR_PHONE = '01111111111';
 
     private const CATALOG = [
-        'cars-for-sale' => [[90_000, 1_800_000], ['تويوتا كورولا فبريكا بالكامل', 'هيونداي إلنترا حالة ممتازة', 'كيا سبورتاج موديل حديث', 'نيسان صني بحالة الزيرو', 'شيفروليه أوبترا ماشية قليل', 'مرسيدس C180 فل الفل']],
-        'cars-for-rent' => [[600, 4_000], ['سيارة للإيجار اليومي مع سائق', 'إيجار سيارات لحفلات الزفاف', 'تأجير ميكروباص رحلات', 'سيارة اقتصادية للإيجار الشهري']],
-        'car-parts' => [[150, 25_000], ['كاوتش جديد مقاس 16', 'بطارية سيارة أصلية', 'جنوط ألومنيوم مستعملة', 'قطع غيار تويوتا أصلية', 'شاشة أندرويد للسيارة']],
-        'motorcycles' => [[12_000, 180_000], ['موتوسيكل هوندا 2020 حالة ممتازة', 'سكوتر ياماها اقتصادي', 'دراجة نارية بجاج رخصة سارية']],
-        'apartments-for-sale' => [[450_000, 6_500_000], ['شقة للبيع بمدينة نصر تشطيب سوبر لوكس', 'شقة 150 متر بالتجمع الخامس', 'شقة بالمعادي قريبة من المترو', 'شقة تمليك بالهرم ناصية', 'شقة بمدينتي جاهزة للسكن']],
-        'apartments-for-rent' => [[2_500, 35_000], ['شقة للإيجار بالمهندسين مفروشة', 'شقة إيجار جديد بمدينة نصر', 'شقة للإيجار بالشيخ زايد', 'استوديو للإيجار بالزمالك']],
-        'villas' => [[3_500_000, 30_000_000], ['فيلا للبيع بالشيخ زايد حديقة خاصة', 'فيلا مستقلة بالتجمع الأول', 'تاون هاوس بالرحاب جاهز للاستلام']],
-        'land' => [[600_000, 9_000_000], ['أرض للبيع بالعاشر من رمضان', 'قطعة أرض سكنية بأكتوبر', 'أرض زراعية بطريق مصر إسكندرية']],
-        'shops-and-offices' => [[350_000, 5_000_000], ['محل للبيع بموقع تجاري متميز', 'مكتب إداري للإيجار بوسط البلد', 'محل ناصية على شارع رئيسي']],
-        'job-vacancies' => [[0, 0], ['مطلوب محاسب بخبرة سنتين', 'وظيفة سائق لدى شركة', 'مطلوب مسؤول مبيعات براتب وعمولة', 'مطلوب مدرس لغة إنجليزية', 'وظائف شاغرة لمهندسين مدنيين']],
-        'job-seekers' => [[0, 0], ['أبحث عن عمل في مجال المحاسبة', 'مبرمج ويب يبحث عن فرصة عمل', 'خريج تجارة يبحث عن وظيفة إدارية']],
-        'mobiles' => [[1_500, 65_000], ['آيفون 13 برو بحالة الجديد', 'سامسونج جالاكسي S22 بالضمان', 'شاومي ريدمي نوت 11 كسر زيرو', 'أوبو رينو 8 استعمال خفيف']],
-        'computers-and-laptops' => [[4_000, 90_000], ['لابتوب ديل كور i7 بحالة ممتازة', 'ماك بوك إير M1 نظيف', 'كمبيوتر جيمنج بكارت شاشة قوي', 'لابتوب لينوفو للطلبة']],
-        'tvs-and-screens' => [[3_000, 45_000], ['شاشة سامسونج 55 بوصة سمارت', 'تلفزيون إل جي 4K بحالة الزيرو', 'شاشة كمبيوتر 27 بوصة']],
-        'cameras' => [[2_500, 80_000], ['كاميرا كانون 90D مع عدسة', 'كاميرا سوني A7 III بالكرتونة', 'كاميرا مراقبة واي فاي']],
-        'video-games' => [[1_000, 30_000], ['بلايستيشن 5 مع دراعين', 'إكس بوكس سيريس إس جديد', 'ألعاب بلايستيشن 4 للبيع']],
-        'furniture' => [[800, 60_000], ['غرفة نوم كاملة خشب زان', 'ركنة مودرن 6 مقاعد', 'سفرة 8 كراسي بحالة ممتازة', 'مكتب خشب مع كرسي']],
-        'home-appliances' => [[1_000, 40_000], ['غسالة أوتوماتيك 10 كيلو', 'ثلاجة نو فروست 18 قدم', 'بوتاجاز 5 شعلة', 'تكييف 1.5 حصان بارد ساخن']],
-        'decor-and-housewares' => [[100, 8_000], ['طقم أواني جرانيت 10 قطع', 'ستائر مودرن للصالون', 'لوحات ديكور جدارية', 'سجادة تركي 3×4']],
-        'maintenance-and-finishing' => [[200, 20_000], ['سباك محترف لجميع الأعمال', 'نقاش ودهانات بأسعار مناسبة', 'فني كهرباء وتأسيس', 'تركيب سيراميك وبورسلين']],
-        'transport-and-shipping' => [[300, 6_000], ['نقل أثاث بسيارات مجهزة', 'خدمة شحن بضائع بين المحافظات', 'توصيل طلبات داخل القاهرة']],
-        'lessons-and-courses' => [[100, 3_000], ['دروس خصوصية رياضيات للثانوية', 'كورس برمجة للمبتدئين أونلاين', 'مدرس لغة عربية للمرحلة الإعدادية']],
-        'events-and-photography' => [[1_500, 25_000], ['تصوير فوتوغرافي لحفلات الزفاف', 'تنظيم حفلات أعياد ميلاد', 'تصوير فيديو احترافي للمناسبات']],
-        'other-services' => [[100, 5_000], ['خدمة تنظيف منازل ومكاتب', 'ترجمة معتمدة عربي إنجليزي', 'تصميم شعارات وهويات تجارية']],
-        'clothes' => [[100, 4_000], ['بدلة رجالي إيطالي جديدة', 'فستان سهرة استعمال مرة واحدة', 'جاكيت جلد طبيعي', 'ملابس أطفال ماركات']],
-        'shoes-and-bags' => [[150, 6_000], ['حذاء رياضي نايك أصلي', 'شنطة يد جلد طبيعي', 'حذاء كلاسيك رجالي']],
-        'watches-and-jewelry' => [[400, 90_000], ['ساعة كاسيو أصلية', 'خاتم ذهب عيار 21', 'ساعة أوميجا بحالة الجديد']],
-        'other' => [[50, 20_000], ['سلعة متنوعة للبيع بحالة جيدة', 'مستلزمات متنوعة بأسعار مخفضة', 'أغراض مستعملة للبيع']],
+        'cars-for-sale' => [[90_000, 1_800_000], [
+            'تويوتا كورولا فبريكا بالكامل' => [4, 7],
+            'هيونداي إلنترا حالة ممتازة' => [7, 4],
+            'كيا سبورتاج موديل حديث' => [4],
+            'نيسان صني بحالة الزيرو' => [5, 4],
+            'شيفروليه أوبترا ماشية قليل' => [7, 5],
+            'مرسيدس C180 فل الفل' => [1, 2],
+            'سيارة كلاسيك موديل قديم بحالة ممتازة' => [3, 6, 8],
+        ]],
+        'cars-for-rent' => [[600, 4_000], [
+            'سيارة للإيجار اليومي مع سائق' => [2, 3, 5],
+            'إيجار سيارة كابريو لحفلات الزفاف' => [4],
+            'سيارة اقتصادية للإيجار الشهري' => [1, 3],
+        ]],
+        'car-parts' => [[150, 25_000], [
+            'كاوتش جديد مقاس 16' => [3],
+            'جنوط ألومنيوم مستعملة' => [1, 2],
+            'طقم جنوط أصلي للمرسيدس' => [2],
+            'عدادات ولوحة قيادة أصلية' => [4],
+            'ناقل حركة عصا مانيوال' => [5],
+        ]],
+        'motorcycles' => [[12_000, 180_000], [
+            'موتوسيكل هوندا 2020 حالة ممتازة' => [1, 3, 5],
+            'سكوتر فيسبا اقتصادي' => [6],
+            'دراجة نارية هارلي رخصة سارية' => [2, 4, 5],
+        ]],
+        'apartments-for-sale' => [[450_000, 6_500_000], [
+            'شقة للبيع بمدينة نصر تشطيب سوبر لوكس' => [],
+            'شقة 150 متر بالتجمع الخامس' => [],
+            'شقة بالمعادي قريبة من المترو' => [],
+            'شقة تمليك بالهرم ناصية' => [],
+            'شقة بمدينتي جاهزة للسكن' => [],
+        ]],
+        'apartments-for-rent' => [[2_500, 35_000], [
+            'شقة للإيجار بالمهندسين مفروشة' => [],
+            'شقة إيجار جديد بمدينة نصر' => [],
+            'شقة للإيجار بالشيخ زايد' => [],
+            'استوديو للإيجار بالزمالك' => [],
+        ]],
+        'villas' => [[3_500_000, 30_000_000], [
+            'فيلا للبيع بالشيخ زايد حديقة خاصة' => [],
+            'فيلا مستقلة بالتجمع الخامس' => [],
+            'تاون هاوس بالرحاب جاهز للاستلام' => [],
+        ]],
+        'land' => [[600_000, 9_000_000], [
+            'أرض للبيع بالعاشر من رمضان' => [],
+            'قطعة أرض سكنية بأكتوبر' => [],
+            'أرض زراعية بطريق مصر إسكندرية' => [],
+        ]],
+        'shops-and-offices' => [[350_000, 5_000_000], [
+            'محل للبيع بموقع تجاري متميز' => [1, 2, 3],
+            'مكتب إداري للإيجار بوسط البلد' => [4, 5, 6],
+            'محل ناصية على شارع رئيسي' => [1, 3],
+        ]],
+        'job-vacancies' => [[0, 0], [
+            'مطلوب محاسب بخبرة سنتين' => [],
+            'مطلوب موظف إدخال بيانات' => [],
+            'مطلوب مسؤول مبيعات براتب وعمولة' => [],
+            'مطلوب مدرس لغة إنجليزية' => [],
+            'وظائف شاغرة لمهندسين مدنيين' => [],
+        ]],
+        'job-seekers' => [[0, 0], [
+            'أبحث عن عمل في مجال المحاسبة' => [],
+            'مبرمج ويب يبحث عن فرصة عمل' => [],
+            'خريج تجارة يبحث عن وظيفة إدارية' => [],
+        ]],
+        'mobiles' => [[1_500, 65_000], [
+            'آيفون 13 برو بحالة الجديد' => [],
+            'سامسونج جالاكسي S22 بالضمان' => [],
+            'شاومي ريدمي نوت 11 كسر زيرو' => [],
+            'أوبو رينو 8 استعمال خفيف' => [],
+        ]],
+        'computers-and-laptops' => [[4_000, 90_000], [
+            'لابتوب ديل كور i7 بحالة ممتازة' => [],
+            'ماك بوك إير M1 نظيف' => [],
+            'لابتوب جيمنج بكارت شاشة قوي' => [],
+            'لابتوب لينوفو للطلبة' => [],
+        ]],
+        'tvs-and-screens' => [[3_000, 45_000], [
+            'شاشة سامسونج 55 بوصة سمارت' => [1, 2, 4],
+            'تلفزيون إل جي 4K بحالة الزيرو' => [1, 2, 3, 4],
+            'شاشة كمبيوتر 27 بوصة' => [5, 6],
+        ]],
+        'cameras' => [[2_500, 80_000], [
+            'كاميرا كانون 90D مع عدسة' => [1, 4],
+            'كاميرا سوني A7 III بالكرتونة' => [2, 3, 6],
+            'كاميرا ديجيتال احترافية للتصوير' => [1, 4, 5],
+        ]],
+        'video-games' => [[1_000, 30_000], [
+            'بلايستيشن 5 مع دراعين' => [],
+            'إكس بوكس سيريس إس جديد' => [],
+            'ألعاب بلايستيشن 4 للبيع' => [],
+        ]],
+        'furniture' => [[800, 60_000], [
+            'طقم كنب صالون مودرن' => [1, 2, 4, 5],
+            'ركنة مودرن 6 مقاعد' => [1, 2, 4],
+            'فوتيه عصري بحالة ممتازة' => [3],
+            'ترابيزة خشب مع كرسي' => [6],
+        ]],
+        'home-appliances' => [[1_000, 40_000], [
+            'غسالة أوتوماتيك 10 كيلو' => [3, 4],
+            'مكنسة روبوت ذكية بحالة الزيرو' => [1],
+            'ماكينة قهوة إسبريسو أوتوماتيك' => [2],
+            'غسالة صناعية للمغاسل والمحلات' => [3],
+        ]],
+        'decor-and-housewares' => [[100, 8_000], [
+            'مزهرية وشمعدانات للديكور' => [1, 6],
+            'زهور مجففة بمزهرية خشب' => [2],
+            'أباجورة وفوانيس ديكور' => [3, 4],
+            'أصيص نباتات زينة للصالون' => [5],
+        ]],
+        'maintenance-and-finishing' => [[200, 20_000], [
+            'فني تركيب وتثبيت بالدريل' => [4],
+            'نقاش ودهانات بأسعار مناسبة' => [1, 2, 3],
+            'فني كهرباء وتأسيس' => [6, 7, 8],
+            'تركيب سيراميك وبورسلين' => [5],
+        ]],
+        'transport-and-shipping' => [[300, 6_000], [
+            'نقل أثاث بسيارات مجهزة' => [1],
+            'خدمة شحن بضائع بين المحافظات' => [1, 2, 3, 6],
+            'رفع وتحميل بضائع بالونش' => [4, 5],
+        ]],
+        'lessons-and-courses' => [[100, 3_000], [
+            'دروس خصوصية رياضيات للثانوية' => [],
+            'كورس برمجة للمبتدئين أونلاين' => [],
+            'مدرس لغة عربية للمرحلة الإعدادية' => [],
+        ]],
+        'events-and-photography' => [[1_500, 25_000], [
+            'تصوير فوتوغرافي لحفلات الزفاف' => [1, 3, 4],
+            'تنظيم حفلات أعياد ميلاد' => [5, 6],
+            'تصوير فيديو احترافي للمناسبات' => [1, 2, 6],
+        ]],
+        'other-services' => [[100, 5_000], [
+            'تنظيف واجهات زجاجية للمباني' => [1, 2],
+            'برمجة وتطوير مواقع ويب' => [4],
+            'تصميم شعارات وهويات تجارية' => [3, 5],
+        ]],
+        'clothes' => [[100, 4_000], [
+            'بدلة رجالي إيطالي جديدة' => [1, 5, 6],
+            'فستان سهرة استعمال مرة واحدة' => [4, 3],
+            'جاكيت رجالي شتوي' => [2, 5],
+            'ملابس حريمي موديلات جديدة' => [3, 4],
+        ]],
+        'shoes-and-bags' => [[150, 6_000], [
+            'حذاء رياضي نايك أصلي' => [1, 3, 4],
+            'شنطة يد جلد طبيعي' => [5, 6, 7, 9],
+            'حذاء كونفرس أبيض بحالة ممتازة' => [2],
+            'شنطة ظهر عملية للسفر' => [8],
+        ]],
+        'watches-and-jewelry' => [[400, 90_000], [
+            'ساعة كاسيو أصلية' => [3, 1, 2],
+            'خاتم ذهب عيار 21' => [5, 6, 7],
+            'ساعة أوميجا بحالة الجديد' => [1],
+            'ساعة ذكية أبل ووتش' => [4],
+            'سلسلة ذهب بدلاية قلب' => [8],
+        ]],
+        'other' => [[50, 20_000], [
+            'مجموعة كتب وقصص للأطفال' => [1],
+            'إبريق نحاس أنتيك' => [2],
+            'دولاب خشب منحوت قديم' => [3],
+            'أصص نباتات زينة' => [4],
+            'مقص وأدوات مكتبية' => [5],
+            'فرش سيليكون للمطبخ' => [6],
+        ]],
+    ];
+
+    private const LOCATIONS = [
+        'شقة للبيع بمدينة نصر تشطيب سوبر لوكس' => ['القاهرة', 'مدينة نصر'],
+        'شقة 150 متر بالتجمع الخامس' => ['القاهرة', 'التجمع الخامس'],
+        'شقة بالمعادي قريبة من المترو' => ['القاهرة', 'المعادي'],
+        'شقة تمليك بالهرم ناصية' => ['الجيزة', 'الهرم'],
+        'شقة بمدينتي جاهزة للسكن' => ['القاهرة', 'مدينتي'],
+        'شقة للإيجار بالمهندسين مفروشة' => ['الجيزة', 'المهندسين'],
+        'شقة إيجار جديد بمدينة نصر' => ['القاهرة', 'مدينة نصر'],
+        'شقة للإيجار بالشيخ زايد' => ['الجيزة', 'الشيخ زايد'],
+        'استوديو للإيجار بالزمالك' => ['القاهرة', 'الزمالك'],
+        'فيلا للبيع بالشيخ زايد حديقة خاصة' => ['الجيزة', 'الشيخ زايد'],
+        'فيلا مستقلة بالتجمع الخامس' => ['القاهرة', 'التجمع الخامس'],
+        'تاون هاوس بالرحاب جاهز للاستلام' => ['القاهرة', 'الرحاب'],
+        'أرض للبيع بالعاشر من رمضان' => ['الشرقية', 'العاشر من رمضان'],
+        'قطعة أرض سكنية بأكتوبر' => ['الجيزة', 'السادس من أكتوبر'],
+        'أرض زراعية بطريق مصر إسكندرية' => ['البحيرة', null],
+        'مكتب إداري للإيجار بوسط البلد' => ['القاهرة', 'وسط البلد'],
+    ];
+
+    private const ATTRIBUTES = [
+        'تويوتا كورولا فبريكا بالكامل' => ['brand' => 'تويوتا', 'model' => 'كورولا', 'year' => 2019, 'mileage' => 65_000, 'condition' => 'مستعملة'],
+        'هيونداي إلنترا حالة ممتازة' => ['brand' => 'هيونداي', 'model' => 'إلنترا', 'year' => 2021, 'mileage' => 38_000, 'condition' => 'مستعملة'],
+        'كيا سبورتاج موديل حديث' => ['brand' => 'كيا', 'model' => 'سبورتاج', 'year' => 2023, 'mileage' => 12_000, 'condition' => 'مستعملة'],
+        'نيسان صني بحالة الزيرو' => ['brand' => 'نيسان', 'model' => 'صني', 'year' => 2024, 'mileage' => 1_500, 'condition' => 'جديدة'],
+        'شيفروليه أوبترا ماشية قليل' => ['brand' => 'شيفروليه', 'model' => 'أوبترا', 'year' => 2014, 'mileage' => 90_000, 'condition' => 'مستعملة'],
+        'مرسيدس C180 فل الفل' => ['brand' => 'مرسيدس', 'model' => 'C180', 'year' => 2018, 'mileage' => 72_000, 'condition' => 'مستعملة', 'transmission' => 'أوتوماتيك'],
+        'سيارة كلاسيك موديل قديم بحالة ممتازة' => ['brand' => 'أخرى', 'model' => 'كلاسيك', 'year' => 1974, 'mileage' => 150_000, 'condition' => 'مستعملة'],
+        'سيارة للإيجار اليومي مع سائق' => ['brand' => 'تويوتا', 'model' => 'كورولا', 'year' => 2022, 'mileage' => null, 'condition' => 'مستعملة'],
+        'إيجار سيارة كابريو لحفلات الزفاف' => ['brand' => 'أخرى', 'model' => 'كابريو', 'year' => 2020, 'mileage' => null, 'condition' => 'مستعملة'],
+        'سيارة اقتصادية للإيجار الشهري' => ['brand' => 'هيونداي', 'model' => 'أكسنت', 'year' => 2021, 'mileage' => null, 'condition' => 'مستعملة'],
+        'كاوتش جديد مقاس 16' => ['mileage' => null, 'condition' => 'جديدة'],
+        'جنوط ألومنيوم مستعملة' => ['mileage' => null, 'condition' => 'مستعملة'],
+        'طقم جنوط أصلي للمرسيدس' => ['brand' => 'مرسيدس', 'mileage' => null, 'condition' => 'مستعملة'],
+        'عدادات ولوحة قيادة أصلية' => ['mileage' => null, 'condition' => 'مستعملة'],
+        'ناقل حركة عصا مانيوال' => ['mileage' => null, 'transmission' => 'يدوي', 'condition' => 'مستعملة'],
+        'موتوسيكل هوندا 2020 حالة ممتازة' => ['brand' => 'هوندا', 'model' => 'CB', 'year' => 2020, 'mileage' => 18_000, 'transmission' => 'يدوي', 'fuel_type' => 'بنزين', 'condition' => 'مستعملة'],
+        'سكوتر فيسبا اقتصادي' => ['brand' => 'أخرى', 'model' => 'فيسبا', 'year' => 2019, 'mileage' => 22_000, 'transmission' => 'أوتوماتيك', 'fuel_type' => 'بنزين', 'condition' => 'مستعملة'],
+        'دراجة نارية هارلي رخصة سارية' => ['brand' => 'أخرى', 'model' => 'هارلي ديفيدسون', 'year' => 2016, 'mileage' => 30_000, 'transmission' => 'يدوي', 'fuel_type' => 'بنزين', 'condition' => 'مستعملة'],
+        'شقة للبيع بمدينة نصر تشطيب سوبر لوكس' => ['property_type' => 'شقة', 'area' => 130, 'rooms' => 3, 'bathrooms' => 2, 'floor' => 4, 'finishing' => 'تشطيب كامل'],
+        'شقة 150 متر بالتجمع الخامس' => ['property_type' => 'شقة', 'area' => 150, 'rooms' => 3, 'bathrooms' => 2, 'floor' => 2, 'finishing' => 'تشطيب كامل'],
+        'شقة بالمعادي قريبة من المترو' => ['property_type' => 'شقة', 'area' => 120, 'rooms' => 3, 'bathrooms' => 2, 'floor' => 5, 'finishing' => 'تشطيب كامل'],
+        'شقة تمليك بالهرم ناصية' => ['property_type' => 'شقة', 'area' => 170, 'rooms' => 3, 'bathrooms' => 2, 'floor' => 3, 'finishing' => 'نصف تشطيب'],
+        'شقة بمدينتي جاهزة للسكن' => ['property_type' => 'شقة', 'area' => 110, 'rooms' => 2, 'bathrooms' => 1, 'floor' => 6, 'finishing' => 'تشطيب كامل'],
+        'شقة للإيجار بالمهندسين مفروشة' => ['property_type' => 'شقة', 'area' => 95, 'rooms' => 2, 'bathrooms' => 1, 'floor' => 3, 'finishing' => 'تشطيب كامل'],
+        'شقة إيجار جديد بمدينة نصر' => ['property_type' => 'شقة', 'area' => 115, 'rooms' => 3, 'bathrooms' => 1, 'floor' => 2, 'finishing' => 'تشطيب كامل'],
+        'شقة للإيجار بالشيخ زايد' => ['property_type' => 'شقة', 'area' => 140, 'rooms' => 3, 'bathrooms' => 2, 'floor' => 1, 'finishing' => 'تشطيب كامل'],
+        'استوديو للإيجار بالزمالك' => ['property_type' => 'استوديو', 'area' => 55, 'rooms' => 1, 'bathrooms' => 1, 'floor' => 4, 'finishing' => 'تشطيب كامل'],
+        'فيلا للبيع بالشيخ زايد حديقة خاصة' => ['property_type' => 'فيلا', 'area' => 450, 'rooms' => 5, 'bathrooms' => 4, 'floor' => null, 'finishing' => 'تشطيب كامل'],
+        'فيلا مستقلة بالتجمع الخامس' => ['property_type' => 'فيلا', 'area' => 400, 'rooms' => 6, 'bathrooms' => 5, 'floor' => null, 'finishing' => 'تشطيب كامل'],
+        'تاون هاوس بالرحاب جاهز للاستلام' => ['property_type' => 'تاون هاوس', 'area' => 250, 'rooms' => 4, 'bathrooms' => 3, 'floor' => null, 'finishing' => 'نصف تشطيب'],
+        'أرض للبيع بالعاشر من رمضان' => ['property_type' => 'أرض', 'area' => 600, 'rooms' => null, 'bathrooms' => null, 'floor' => null, 'finishing' => null],
+        'قطعة أرض سكنية بأكتوبر' => ['property_type' => 'أرض', 'area' => 300, 'rooms' => null, 'bathrooms' => null, 'floor' => null, 'finishing' => null],
+        'أرض زراعية بطريق مصر إسكندرية' => ['property_type' => 'أرض', 'area' => 2_100, 'rooms' => null, 'bathrooms' => null, 'floor' => null, 'finishing' => null],
+        'محل للبيع بموقع تجاري متميز' => ['property_type' => 'محل تجاري', 'area' => 60, 'rooms' => null, 'bathrooms' => 1, 'floor' => 0, 'finishing' => 'تشطيب كامل'],
+        'مكتب إداري للإيجار بوسط البلد' => ['property_type' => 'مكتب', 'area' => 90, 'rooms' => 3, 'bathrooms' => 1, 'floor' => 5, 'finishing' => 'تشطيب كامل'],
+        'محل ناصية على شارع رئيسي' => ['property_type' => 'محل تجاري', 'area' => 80, 'rooms' => null, 'bathrooms' => 1, 'floor' => 0, 'finishing' => 'تشطيب كامل'],
+        'آيفون 13 برو بحالة الجديد' => ['brand' => 'أبل', 'condition' => 'مستعمل', 'warranty' => 0],
+        'سامسونج جالاكسي S22 بالضمان' => ['brand' => 'سامسونج', 'condition' => 'جديد', 'warranty' => 1],
+        'شاومي ريدمي نوت 11 كسر زيرو' => ['brand' => 'شاومي', 'condition' => 'مستعمل', 'warranty' => 0],
+        'أوبو رينو 8 استعمال خفيف' => ['brand' => 'أوبو', 'condition' => 'مستعمل', 'warranty' => 0],
+        'لابتوب ديل كور i7 بحالة ممتازة' => ['brand' => 'ديل', 'condition' => 'مستعمل', 'warranty' => 0],
+        'ماك بوك إير M1 نظيف' => ['brand' => 'أبل', 'condition' => 'مستعمل', 'warranty' => 0],
+        'لابتوب جيمنج بكارت شاشة قوي' => ['brand' => 'إم إس آي', 'condition' => 'مستعمل', 'warranty' => 1],
+        'لابتوب لينوفو للطلبة' => ['brand' => 'لينوفو', 'condition' => 'مستعمل', 'warranty' => 0],
+        'شاشة سامسونج 55 بوصة سمارت' => ['brand' => 'سامسونج', 'condition' => 'مستعمل', 'warranty' => 0],
+        'تلفزيون إل جي 4K بحالة الزيرو' => ['brand' => 'إل جي', 'condition' => 'جديد', 'warranty' => 1],
+        'شاشة كمبيوتر 27 بوصة' => ['brand' => 'ديل', 'condition' => 'مستعمل', 'warranty' => 0],
+        'كاميرا كانون 90D مع عدسة' => ['brand' => 'كانون', 'condition' => 'مستعمل', 'warranty' => 0],
+        'كاميرا سوني A7 III بالكرتونة' => ['brand' => 'سوني', 'condition' => 'جديد', 'warranty' => 1],
+        'كاميرا ديجيتال احترافية للتصوير' => ['brand' => 'نيكون', 'condition' => 'مستعمل', 'warranty' => 0],
+        'بلايستيشن 5 مع دراعين' => ['brand' => 'سوني', 'condition' => 'مستعمل', 'warranty' => 0],
+        'إكس بوكس سيريس إس جديد' => ['brand' => 'مايكروسوفت', 'condition' => 'جديد', 'warranty' => 1],
+        'ألعاب بلايستيشن 4 للبيع' => ['brand' => 'سوني', 'condition' => 'مستعمل', 'warranty' => 0],
+        'بدلة رجالي إيطالي جديدة' => ['condition' => 'جديد', 'size' => '50'],
+        'فستان سهرة استعمال مرة واحدة' => ['condition' => 'مستعمل', 'size' => 'M'],
+        'حذاء رياضي نايك أصلي' => ['condition' => 'جديد', 'size' => '42'],
+        'حذاء كونفرس أبيض بحالة ممتازة' => ['condition' => 'مستعمل', 'size' => '41'],
+        'ساعة أوميجا بحالة الجديد' => ['condition' => 'جديد', 'size' => null],
     ];
 
     private const NAMES = [
@@ -97,6 +313,8 @@ class DemoSeeder extends Seeder
         'الوصف غير كافٍ. أضف تفاصيل أكثر وأعد المحاولة.',
     ];
 
+    private array $imageCache = [];
+
     public function run(): void
     {
         if (! app()->environment(['local', 'testing'])) {
@@ -118,16 +336,15 @@ class DemoSeeder extends Seeder
 
         $users = $this->createUsers();
         $this->createModerator();
-        $imageFiles = $this->createPlaceholderImages();
 
-        $listings = $this->createListings($users, $imageFiles);
+        $listings = $this->createListings($users);
         $this->guaranteeFeaturedListings($listings);
         $this->createFavoritesAndReports($users, $listings);
         $this->createStoresAndSubscriptions($users);
         $this->createReviews($users);
         $this->createConversations($users, $listings);
         $this->createSavedSearches($users);
-        $this->createAdBanners($users, $imageFiles);
+        $this->createAdBanners($users);
 
         File::deleteDirectory(storage_path('app/demo-placeholders'));
 
@@ -166,47 +383,53 @@ class DemoSeeder extends Seeder
         return '+2012'.str_pad((string) $i, 8, '0', STR_PAD_LEFT);
     }
 
-    private function createPlaceholderImages(): array
+    private function imagesFor(string $categorySlug, array $numbers = []): array
     {
+        $directory = database_path("seeders/data/images/{$categorySlug}");
+
+        if (! is_dir($directory)) {
+            $directory = database_path('seeders/data/images/other');
+        }
+
+        $files = $this->imageCache[$directory] ??= File::glob($directory.'/*.jpg');
+
+        if ($numbers === []) {
+            return $files;
+        }
+
+        return array_values(array_filter($files, fn (string $file) => in_array((int) basename($file, '.jpg'), $numbers, true)));
+    }
+
+    private function bannerImage(string $name): string
+    {
+        return database_path("seeders/data/images/banners/{$name}.jpg");
+    }
+
+    private function wideCropOf(string $path): string
+    {
+        $source = imagecreatefromjpeg($path);
+        $width = imagesx($source);
+        $height = min(imagesy($source), (int) round($width / 3.2));
+        $top = (int) max(0, (imagesy($source) - $height) * 0.4);
+
+        $target = imagecreatetruecolor($width, $height);
+        imagecopy($target, $source, 0, 0, 0, $top, $width, $height);
+
         $directory = storage_path('app/demo-placeholders');
         File::ensureDirectoryExists($directory);
 
-        $palette = [
-            [[251, 146, 60], [194, 65, 12]], [[96, 165, 250], [30, 64, 175]], [[52, 211, 153], [4, 120, 87]],
-            [[244, 114, 182], [157, 23, 77]], [[167, 139, 250], [91, 33, 182]], [[250, 204, 21], [161, 98, 7]],
-            [[148, 163, 184], [51, 65, 85]], [[248, 113, 113], [153, 27, 27]],
-        ];
+        $file = $directory.DIRECTORY_SEPARATOR.'promoted-banner.jpg';
+        imagejpeg($target, $file, 84);
 
-        $files = [];
-
-        foreach ($palette as $i => [$from, $to]) {
-            $image = imagecreatetruecolor(800, 600);
-
-            for ($y = 0; $y < 600; $y++) {
-                $ratio = $y / 599;
-                $color = imagecolorallocate(
-                    $image,
-                    (int) ($from[0] + ($to[0] - $from[0]) * $ratio),
-                    (int) ($from[1] + ($to[1] - $from[1]) * $ratio),
-                    (int) ($from[2] + ($to[2] - $from[2]) * $ratio),
-                );
-                imageline($image, 0, $y, 799, $y, $color);
-            }
-
-            $white = imagecolorallocatealpha($image, 255, 255, 255, 90);
-            imagefilledellipse($image, 250 + $i * 40, 300, 320, 320, $white);
-            imagefilledrectangle($image, 420, 180, 700, 420, $white);
-            imagefilledellipse($image, 560, 300, 120, 120, imagecolorallocatealpha($image, 255, 255, 255, 60));
-
-            $path = $directory.DIRECTORY_SEPARATOR."placeholder-{$i}.jpg";
-            imagejpeg($image, $path, 82);
-            $files[] = $path;
-        }
-
-        return $files;
+        return $file;
     }
 
-    private function createListings(Collection $users, array $imageFiles): Collection
+    private function wikipedia(string $article): string
+    {
+        return 'https://ar.wikipedia.org/wiki/'.rawurlencode($article);
+    }
+
+    private function createListings(Collection $users): Collection
     {
         $leaves = Category::query()->whereDoesntHave('children')->get();
         $governorates = Governorate::with('cities')->get();
@@ -217,10 +440,15 @@ class DemoSeeder extends Seeder
         for ($n = 0; $n < static::$listingCount; $n++) {
             $category = $leaves->random();
             [$priceRange, $titles] = self::CATALOG[$category->slug] ?? self::CATALOG['other'];
-            $governorate = $governorates->random();
-            $city = $governorate->cities->isNotEmpty() && random_int(1, 10) > 3 ? $governorate->cities->random() : null;
-
-            $title = Arr::random($titles);
+            $title = Arr::random(array_keys($titles));
+            $location = self::LOCATIONS[$title] ?? null;
+            $governorate = $location === null ? null : $governorates->firstWhere('name', $location[0]);
+            $governorate ??= $governorates->random();
+            $city = match (true) {
+                $location !== null && $location[1] !== null => $governorate->cities->firstWhere('name', $location[1]),
+                $location !== null => null,
+                default => $governorate->cities->isNotEmpty() && random_int(1, 10) > 3 ? $governorate->cities->random() : null,
+            };
             $description = $title.'. '.implode(' ', Arr::random(self::SENTENCES, 3));
 
             $status = $this->randomStatus();
@@ -252,10 +480,12 @@ class DemoSeeder extends Seeder
             $listing = Listing::create($attributes);
             $fields = $category->effectiveFields();
 
-            $values = $sync($listing, $fields, $this->fieldValues($fields, $governorate->name));
+            $values = $sync($listing, $fields, $this->fieldValues($fields, $governorate->name, self::ATTRIBUTES[$title] ?? []));
             $listing->update(['search_text' => ListingSearchText::build($title, $description, $values)]);
 
-            foreach (Arr::random($imageFiles, random_int(1, 3)) as $file) {
+            $pool = $this->imagesFor($category->slug, $titles[$title]);
+
+            foreach (Arr::random($pool, random_int(1, min(3, count($pool)))) as $file) {
                 $listing->addMedia($file)->preservingOriginal()->toMediaCollection(Listing::IMAGES);
             }
 
@@ -350,11 +580,19 @@ class DemoSeeder extends Seeder
         };
     }
 
-    private function fieldValues(Collection $fields, string $governorateName): array
+    private function fieldValues(Collection $fields, string $governorateName, array $overrides = []): array
     {
         $values = [];
 
         foreach ($fields as $field) {
+            if (array_key_exists($field->key, $overrides)) {
+                if ($overrides[$field->key] !== null) {
+                    $values[$field->key] = (string) $overrides[$field->key];
+                }
+
+                continue;
+            }
+
             if (! $field->is_required && random_int(1, 100) > 75) {
                 continue;
             }
@@ -542,27 +780,30 @@ class DemoSeeder extends Seeder
         );
     }
 
-    private function createAdBanners(Collection $users, array $imageFiles): Collection
+    private function createAdBanners(Collection $users): Collection
     {
         $advertiser = $users->first();
 
         $banners = [
-            ['placement' => 'home_top', 'title' => 'عرض المتجر الرقمي', 'target_url' => 'https://example.com/digital-store', 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDays(2), 'expires_at' => now()->addDays(5)],
-            ['placement' => 'search_sidebar', 'title' => 'خصم عيادة الأسنان', 'target_url' => 'https://example.com/dental-clinic', 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDay(), 'expires_at' => now()->addDays(20)],
-            ['placement' => 'listing_sidebar', 'title' => 'شركة نقل الأثاث', 'target_url' => 'https://example.com/movers', 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDays(3), 'expires_at' => now()->addDays(10)],
-            ['placement' => 'home_top', 'title' => 'مطعم جديد بالتجمع', 'target_url' => 'https://example.com/restaurant', 'status' => AdBannerStatus::Pending],
-            ['placement' => 'search_sidebar', 'title' => 'إعلان صورته مخالفة', 'target_url' => 'https://example.com/rejected', 'status' => AdBannerStatus::Rejected, 'rejection_reason' => 'الصورة تحتوي على نص كبير مخالف للسياسة.'],
+            ['image' => $this->bannerImage('electronics'), 'placement' => 'home_top', 'title' => 'عرض المتجر الرقمي', 'target_url' => $this->wikipedia('تجارة_إلكترونية'), 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDays(2), 'expires_at' => now()->addDays(5)],
+            ['image' => $this->bannerImage('tourism'), 'placement' => 'home_top', 'title' => 'رحلات سياحية إلى الأهرامات', 'target_url' => $this->wikipedia('سياحة_في_مصر'), 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDay(), 'expires_at' => now()->addDays(12)],
+            ['image' => $this->bannerImage('dental'), 'placement' => 'search_sidebar', 'title' => 'خصم عيادة الأسنان', 'target_url' => $this->wikipedia('طب_الأسنان'), 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDay(), 'expires_at' => now()->addDays(20)],
+            ['image' => $this->bannerImage('movers'), 'placement' => 'listing_sidebar', 'title' => 'شركة نقل الأثاث', 'target_url' => $this->wikipedia('شاحنة'), 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDays(3), 'expires_at' => now()->addDays(10)],
+            ['image' => $this->bannerImage('restaurant'), 'placement' => 'home_top', 'title' => 'مطعم جديد بالتجمع', 'target_url' => $this->wikipedia('مطعم'), 'status' => AdBannerStatus::Pending],
+            ['image' => $this->bannerImage('coins-sign'), 'placement' => 'search_sidebar', 'title' => 'إعلان صورته مخالفة', 'target_url' => $this->wikipedia('عملة_معدنية'), 'status' => AdBannerStatus::Rejected, 'rejection_reason' => 'الصورة تحتوي على نص كبير مخالف للسياسة.'],
         ];
 
         $promoted = Listing::query()->visible()->inRandomOrder()->first();
 
         if ($promoted !== null) {
-            $banners[] = ['user_id' => $promoted->user_id, 'placement' => 'search_sidebar', 'title' => 'ترويج: '.Str::limit($promoted->title, 40), 'listing_id' => $promoted->id, 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDay(), 'expires_at' => now()->addDays(14)];
+            $categorySlug = Category::query()->whereKey($promoted->category_id)->value('slug');
+
+            $banners[] = ['image' => $this->wideCropOf(Arr::first($this->imagesFor($categorySlug))), 'user_id' => $promoted->user_id, 'placement' => 'search_sidebar', 'title' => 'ترويج: '.Str::limit($promoted->title, 40), 'listing_id' => $promoted->id, 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDay(), 'expires_at' => now()->addDays(14)];
         }
 
         $created = collect();
 
-        foreach ($banners as $i => $banner) {
+        foreach ($banners as $banner) {
             $existing = AdBanner::where('title', $banner['title'])->first();
 
             if ($existing) {
@@ -571,8 +812,8 @@ class DemoSeeder extends Seeder
                 continue;
             }
 
-            $record = AdBanner::create($banner + ['user_id' => $advertiser->id]);
-            $record->addMedia($imageFiles[$i % count($imageFiles)])->preservingOriginal()->toMediaCollection(AdBanner::IMAGE);
+            $record = AdBanner::create(Arr::except($banner, 'image') + ['user_id' => $advertiser->id]);
+            $record->addMedia($banner['image'])->preservingOriginal()->toMediaCollection(AdBanner::IMAGE);
             $created->push($record);
         }
 

@@ -78,8 +78,12 @@ php artisan queue:work           # in another terminal: builds the WebP image co
   and a `MEILISEARCH_HOST`/`MEILISEARCH_KEY` once a server is running; every other filter (category,
   price, visibility…) still runs as normal SQL on top of it either way. See `docs/DEPLOY.md`, "9c.
   Search engine".
-- **Demo data** (local only): `php artisan db:seed --class=DemoSeeder` adds ~200 listings with images,
-  12 users (password `password`), a moderator (`01111111111` / `password`), favorites and reports.
+- **Demo data** (local only): `php artisan db:seed --class=DemoSeeder` adds ~200 listings, 12 users
+  (password `password`), a moderator (`01111111111` / `password`), favorites, reports, stores, reviews,
+  conversations and sponsored banners. Every listing carries real photographs that match its title
+  (CC0 stock photos kept in `database/seeders/data/images/`, credits in `CREDITS.md` there), a
+  location and field values that agree with the title, and the banners link to live pages. Run
+  `php artisan queue:work` afterwards so the image conversions get generated.
 - **Before deploying:** run `php artisan launch:check` (add `--strict` to also fail on warnings). It
   checks the environment, SMS/mail/CAPTCHA configuration, admin password, PHP extensions and upload
   limits, database engine and migrations, `public/storage`, the sitemap and `mysqldump` availability.
