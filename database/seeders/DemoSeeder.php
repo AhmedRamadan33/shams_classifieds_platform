@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Actions\SyncListingFieldValues;
+use App\Enums\AdBannerStatus;
 use App\Enums\FieldType;
 use App\Enums\ListingStatus;
 use App\Enums\PriceType;
+use App\Models\AdBanner;
 use App\Models\Category;
 use App\Models\CategoryField;
 use App\Models\Favorite;
 use App\Models\Governorate;
+use App\Models\HeroSlide;
 use App\Models\Listing;
 use App\Models\Report;
 use App\Models\User;
@@ -106,6 +109,8 @@ class DemoSeeder extends Seeder
 
         $listings = $this->createListings($users, $imageFiles);
         $this->createFavoritesAndReports($users, $listings);
+        $this->createHeroSlides($imageFiles);
+        $this->createAdBanners($users, $imageFiles);
 
         File::deleteDirectory(storage_path('app/demo-placeholders'));
 
@@ -365,5 +370,56 @@ class DemoSeeder extends Seeder
                 ],
             );
         }
+    }
+
+    private function createHeroSlides(array $imageFiles): void
+    {
+        $slides = [
+            ['title' => 'اكتشف آلاف الإعلانات', 'subtitle' => 'سيارات، عقارات، إلكترونيات وأكثر في مكان واحد.', 'link_url' => url('/search')],
+            ['title' => 'بيع ما لا تحتاجه في دقائق', 'subtitle' => 'أضف إعلانك مجاناً ووصله للمهتمين مباشرة.', 'link_url' => route('listings.create')],
+            ['title' => 'ميّز إعلانك أو أعلن معنا', 'subtitle' => 'باقات تمييز وبانرات إعلانية لزيادة ظهورك.', 'link_url' => route('ad-banners.create')],
+        ];
+
+        foreach ($slides as $i => $slide) {
+            $existing = HeroSlide::where('title', $slide['title'])->first();
+
+            if ($existing) {
+                continue;
+            }
+
+            $created = HeroSlide::create($slide + ['sort_order' => $i]);
+            $created->addMedia($imageFiles[$i % count($imageFiles)])->preservingOriginal()->toMediaCollection(HeroSlide::IMAGE);
+        }
+    }
+
+    private function createAdBanners(Collection $users, array $imageFiles): Collection
+    {
+        $advertiser = $users->first();
+
+        $banners = [
+            ['placement' => 'home_top', 'title' => 'عرض المتجر الرقمي', 'target_url' => 'https://example.com/digital-store', 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDays(2), 'expires_at' => now()->addDays(5)],
+            ['placement' => 'search_sidebar', 'title' => 'خصم عيادة الأسنان', 'target_url' => 'https://example.com/dental-clinic', 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDay(), 'expires_at' => now()->addDays(20)],
+            ['placement' => 'listing_sidebar', 'title' => 'شركة نقل الأثاث', 'target_url' => 'https://example.com/movers', 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDays(3), 'expires_at' => now()->addDays(10)],
+            ['placement' => 'home_top', 'title' => 'مطعم جديد بالتجمع', 'target_url' => 'https://example.com/restaurant', 'status' => AdBannerStatus::Pending],
+            ['placement' => 'search_sidebar', 'title' => 'إعلان صورته مخالفة', 'target_url' => 'https://example.com/rejected', 'status' => AdBannerStatus::Rejected, 'rejection_reason' => 'الصورة تحتوي على نص كبير مخالف للسياسة.'],
+        ];
+
+        $created = collect();
+
+        foreach ($banners as $i => $banner) {
+            $existing = AdBanner::where('title', $banner['title'])->first();
+
+            if ($existing) {
+                $created->push($existing);
+
+                continue;
+            }
+
+            $record = AdBanner::create(['user_id' => $advertiser->id] + $banner);
+            $record->addMedia($imageFiles[$i % count($imageFiles)])->preservingOriginal()->toMediaCollection(AdBanner::IMAGE);
+            $created->push($record);
+        }
+
+        return $created;
     }
 }
