@@ -15,7 +15,7 @@ export const appEnv = {
     APP_ENV: 'local',
     APP_DEBUG: 'false',
     APP_URL: BASE_URL,
-    DB_DATABASE: 'shams_e2e',
+    SEED_DEMO_DATA: 'false',
     SESSION_DRIVER: 'file',
     CACHE_STORE: 'file',
     QUEUE_CONNECTION: 'sync',

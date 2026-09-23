@@ -78,7 +78,8 @@ php artisan queue:work           # in another terminal: builds the WebP image co
   and a `MEILISEARCH_HOST`/`MEILISEARCH_KEY` once a server is running; every other filter (category,
   price, visibility…) still runs as normal SQL on top of it either way. See `docs/DEPLOY.md`, "9c.
   Search engine".
-- **Demo data** (local only): `php artisan db:seed --class=DemoSeeder` adds ~200 listings, 12 users
+- **Demo data** (local only): `php artisan migrate:fresh --seed` (with `SEED_DEMO_DATA=true`, the default in
+  `.env.example`) or `php artisan db:seed --class=DemoSeeder` adds ~200 listings, 12 users
   (password `password`), a moderator (`01111111111` / `password`), favorites, reports, stores, reviews,
   conversations and sponsored banners. Every listing carries real photographs that match its title
   (CC0 stock photos kept in `database/seeders/data/images/`, credits in `CREDITS.md` there), a
@@ -92,15 +93,15 @@ php artisan queue:work           # in another terminal: builds the WebP image co
 
 ```bash
 vendor/bin/pint --test    # formatting
-php artisan test          # Pest; needs a MySQL database `shams_test` (see phpunit.xml)
+php artisan test          # Pest; runs on the `shams` database and wipes it (see phpunit.xml)
 npm run e2e               # Playwright: full user journeys at 375px and 1280px (see e2e/)
 ```
 
 The FULLTEXT search tests live in `tests/Search` and use `DatabaseTruncation` (InnoDB full-text indexes
 only see committed rows). Everything else runs inside a transaction per test.
 
-`npm run e2e` drives a real Chrome browser against a throw-away `shams_e2e` database and upload folder
-(see `e2e/support/env.js`); it never touches the `shams`/`shams_test` databases. It registers a user
+`npm run e2e` drives a real Chrome browser against the `shams` database (it runs `migrate:fresh`, so it
+wipes it) and a throw-away upload folder (see `e2e/support/env.js`). It registers a user
 through the OTP flow (read from the log), posts an ad through the multi-step form with photo uploads,
 approves it as the moderator in `/admin`, and checks phone reveal, favorites and reporting — at both a
 375px phone width and a 1280px desktop width, asserting RTL layout and no horizontal overflow.

@@ -20,5 +20,9 @@ class DatabaseSeeder extends Seeder
             PlanSeeder::class,
             AdPackageSeeder::class,
         ]);
+
+        if (app()->environment('local') && config('classifieds.seed_demo_data')) {
+            $this->call(DemoSeeder::class);
+        }
     }
 }

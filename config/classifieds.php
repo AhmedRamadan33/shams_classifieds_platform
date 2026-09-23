@@ -8,6 +8,8 @@ return [
 
     'require_review' => (bool) env('CLASSIFIEDS_REQUIRE_REVIEW', true),
 
+    'seed_demo_data' => (bool) env('SEED_DEMO_DATA', false),
+
     'daily_listing_limit' => (int) env('CLASSIFIEDS_DAILY_LISTING_LIMIT', 10),
 
     'saved_search_limit' => (int) env('CLASSIFIEDS_SAVED_SEARCH_LIMIT', 20),
