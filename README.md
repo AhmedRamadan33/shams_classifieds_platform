@@ -52,8 +52,9 @@ php artisan queue:work           # in another terminal: builds the WebP image co
   average rating and review list show on the seller page and the star rating also appears on that
   seller's listing pages. Moderators/admins can hide (not just delete) a review from the panel.
 - **Sponsored ad banners:** anyone signed in can advertise at `/advertise` — pick a placement (top of
-  the homepage, the search-results sidebar, or a listing page's sidebar), upload a banner image and a
-  target URL. A moderator/admin approves or rejects the creative first (`/admin` → «البانرات
+  the homepage, the search-results sidebar, or a listing page's sidebar), upload a banner image and choose where
+  it points: an external URL, or one of their own live listings (that banner pauses by itself while
+  the listing is sold, expired or deleted, and comes back when it is live again). A moderator/admin approves or rejects the creative first (`/admin` → «البانرات
   الإعلانية»); once approved, the advertiser pays for a package (`/admin` → «باقات البانرات
   الإعلانية», priced and durationed per placement) at `/banners/{id}/purchase` — the same
   Fake/Paymob gateway as featured listings — and the banner goes live immediately, clicks tracked.

@@ -554,6 +554,12 @@ class DemoSeeder extends Seeder
             ['placement' => 'search_sidebar', 'title' => 'إعلان صورته مخالفة', 'target_url' => 'https://example.com/rejected', 'status' => AdBannerStatus::Rejected, 'rejection_reason' => 'الصورة تحتوي على نص كبير مخالف للسياسة.'],
         ];
 
+        $promoted = Listing::query()->visible()->inRandomOrder()->first();
+
+        if ($promoted !== null) {
+            $banners[] = ['user_id' => $promoted->user_id, 'placement' => 'search_sidebar', 'title' => 'ترويج: '.Str::limit($promoted->title, 40), 'listing_id' => $promoted->id, 'status' => AdBannerStatus::Active, 'starts_at' => now()->subDay(), 'expires_at' => now()->addDays(14)];
+        }
+
         $created = collect();
 
         foreach ($banners as $i => $banner) {
@@ -565,7 +571,7 @@ class DemoSeeder extends Seeder
                 continue;
             }
 
-            $record = AdBanner::create(['user_id' => $advertiser->id] + $banner);
+            $record = AdBanner::create($banner + ['user_id' => $advertiser->id]);
             $record->addMedia($imageFiles[$i % count($imageFiles)])->preservingOriginal()->toMediaCollection(AdBanner::IMAGE);
             $created->push($record);
         }

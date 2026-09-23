@@ -7,6 +7,7 @@ namespace Database\Factories;
 use App\Enums\AdBannerStatus;
 use App\Enums\AdPlacement;
 use App\Models\AdBanner;
+use App\Models\Listing;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,6 +24,15 @@ class AdBannerFactory extends Factory
             'target_url' => fake()->url(),
             'status' => AdBannerStatus::Pending->value,
         ];
+    }
+
+    public function targetingListing(Listing $listing): static
+    {
+        return $this->state([
+            'user_id' => $listing->user_id,
+            'listing_id' => $listing->id,
+            'target_url' => null,
+        ]);
     }
 
     public function approved(): static

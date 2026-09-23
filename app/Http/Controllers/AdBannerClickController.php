@@ -11,12 +11,14 @@ class AdBannerClickController extends Controller
 {
     public function __invoke(AdBanner $adBanner): RedirectResponse
     {
-        if (! AdBanner::query()->currentlyActive()->whereKey($adBanner->getKey())->exists()) {
+        $live = AdBanner::query()->currentlyActive()->with('listing')->find($adBanner->getKey());
+
+        if ($live === null || $live->resolvedUrl() === null) {
             return redirect()->route('home');
         }
 
-        $adBanner->increment('clicks');
+        $live->increment('clicks');
 
-        return redirect()->away($adBanner->target_url);
+        return redirect()->away($live->resolvedUrl());
     }
 }

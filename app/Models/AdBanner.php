@@ -23,7 +23,7 @@ class AdBanner extends Model implements HasMedia
     public const IMAGE = 'image';
 
     protected $fillable = [
-        'user_id', 'ad_package_id', 'placement', 'title', 'target_url', 'status', 'rejection_reason',
+        'user_id', 'ad_package_id', 'listing_id', 'placement', 'title', 'target_url', 'status', 'rejection_reason',
         'starts_at', 'expires_at',
     ];
 
@@ -53,6 +53,11 @@ class AdBanner extends Model implements HasMedia
         return $this->belongsTo(AdPackage::class);
     }
 
+    public function listing(): BelongsTo
+    {
+        return $this->belongsTo(Listing::class);
+    }
+
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
@@ -66,7 +71,40 @@ class AdBanner extends Model implements HasMedia
     public function scopeCurrentlyActive(Builder $query): Builder
     {
         return $query->where('status', AdBannerStatus::Active->value)
-            ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
+            ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()))
+            ->where(fn (Builder $q) => $q->whereNotNull('target_url')->orWhereHas('listing', fn (Builder $l) => $l->visible()));
+    }
+
+    public function targetsListing(): bool
+    {
+        return $this->listing_id !== null;
+    }
+
+    public function hasLiveTarget(): bool
+    {
+        if (! $this->targetsListing()) {
+            return $this->target_url !== null;
+        }
+
+        $listing = $this->listing;
+
+        return $listing !== null && $listing->isPubliclyListed() && ! $listing->user->is_banned;
+    }
+
+    public function destinationLabel(): string
+    {
+        if ($this->targetsListing()) {
+            return $this->listing !== null
+                ? __('app.ad_banners.destination_listing', ['title' => $this->listing->title])
+                : __('app.ad_banners.listing_removed');
+        }
+
+        return $this->target_url ?? __('app.ad_banners.listing_removed');
+    }
+
+    public function resolvedUrl(): ?string
+    {
+        return $this->targetsListing() ? $this->listing?->url() : $this->target_url;
     }
 
     public function isExpired(): bool

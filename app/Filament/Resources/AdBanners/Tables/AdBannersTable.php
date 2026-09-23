@@ -33,6 +33,10 @@ class AdBannersTable
                     ->label(__('app.admin.placement'))
                     ->formatStateUsing(fn (AdPlacement $state): string => $state->label())
                     ->sortable(),
+                TextColumn::make('destination')
+                    ->label(__('app.admin.destination'))
+                    ->getStateUsing(fn (AdBanner $record): string => $record->destinationLabel())
+                    ->limit(40),
                 TextColumn::make('status')
                     ->label(__('app.admin.status'))
                     ->badge()

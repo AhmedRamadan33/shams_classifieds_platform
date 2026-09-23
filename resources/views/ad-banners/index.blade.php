@@ -20,6 +20,12 @@
                     <div class="min-w-0 flex-1">
                         <p class="truncate font-bold text-slate-900">{{ $banner->title ?? $banner->placement->label() }}</p>
                         <p class="mt-0.5 text-sm text-slate-600">{{ $banner->placement->label() }}</p>
+                        <p class="mt-0.5 truncate text-xs text-slate-500">
+                            {{ $banner->destinationLabel() }}
+                        </p>
+                        @if ($banner->status === \App\Enums\AdBannerStatus::Active && ! $banner->hasLiveTarget())
+                            <p class="mt-1 text-xs font-bold text-amber-700">{{ __('app.ad_banners.paused_listing_unavailable') }}</p>
+                        @endif
                         @if ($banner->status === \App\Enums\AdBannerStatus::Rejected && $banner->rejection_reason)
                             <p class="mt-1 text-sm text-red-700">{{ $banner->rejection_reason }}</p>
                         @endif
@@ -30,7 +36,7 @@
 
                     <span class="shrink-0 rounded-full px-3 py-1 text-xs font-bold {{ $banner->status->badgeClasses() }}">{{ $banner->status->label() }}</span>
 
-                    @if (in_array($banner->status, $purchasable, true))
+                    @if (in_array($banner->status, $purchasable, true) && $banner->hasLiveTarget())
                         <x-button :href="route('ad-banners.purchase', $banner)" size="sm">{{ __('app.ad_banners.pay_now') }}</x-button>
                     @endif
                 </div>

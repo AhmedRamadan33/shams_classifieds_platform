@@ -36,10 +36,12 @@ class AdBannerInfolist
                             ->label(__('app.admin.placement'))
                             ->formatStateUsing(fn (AdPlacement $state): string => $state->label()),
                         TextEntry::make('title')->label(__('app.admin.title'))->placeholder('—'),
-                        TextEntry::make('target_url')
-                            ->label(__('app.admin.link_url'))
+                        TextEntry::make('destination')
+                            ->label(__('app.admin.destination'))
+                            ->getStateUsing(fn (AdBanner $record): string => $record->destinationLabel())
+                            ->url(fn (AdBanner $record): ?string => $record->resolvedUrl(), shouldOpenInNewTab: true)
                             ->columnSpanFull()
-                            ->extraAttributes(['dir' => 'ltr']),
+                            ->extraAttributes(['dir' => 'auto']),
                         ImageEntry::make('image')
                             ->label(__('app.admin.image'))
                             ->getStateUsing(fn (AdBanner $record): ?string => $record->imageUrl())

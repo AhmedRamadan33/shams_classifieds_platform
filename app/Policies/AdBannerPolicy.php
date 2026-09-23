@@ -37,7 +37,8 @@ class AdBannerPolicy
     public function purchase(User $user, AdBanner $adBanner): bool
     {
         return $this->owns($user, $adBanner)
-            && in_array($adBanner->status, [AdBannerStatus::Approved, AdBannerStatus::Active, AdBannerStatus::Expired], true);
+            && in_array($adBanner->status, [AdBannerStatus::Approved, AdBannerStatus::Active, AdBannerStatus::Expired], true)
+            && $adBanner->hasLiveTarget();
     }
 
     private function owns(User $user, AdBanner $adBanner): bool

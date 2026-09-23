@@ -62,7 +62,7 @@ class AdBannerResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with(['user', 'adPackage', 'media']);
+        return parent::getEloquentQuery()->with(['user', 'adPackage', 'media', 'listing']);
     }
 
     public static function infolist(Schema $schema): Schema

@@ -46,3 +46,44 @@ it('shows the listing_sidebar banner on a listing page', function () {
     $this->get($listing->url())
         ->assertSee(route('ad-banners.click', $banner));
 });
+
+it('shows a listing banner while its listing is live, hides it whenever the listing stops being live, and brings it back when it is live again', function () {
+    $listing = Listing::factory()->create();
+    $banner = AdBanner::factory()->targetingListing($listing)->active()->create(['placement' => 'home_top']);
+    $url = route('ad-banners.click', $banner);
+
+    $this->get('/')->assertSee($url);
+
+    $listing->update(['status' => 'sold']);
+    $this->get('/')->assertDontSee($url);
+
+    $listing->update(['status' => 'expired']);
+    $this->get('/')->assertDontSee($url);
+
+    $listing->update(['status' => 'active', 'expires_at' => now()->subMinute()]);
+    $this->get('/')->assertDontSee($url);
+
+    $listing->update(['expires_at' => now()->addDays(10)]);
+    $this->get('/')->assertSee($url);
+
+    $listing->delete();
+    $this->get('/')->assertDontSee($url);
+
+    $listing->restore();
+    $this->get('/')->assertSee($url);
+
+    $listing->user->update(['is_banned' => true]);
+    $this->get('/')->assertDontSee($url);
+});
+
+it('opens a listing banner in the same tab and an external one in a new tab', function () {
+    $listing = Listing::factory()->create();
+    AdBanner::factory()->targetingListing($listing)->active()->create(['placement' => 'home_top']);
+
+    $this->get('/')->assertDontSee('target="_blank"', false);
+
+    AdBanner::query()->delete();
+    AdBanner::factory()->active()->create(['placement' => 'home_top']);
+
+    $this->get('/')->assertSee('target="_blank"', false);
+});

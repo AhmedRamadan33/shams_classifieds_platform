@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Enums\PaymentStatus;
 use App\Models\AdBanner;
 use App\Models\AdPackage;
+use App\Models\Listing;
 use App\Models\Payment;
 use App\Models\User;
 
@@ -113,4 +114,52 @@ it('does not redirect for a pending banner either', function () {
     $banner = AdBanner::factory()->for($this->owner)->create(['target_url' => 'https://phishing.example/login']);
 
     $this->get(route('ad-banners.click', $banner))->assertRedirect(route('home'));
+});
+
+it('sends a listing banner click to its listing and counts it', function () {
+    $listing = Listing::factory()->for($this->owner)->create();
+    $banner = AdBanner::factory()->targetingListing($listing)->active()->create();
+
+    $this->get(route('ad-banners.click', $banner))->assertRedirect($listing->url());
+
+    expect($banner->fresh()->clicks)->toBe(1);
+});
+
+it('does not redirect for a listing banner whose listing is no longer live', function (string $change) {
+    $listing = Listing::factory()->for($this->owner)->create();
+    $banner = AdBanner::factory()->targetingListing($listing)->active()->create();
+
+    match ($change) {
+        'sold' => $listing->update(['status' => 'sold']),
+        'deleted' => $listing->delete(),
+        'gone for good' => $listing->forceDelete(),
+    };
+
+    $this->get(route('ad-banners.click', $banner))->assertRedirect(route('home'));
+
+    expect($banner->fresh()->clicks)->toBe(0);
+})->with(['sold', 'deleted', 'gone for good']);
+
+it('lets the owner pay for a listing banner while its listing is live', function () {
+    $listing = Listing::factory()->for($this->owner)->create();
+    $banner = AdBanner::factory()->targetingListing($listing)->approved()->create(['placement' => 'home_top']);
+
+    $this->actingAs($this->owner)
+        ->post(route('ad-banners.purchase.store', $banner), ['ad_package_id' => $this->homePackage->id])
+        ->assertRedirect();
+
+    expect($banner->fresh()->status->value)->toBe('active');
+});
+
+it('forbids paying for a banner whose listing is no longer live', function () {
+    $listing = Listing::factory()->for($this->owner)->create();
+    $banner = AdBanner::factory()->targetingListing($listing)->approved()->create(['placement' => 'home_top']);
+    $listing->update(['status' => 'sold']);
+
+    $this->actingAs($this->owner)->get(route('ad-banners.purchase', $banner))->assertForbidden();
+    $this->actingAs($this->owner)
+        ->post(route('ad-banners.purchase.store', $banner), ['ad_package_id' => $this->homePackage->id])
+        ->assertForbidden();
+
+    expect(Payment::count())->toBe(0);
 });

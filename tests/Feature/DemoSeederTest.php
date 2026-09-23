@@ -48,9 +48,10 @@ it('creates demo listings across categories with dynamic values, images, users, 
     $moderator = User::where('phone', '+201111111111')->sole();
     expect($moderator->hasRole('moderator'))->toBeTrue()->and($moderator->hasVerifiedPhone())->toBeTrue();
 
-    expect(AdBanner::count())->toBe(5)
+    expect(AdBanner::count())->toBe(6)
         ->and(AdBanner::doesntHave('media')->count())->toBe(0)
-        ->and(AdBanner::where('status', 'active')->count())->toBe(3)
+        ->and(AdBanner::whereNotNull('listing_id')->count())->toBe(1)
+        ->and(AdBanner::where('status', 'active')->count())->toBe(4)
         ->and(AdBanner::where('status', 'pending')->count())->toBe(1)
         ->and(AdBanner::where('status', 'rejected')->count())->toBe(1);
 
@@ -73,7 +74,7 @@ it('is safe to run twice', function () {
     $this->seed(DemoSeeder::class);
 
     expect(Listing::count())->toBe(40)
-        ->and(AdBanner::count())->toBe(5)
+        ->and(AdBanner::count())->toBe(6)
         ->and(Store::count())->toBe(4)
         ->and(SavedSearch::count())->toBe(2);
 });

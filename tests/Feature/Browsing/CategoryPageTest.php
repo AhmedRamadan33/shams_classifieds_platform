@@ -248,7 +248,7 @@ it('caches the home page sections and rebuilds them when a listing changes', fun
 
     DB::enableQueryLog();
     $this->get('/')->assertSee('إعلان موجود قبل التخزين');
-    expect(collect(DB::getQueryLog())->pluck('query')->filter(fn ($q) => str_contains($q, 'from `listings`')))->toBeEmpty();
+    expect(collect(DB::getQueryLog())->pluck('query')->filter(fn ($q) => str_contains($q, 'from `listings`') && ! str_contains($q, '`ad_banners`')))->toBeEmpty();
     DB::disableQueryLog();
 
     Listing::factory()->titled('إعلان جديد بعد التخزين')->create();

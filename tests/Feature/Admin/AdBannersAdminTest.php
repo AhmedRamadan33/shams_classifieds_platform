@@ -10,6 +10,7 @@ use App\Filament\Resources\AdPackages\Pages\CreateAdPackage;
 use App\Filament\Resources\AdPackages\Pages\ListAdPackages;
 use App\Models\AdBanner;
 use App\Models\AdPackage;
+use App\Models\Listing;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
@@ -110,4 +111,25 @@ it('approves a banner and its owner can then be routed to pay for it', function 
     app(ApproveAdBanner::class)($banner);
 
     $this->actingAs($owner)->get(route('ad-banners.purchase', $banner))->assertOk();
+});
+
+it('shows moderators which listing a banner points to', function () {
+    $this->actingAs($this->moderator);
+    $listing = Listing::factory()->titled('شقة للتجربة', 'وصف')->create();
+    $banner = AdBanner::factory()->targetingListing($listing)->create();
+
+    $this->get("/admin/ad-banners/{$banner->id}")->assertOk()->assertSee('شقة للتجربة');
+
+    Livewire::test(ListAdBanners::class)
+        ->assertCanSeeTableRecords([$banner])
+        ->assertSee('شقة للتجربة');
+});
+
+it('still shows a banner whose listing was deleted for good', function () {
+    $this->actingAs($this->moderator);
+    $listing = Listing::factory()->create();
+    $banner = AdBanner::factory()->targetingListing($listing)->create();
+    $listing->forceDelete();
+
+    $this->get("/admin/ad-banners/{$banner->id}")->assertOk()->assertSee(__('app.ad_banners.listing_removed'));
 });
