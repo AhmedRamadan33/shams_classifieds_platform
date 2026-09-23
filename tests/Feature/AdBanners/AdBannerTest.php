@@ -84,3 +84,13 @@ it('shows the rejection reason to the owner on their banners page', function () 
     $this->actingAs($this->user)->get(route('ad-banners.index'))
         ->assertSee($banner->rejection_reason);
 });
+
+it('only accepts http and https target urls', function (string $url) {
+    $this->actingAs($this->user)->post(route('ad-banners.store'), [
+        'placement' => 'home_top',
+        'target_url' => $url,
+        'image' => Fixtures::image(),
+    ])->assertSessionHasErrors('target_url');
+
+    expect(AdBanner::count())->toBe(0);
+})->with(['javascript:alert(1)', 'ftp://example.com/file', 'data:text/html;base64,PGh0bWw+', 'file:///etc/passwd']);

@@ -100,3 +100,17 @@ it('tracks a click and redirects to the target url', function () {
 
     expect($active->fresh()->clicks)->toBe(1);
 });
+
+it('never redirects for a banner that is not live, and does not count the click', function (string $state) {
+    $banner = AdBanner::factory()->for($this->owner)->$state()->create(['target_url' => 'https://phishing.example/login']);
+
+    $this->get(route('ad-banners.click', $banner))->assertRedirect(route('home'));
+
+    expect($banner->fresh()->clicks)->toBe(0);
+})->with(['approved', 'rejected', 'expired']);
+
+it('does not redirect for a pending banner either', function () {
+    $banner = AdBanner::factory()->for($this->owner)->create(['target_url' => 'https://phishing.example/login']);
+
+    $this->get(route('ad-banners.click', $banner))->assertRedirect(route('home'));
+});

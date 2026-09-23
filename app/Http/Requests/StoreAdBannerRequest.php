@@ -21,7 +21,7 @@ class StoreAdBannerRequest extends FormRequest
         return [
             'placement' => ['required', Rule::in(array_map(fn (AdPlacement $p) => $p->value, AdPlacement::cases()))],
             'title' => ['nullable', 'string', 'max:150'],
-            'target_url' => ['required', 'url', 'max:500'],
+            'target_url' => ['required', 'url:http,https', 'max:500'],
             'image' => [
                 'required', 'image', 'mimetypes:image/jpeg,image/png,image/webp',
                 'max:'.config('classifieds.max_image_kb'),
