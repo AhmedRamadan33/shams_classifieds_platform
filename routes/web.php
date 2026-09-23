@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AdBannerClickController;
+use App\Http\Controllers\AdBannerController;
+use App\Http\Controllers\AdBannerPurchaseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CategoryFieldsController;
 use App\Http\Controllers\ConversationController;
@@ -52,6 +55,8 @@ Route::get('/api/categories/{category:id}/fields', [CategoryFieldsController::cl
 Route::post('/payments/webhook/paymob', PaymobWebhookController::class)->name('payments.webhook.paymob');
 
 Route::get('/payments/return', [FeaturedPurchaseController::class, 'returnFromGateway'])->name('payments.return-from-gateway');
+
+Route::get('/banner-click/{adBanner}', AdBannerClickController::class)->name('ad-banners.click');
 
 Route::middleware(['auth', 'phone.verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
@@ -105,6 +110,14 @@ Route::middleware(['auth', 'phone.verified'])->group(function () {
 
     Route::get('/subscribe', [SubscriptionController::class, 'create'])->name('subscribe');
     Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe.store');
+
+    Route::get('/advertise', [AdBannerController::class, 'create'])->name('ad-banners.create');
+    Route::post('/advertise', [AdBannerController::class, 'store'])
+        ->middleware(['honeypot', 'throttle:ad-banners-create'])
+        ->name('ad-banners.store');
+    Route::get('/banners', [AdBannerController::class, 'index'])->name('ad-banners.index');
+    Route::get('/banners/{adBanner}/purchase', [AdBannerPurchaseController::class, 'create'])->name('ad-banners.purchase');
+    Route::post('/banners/{adBanner}/purchase', [AdBannerPurchaseController::class, 'store'])->name('ad-banners.purchase.store');
 
     Route::post('/seller/{seller}/reviews', [ReviewController::class, 'store'])
         ->middleware('throttle:reviews')

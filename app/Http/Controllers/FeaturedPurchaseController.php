@@ -50,7 +50,7 @@ class FeaturedPurchaseController extends Controller
     {
         abort_unless($payment->user_id === auth()->id(), 403);
 
-        return view('payments.result', ['payment' => $payment->load(['listing', 'package', 'subscription.plan'])]);
+        return view('payments.result', ['payment' => $payment->load(['listing', 'package', 'subscription.plan', 'adBanner'])]);
     }
 
     public function returnFromGateway(Request $request): RedirectResponse

@@ -113,8 +113,11 @@
         @endif
 
         <div class="mt-6 grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
-            <x-filters :action="$formAction" :search="$search" :hidden="$hidden" :clear-url="$clearUrl"
-                       :selected-governorate="$governorate?->slug" />
+            <div class="space-y-4">
+                <x-filters :action="$formAction" :search="$search" :hidden="$hidden" :clear-url="$clearUrl"
+                           :selected-governorate="$governorate?->slug" />
+                <x-ad-banner placement="search_sidebar" />
+            </div>
 
             <section aria-label="{{ $heading }}">
                 @if ($listings->isEmpty())

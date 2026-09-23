@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Payment extends Model
 {
     protected $fillable = [
-        'user_id', 'listing_id', 'package_id', 'subscription_id', 'gateway', 'amount', 'currency',
-        'status', 'gateway_order_id', 'gateway_transaction_id', 'paid_at', 'meta',
+        'user_id', 'listing_id', 'package_id', 'subscription_id', 'ad_banner_id', 'gateway', 'amount',
+        'currency', 'status', 'gateway_order_id', 'gateway_transaction_id', 'paid_at', 'meta',
     ];
 
     protected $attributes = [
@@ -49,9 +49,19 @@ class Payment extends Model
         return $this->belongsTo(Subscription::class);
     }
 
+    public function adBanner(): BelongsTo
+    {
+        return $this->belongsTo(AdBanner::class);
+    }
+
     public function isForSubscription(): bool
     {
         return $this->subscription_id !== null;
+    }
+
+    public function isForAdBanner(): bool
+    {
+        return $this->ad_banner_id !== null;
     }
 
     public function isPaid(): bool

@@ -51,6 +51,18 @@ php artisan queue:work           # in another terminal: builds the WebP image co
   seller from their public page, one per reviewer per seller (leaving a new one edits it); the
   average rating and review list show on the seller page and the star rating also appears on that
   seller's listing pages. Moderators/admins can hide (not just delete) a review from the panel.
+- **Homepage hero slider:** admin-managed slides (image, optional title/subtitle/link, order,
+  active toggle) at `/admin` → «شرائح الصفحة الرئيسية», shown as an auto-advancing carousel at the
+  top of the homepage; nothing shows if there are no active slides.
+- **Sponsored ad banners:** anyone signed in can advertise at `/advertise` — pick a placement (top of
+  the homepage, the search-results sidebar, or a listing page's sidebar), upload a banner image and a
+  target URL. A moderator/admin approves or rejects the creative first (`/admin` → «البانرات
+  الإعلانية»); once approved, the advertiser pays for a package (`/admin` → «باقات البانرات
+  الإعلانية», priced and durationed per placement) at `/banners/{id}/purchase` — the same
+  Fake/Paymob gateway as featured listings — and the banner goes live immediately, clicks tracked.
+  Paying again while still running extends the remaining time instead of restarting it. Every other
+  filter (visibility, placement, expiry) is enforced in SQL on top of whichever banner is randomly
+  picked for a slot, so an unapproved or expired banner can never render.
 - **Public REST API (`/api/v1`):** a token-based JSON API (Laravel Sanctum) covering everything the
   website does — browsing/search, phone-verified register/login, your own listings (CRUD with image
   uploads), favorites, contact reveal, reports, notifications, in-app messages and saved searches. It

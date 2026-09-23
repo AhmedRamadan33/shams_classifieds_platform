@@ -13,6 +13,12 @@
         </div>
     </section>
 
+    <x-hero-slider />
+
+    <div class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8">
+        <x-ad-banner placement="home_top" />
+    </div>
+
     <div class="mx-auto max-w-7xl space-y-12 px-4 pb-4 sm:px-6 lg:px-8">
         <section aria-labelledby="home-categories" class="-mt-2">
             <h2 id="home-categories" class="text-xl font-bold text-slate-900">{{ __('app.home.categories_title') }}</h2>

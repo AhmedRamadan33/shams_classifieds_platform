@@ -8,6 +8,8 @@
                 <p class="font-bold">{{ __('app.payments.paid_title') }}</p>
                 @if ($payment->isForSubscription())
                     <p class="mt-1">{{ __('app.payments.paid_body_subscription', ['plan' => $payment->subscription->plan->name, 'date' => $payment->subscription->expires_at?->translatedFormat('j F Y')]) }}</p>
+                @elseif ($payment->isForAdBanner())
+                    <p class="mt-1">{{ __('app.payments.paid_body_ad_banner', ['date' => $payment->adBanner->expires_at?->translatedFormat('j F Y')]) }}</p>
                 @else
                     <p class="mt-1">{{ __('app.payments.paid_body', ['title' => $payment->listing->title, 'date' => $payment->listing->featured_until?->translatedFormat('j F Y')]) }}</p>
                 @endif

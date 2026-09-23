@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 return [
 
-    // ---------------------------------------------------------------- general
     'brand' => 'شمس',
     'tagline' => 'سوق الإعلانات المبوّبة لبيع وشراء كل ما تحتاجه: سيارات، عقارات، وظائف، إلكترونيات وخدمات.',
     'meta_description' => 'شمس: موقع إعلانات مبوّبة مجانية. تصفّح آلاف الإعلانات أو أضف إعلانك الآن وتواصل مع المعلنين مباشرة عبر الهاتف وواتساب.',
@@ -42,6 +41,7 @@ return [
         'saved_searches' => 'عمليات البحث المحفوظة',
         'store' => 'متجري',
         'subscribe' => 'اشترك في باقة',
+        'advertise' => 'أعلن معنا',
         'categories' => 'الأقسام',
         'admin' => 'لوحة الإدارة',
     ],
@@ -59,7 +59,6 @@ return [
         'next' => 'الصفحة التالية',
     ],
 
-    // ------------------------------------------------------------------- auth
     'auth' => [
         'login_title' => 'تسجيل الدخول',
         'login_subtitle' => 'أدخل رقم هاتفك وكلمة المرور للمتابعة.',
@@ -127,7 +126,6 @@ return [
         'welcome' => 'مرحباً :name',
     ],
 
-    // ------------------------------------------------------- categories/fields
     'field_types' => [
         'text' => 'نص',
         'number' => 'رقم',
@@ -135,7 +133,6 @@ return [
         'boolean' => 'نعم / لا',
     ],
 
-    // ------------------------------------------------------------ admin panel
     'admin' => [
         'groups' => [
             'catalog' => 'الأقسام والمواقع',
@@ -175,7 +172,6 @@ return [
         'is_filterable' => 'قابل للفلترة',
         'governorate_field' => 'المحافظة',
 
-        // moderation
         'listing' => 'إعلان',
         'listings' => 'الإعلانات',
         'image' => 'الصورة',
@@ -229,7 +225,6 @@ return [
         'open_reports' => 'بلاغات مفتوحة',
         'open_reports_hint' => 'اضغط لعرض البلاغات',
 
-        // users
         'user' => 'مستخدم',
         'users' => 'المستخدمون',
         'roles' => 'الدور',
@@ -246,7 +241,6 @@ return [
         'unbanned_done' => 'تم إلغاء حظر المستخدم.',
         'password_keep' => 'اتركها فارغة للإبقاء على كلمة المرور الحالية.',
 
-        // static pages
         'page' => 'صفحة',
         'pages' => 'الصفحات الثابتة',
         'body' => 'المحتوى',
@@ -254,7 +248,6 @@ return [
         'is_published' => 'منشورة',
         'page_slug_help' => 'أحرف إنجليزية صغيرة وأرقام وشرطات، مثل: about. تظهر الصفحة على الرابط /p/الرابط.',
 
-        // packages & payments
         'package' => 'باقة',
         'packages' => 'باقات التمييز',
         'days' => 'عدد الأيام',
@@ -267,7 +260,6 @@ return [
         'paid_at' => 'تاريخ الدفع',
         'gateway_order_id' => 'رقم الطلب لدى البوابة',
 
-        // stores, plans & subscriptions
         'store' => 'متجر',
         'stores' => 'المتاجر',
         'plan' => 'باقة اشتراك',
@@ -280,7 +272,6 @@ return [
         'starts_at' => 'تاريخ البدء',
         'expires_at' => 'تاريخ الانتهاء',
 
-        // reviews
         'review' => 'تقييم',
         'reviews' => 'التقييمات',
         'reviewer' => 'المقيِّم',
@@ -291,9 +282,21 @@ return [
         'unhide' => 'إظهار',
         'hidden_done' => 'تم إخفاء التقييم.',
         'unhidden_done' => 'تم إظهار التقييم.',
+
+        'hero_slide' => 'شريحة',
+        'hero_slides' => 'شرائح الصفحة الرئيسية',
+        'current_image' => 'الصورة الحالية',
+        'subtitle' => 'نص فرعي',
+        'link_url' => 'الرابط',
+        'ad_package' => 'باقة إعلان',
+        'ad_packages' => 'باقات البانرات الإعلانية',
+        'ad_banner' => 'بانر إعلاني',
+        'ad_banners' => 'البانرات الإعلانية',
+        'placement' => 'مكان الظهور',
+        'advertiser' => 'المُعلِن',
+        'clicks' => 'عدد الضغطات',
     ],
 
-    // ----------------------------------------------------------------- listing
     'listing' => [
         'statuses' => [
             'pending' => 'قيد المراجعة',
@@ -380,7 +383,6 @@ return [
         'image_max' => 'الحد الأقصى لعدد الصور :max صور.',
     ],
 
-    // ---------------------------------------------------------------- browsing
     'breadcrumbs' => 'مسار التنقل',
 
     'browse' => [
@@ -451,6 +453,8 @@ return [
         'cta_title' => 'عندك شيء للبيع؟',
         'cta_text' => 'أضف إعلانك مجاناً في دقائق، وتواصل مع المشترين مباشرة.',
         'no_listings' => 'لا توجد إعلانات بعد. كن أول من يضيف إعلاناً!',
+        'hero_slider' => 'أبرز العروض',
+        'hero_slide_n' => 'الشريحة رقم :n',
     ],
 
     'listing_page' => [
@@ -528,7 +532,6 @@ return [
         '503' => ['title' => 'الموقع تحت الصيانة', 'message' => 'نعود قريباً. شكراً لصبرك.'],
     ],
 
-    // ------------------------------------------------- dashboard/favorites/etc.
     'my_listings' => [
         'title' => 'لوحتي',
         'add' => 'أضف إعلاناً جديداً',
@@ -564,6 +567,7 @@ return [
         'paid_title' => 'تم الدفع بنجاح',
         'paid_body' => 'أصبح إعلانك «:title» مميزاً حتى :date.',
         'paid_body_subscription' => 'أصبح اشتراكك في «:plan» سارياً حتى :date.',
+        'paid_body_ad_banner' => 'أصبح بانرك الإعلاني سارياً حتى :date.',
         'pending_title' => 'الدفع قيد المعالجة',
         'pending_body' => 'سنؤكد الدفع خلال لحظات. حدّث الصفحة إذا لم تتغيّر الحالة.',
         'failed_title' => 'فشلت عملية الدفع',
@@ -643,6 +647,41 @@ return [
         ],
     ],
 
+    'ad_banners' => [
+        'placements' => [
+            'home_top' => 'أعلى الصفحة الرئيسية',
+            'search_sidebar' => 'الشريط الجانبي لنتائج البحث',
+            'listing_sidebar' => 'الشريط الجانبي لصفحة الإعلان',
+        ],
+        'statuses' => [
+            'pending' => 'قيد المراجعة',
+            'approved' => 'بانتظار الدفع',
+            'active' => 'ساري',
+            'rejected' => 'مرفوض',
+            'expired' => 'منتهي',
+        ],
+        'sponsored_label' => 'إعلان ممول',
+        'create_title' => 'أعلن معنا',
+        'create_subtitle' => 'ارفع تصميم البانر واختر مكان ظهوره، وسيصلك إشعار فور مراجعته لتدفع قيمته وتفعيله.',
+        'placement' => 'مكان الظهور',
+        'placement_help' => 'مكان ظهور البانر في الموقع.',
+        'internal_title' => 'اسم داخلي (اختياري)',
+        'internal_title_help' => 'لتمييزه في قائمتك، لا يظهر للزوار.',
+        'target_url' => 'رابط الوجهة',
+        'image' => 'صورة البانر',
+        'image_help' => 'JPG أو PNG أو WebP، بحد أقصى :size.',
+        'submit' => 'إرسال للمراجعة',
+        'submitted' => 'تم استلام طلبك وسيصلك إشعار عند مراجعته.',
+        'index_title' => 'بانراتي الإعلانية',
+        'empty_title' => 'لا توجد بانرات إعلانية',
+        'empty_message' => 'أرسل تصميم بانرك الأول ليظهر في الموقع بعد الموافقة والدفع.',
+        'pay_now' => 'ادفع الآن',
+        'expires_at' => 'ساري حتى :date',
+        'purchase_title' => 'تفعيل البانر الإعلاني',
+        'purchase_subtitle' => 'اختر مدة الظهور في «:placement».',
+        'currently_running_until' => 'البانر ساري حالياً حتى :date. الدفع الآن يمدد المدة بدلاً من استبدالها.',
+    ],
+
     'notifications' => [
         'title' => 'الإشعارات',
         'empty_title' => 'لا توجد إشعارات',
@@ -654,9 +693,10 @@ return [
         'expiring' => 'إعلانك «:title» ينتهي في :date. جدّده الآن ليبقى ظاهراً.',
         'new_message' => 'رسالة جديدة من :name بخصوص إعلان «:title».',
         'saved_search_matched' => 'يوجد :count إعلان جديد يطابق بحثك المحفوظ «:name».',
+        'ad_banner_approved' => 'تمت الموافقة على تصميم بانرك الإعلاني. يمكنك الآن دفع قيمته لتفعيله.',
+        'ad_banner_rejected' => 'تم رفض بانرك الإعلاني. السبب: :reason',
     ],
 
-    // Shared bits of the notification e-mails (App\Notifications\*).
     'mail' => [
         'greeting' => 'مرحباً :name،',
         'action' => 'عرض',
@@ -667,6 +707,8 @@ return [
             'expiring' => 'إعلانك على وشك الانتهاء',
             'new_message' => 'رسالة جديدة على :brand',
             'saved_search_matched' => 'نتائج جديدة لبحثك المحفوظ',
+            'ad_banner_approved' => 'تمت الموافقة على بانرك الإعلاني',
+            'ad_banner_rejected' => 'تم رفض بانرك الإعلاني',
         ],
     ],
 
@@ -706,9 +748,6 @@ return [
         'honeypot_label' => 'اترك هذا الحقل فارغاً',
     ],
 
-    // Field names used in validation messages. They live here, not in validation.php, because
-    // `php artisan lang:update` rewrites that file (and replaces any key the package also defines,
-    // e.g. "phone"). AppServiceProvider passes them to every validator, so they always win.
     'validation_attributes' => [
         'phone' => 'رقم الهاتف',
         'code' => 'رمز التحقق',
@@ -725,7 +764,10 @@ return [
         'options' => 'الخيارات',
         'is_active' => 'مفعّل',
         'sort_order' => 'الترتيب',
+        'placement' => 'مكان الظهور',
+        'target_url' => 'رابط الوجهة',
+        'image' => 'الصورة',
+        'title' => 'العنوان',
+        'ad_package_id' => 'الباقة',
     ],
-
-    // [[next keys]]
 ];

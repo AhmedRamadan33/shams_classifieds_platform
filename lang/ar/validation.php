@@ -285,7 +285,6 @@ return [
         'work' => 'العمل',
         'year' => 'السنة',
 
-        // Classifieds platform
         'phone' => 'رقم الهاتف',
         'code' => 'رمز التحقق',
         'avatar' => 'الصورة الشخصية',

@@ -130,6 +130,11 @@ class User extends Authenticatable implements FilamentUser
             : $this->subscriptions()->active()->latest('expires_at')->first();
     }
 
+    public function adBanners(): HasMany
+    {
+        return $this->hasMany(AdBanner::class);
+    }
+
     public function unreadMessagesCount(): int
     {
         return Message::query()

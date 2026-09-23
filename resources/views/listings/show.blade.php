@@ -258,6 +258,8 @@
                         @endforeach
                     </ul>
                 </section>
+
+                <x-ad-banner placement="listing_sidebar" />
             </aside>
         </div>
 

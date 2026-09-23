@@ -133,5 +133,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('messages', fn (Request $request) => Limit::perMinute(20)->by('messages:'.($request->user()?->id ?? $request->ip())));
 
         RateLimiter::for('reviews', fn (Request $request) => Limit::perMinute(10)->by('reviews:'.($request->user()?->id ?? $request->ip())));
+
+        RateLimiter::for('ad-banners-create', fn (Request $request) => Limit::perMinute(10)->by('ad-banners:'.($request->user()?->id ?? $request->ip())));
     }
 }

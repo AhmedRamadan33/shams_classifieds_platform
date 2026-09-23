@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('listings:expire')->daily()->withoutOverlapping();
 
+Schedule::command('ad-banners:expire')->daily()->withoutOverlapping();
+
 Schedule::command('listings:remind-expiring')->daily()->withoutOverlapping();
 
 Schedule::command('searches:notify')->daily()->withoutOverlapping();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Enums\AdBannerStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\SubscriptionStatus;
 use App\Models\Payment;
@@ -22,6 +23,8 @@ final class CompletePayment
 
             if ($payment->isForSubscription()) {
                 $this->activateSubscription($payment);
+            } elseif ($payment->isForAdBanner()) {
+                $this->activateAdBanner($payment);
             } else {
                 $this->extendFeatured($payment);
             }
@@ -57,6 +60,22 @@ final class CompletePayment
             'status' => SubscriptionStatus::Active,
             'starts_at' => $subscription->starts_at ?? now(),
             'expires_at' => $from->copy()->addDays($plan->duration_days),
+        ])->save();
+    }
+
+    private function activateAdBanner(Payment $payment): void
+    {
+        $banner = $payment->adBanner()->lockForUpdate()->firstOrFail();
+        $package = $banner->adPackage;
+
+        $from = $banner->status === AdBannerStatus::Active && $banner->expires_at?->isFuture()
+            ? $banner->expires_at
+            : now();
+
+        $banner->forceFill([
+            'status' => AdBannerStatus::Active,
+            'starts_at' => $banner->starts_at ?? now(),
+            'expires_at' => $from->copy()->addDays($package->duration_days),
         ])->save();
     }
 }
