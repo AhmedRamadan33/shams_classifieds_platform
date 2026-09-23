@@ -13,8 +13,6 @@
         </div>
     </section>
 
-    <x-hero-slider />
-
     <div class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8">
         <x-ad-banner placement="home_top" />
     </div>

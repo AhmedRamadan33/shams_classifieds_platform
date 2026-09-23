@@ -17,7 +17,6 @@ use App\Models\CategoryField;
 use App\Models\Conversation;
 use App\Models\Favorite;
 use App\Models\Governorate;
-use App\Models\HeroSlide;
 use App\Models\Listing;
 use App\Models\Package;
 use App\Models\Payment;
@@ -128,7 +127,6 @@ class DemoSeeder extends Seeder
         $this->createReviews($users);
         $this->createConversations($users, $listings);
         $this->createSavedSearches($users);
-        $this->createHeroSlides($imageFiles);
         $this->createAdBanners($users, $imageFiles);
 
         File::deleteDirectory(storage_path('app/demo-placeholders'));
@@ -542,26 +540,6 @@ class DemoSeeder extends Seeder
             ['user_id' => $user->id, 'name' => 'سيارات تويوتا'],
             ['category_slug' => 'cars-for-sale', 'filters' => ['q' => 'تويوتا'], 'notify' => false],
         );
-    }
-
-    private function createHeroSlides(array $imageFiles): void
-    {
-        $slides = [
-            ['title' => 'اكتشف آلاف الإعلانات', 'subtitle' => 'سيارات، عقارات، إلكترونيات وأكثر في مكان واحد.', 'link_url' => route('search', [], false)],
-            ['title' => 'بيع ما لا تحتاجه في دقائق', 'subtitle' => 'أضف إعلانك مجاناً ووصله للمهتمين مباشرة.', 'link_url' => route('listings.create', [], false)],
-            ['title' => 'ميّز إعلانك أو أعلن معنا', 'subtitle' => 'باقات تمييز وبانرات إعلانية لزيادة ظهورك.', 'link_url' => route('ad-banners.create', [], false)],
-        ];
-
-        foreach ($slides as $i => $slide) {
-            $existing = HeroSlide::where('title', $slide['title'])->first();
-
-            if ($existing) {
-                continue;
-            }
-
-            $created = HeroSlide::create($slide + ['sort_order' => $i]);
-            $created->addMedia($imageFiles[$i % count($imageFiles)])->preservingOriginal()->toMediaCollection(HeroSlide::IMAGE);
-        }
     }
 
     private function createAdBanners(Collection $users, array $imageFiles): Collection

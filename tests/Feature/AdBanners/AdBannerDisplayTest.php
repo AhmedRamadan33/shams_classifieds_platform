@@ -4,19 +4,10 @@ declare(strict_types=1);
 
 use App\Models\AdBanner;
 use App\Models\Category;
-use App\Models\HeroSlide;
 use App\Models\Listing;
 
-it('shows nothing on the home page when there are no active hero slides or home banners', function () {
+it('shows nothing on the home page when there are no active home banners', function () {
     $this->get('/')->assertOk()->assertDontSee(__('app.ad_banners.sponsored_label'));
-});
-
-it('shows the hero slider on the home page only when an active slide exists', function () {
-    $slide = HeroSlide::factory()->create(['title' => 'عرض العيد', 'is_active' => false]);
-    $this->get('/')->assertDontSee('عرض العيد');
-
-    $slide->update(['is_active' => true]);
-    $this->get('/')->assertSee('عرض العيد');
 });
 
 it('shows an active home_top banner on the home page, but not a banner for another placement', function () {

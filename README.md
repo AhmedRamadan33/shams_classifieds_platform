@@ -21,7 +21,7 @@ php artisan key:generate
 # create an empty MySQL database (utf8mb4) named like DB_DATABASE in .env
 php artisan migrate --seed       # roles, admin, governorates/cities, categories, static pages
 php artisan storage:link
-php artisan serve                # http://localhost:8000
+php artisan serve                # http://127.0.0.1:8000
 php artisan queue:work           # in another terminal: builds the WebP image conversions
 ```
 
@@ -51,9 +51,6 @@ php artisan queue:work           # in another terminal: builds the WebP image co
   seller from their public page, one per reviewer per seller (leaving a new one edits it); the
   average rating and review list show on the seller page and the star rating also appears on that
   seller's listing pages. Moderators/admins can hide (not just delete) a review from the panel.
-- **Homepage hero slider:** admin-managed slides (image, optional title/subtitle/link, order,
-  active toggle) at `/admin` → «شرائح الصفحة الرئيسية», shown as an auto-advancing carousel at the
-  top of the homepage; nothing shows if there are no active slides.
 - **Sponsored ad banners:** anyone signed in can advertise at `/advertise` — pick a placement (top of
   the homepage, the search-results sidebar, or a listing page's sidebar), upload a banner image and a
   target URL. A moderator/admin approves or rejects the creative first (`/admin` → «البانرات

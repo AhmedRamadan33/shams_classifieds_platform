@@ -143,7 +143,7 @@ it('lets every role follow every link on the site without errors, login bounces 
     }
 
     if ($role === 'admin') {
-        array_push($seeds, '/admin/users', '/admin/categories', '/admin/packages', '/admin/plans', '/admin/payments', '/admin/hero-slides', '/admin/ad-packages', '/admin/stores', '/admin/subscriptions', '/admin/pages');
+        array_push($seeds, '/admin/users', '/admin/categories', '/admin/packages', '/admin/plans', '/admin/payments', '/admin/ad-packages', '/admin/stores', '/admin/subscriptions', '/admin/pages');
 
         foreach (Payment::limit(3)->pluck('id') as $id) {
             $seeds[] = "/admin/payments/{$id}";

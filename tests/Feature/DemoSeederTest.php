@@ -7,7 +7,6 @@ use App\Models\AdBanner;
 use App\Models\Category;
 use App\Models\Conversation;
 use App\Models\Favorite;
-use App\Models\HeroSlide;
 use App\Models\Listing;
 use App\Models\Message;
 use App\Models\Payment;
@@ -49,9 +48,6 @@ it('creates demo listings across categories with dynamic values, images, users, 
     $moderator = User::where('phone', '+201111111111')->sole();
     expect($moderator->hasRole('moderator'))->toBeTrue()->and($moderator->hasVerifiedPhone())->toBeTrue();
 
-    expect(HeroSlide::count())->toBe(3)
-        ->and(HeroSlide::doesntHave('media')->count())->toBe(0);
-
     expect(AdBanner::count())->toBe(5)
         ->and(AdBanner::doesntHave('media')->count())->toBe(0)
         ->and(AdBanner::where('status', 'active')->count())->toBe(3)
@@ -77,7 +73,6 @@ it('is safe to run twice', function () {
     $this->seed(DemoSeeder::class);
 
     expect(Listing::count())->toBe(40)
-        ->and(HeroSlide::count())->toBe(3)
         ->and(AdBanner::count())->toBe(5)
         ->and(Store::count())->toBe(4)
         ->and(SavedSearch::count())->toBe(2);
@@ -90,7 +85,6 @@ it('refuses to run outside the local environment', function () {
 
     expect(Listing::count())->toBe(0)
         ->and(User::count())->toBe(0)
-        ->and(HeroSlide::count())->toBe(0)
         ->and(AdBanner::count())->toBe(0)
         ->and(Store::count())->toBe(0)
         ->and(SavedSearch::count())->toBe(0);

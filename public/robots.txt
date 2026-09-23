@@ -14,4 +14,4 @@ Disallow: /reset-password
 Disallow: /verify-phone
 
 # Refreshed with this site's absolute URL every time `php artisan sitemap:generate` runs (daily).
-Sitemap: http://localhost:8000/sitemap.xml
+Sitemap: http://127.0.0.1:8000/sitemap.xml

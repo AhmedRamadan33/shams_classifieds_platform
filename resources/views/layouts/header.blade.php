@@ -18,6 +18,11 @@
             <span>{{ __('app.brand') }}</span>
         </a>
 
+        <nav class="hidden shrink-0 items-center gap-1 lg:flex" aria-label="{{ __('app.menu') }}">
+            <a href="{{ route('search') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-brand-700">{{ __('app.nav.browse') }}</a>
+            <a href="{{ route('ad-banners.create') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-brand-700">{{ __('app.nav.advertise') }}</a>
+        </nav>
+
         <form action="{{ route('search') }}" method="GET" role="search" class="hidden min-w-0 flex-1 md:block">
             <label for="header-search" class="sr-only">{{ __('app.browse.search_button') }}</label>
             <div class="relative">
@@ -86,7 +91,7 @@
                         <a href="{{ route('saved-searches.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">{{ __('app.nav.saved_searches') }}</a>
                         <a href="{{ route('store.edit') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">{{ __('app.nav.store') }}</a>
                         <a href="{{ route('subscribe') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">{{ __('app.nav.subscribe') }}</a>
-                        <a href="{{ route('ad-banners.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">{{ __('app.nav.advertise') }}</a>
+                        <a href="{{ route('ad-banners.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">{{ __('app.nav.my_banners') }}</a>
                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">{{ __('app.nav.profile') }}</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -127,6 +132,8 @@
             <ul class="space-y-1 text-base">
                 <li><a href="{{ route('home') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.home') }}</a></li>
                 <li><a href="{{ route('listings.create') }}" class="block rounded-lg bg-brand-50 px-3 py-2.5 font-bold text-brand-800 hover:bg-brand-100">{{ __('app.nav.add_listing') }}</a></li>
+                <li><a href="{{ route('search') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.browse') }}</a></li>
+                <li><a href="{{ route('ad-banners.create') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.advertise') }}</a></li>
                 @stack('drawer-links')
                 @auth
                     @if (Auth::user()->isStaff())
@@ -138,7 +145,7 @@
                     <li><a href="{{ route('saved-searches.index') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.saved_searches') }}</a></li>
                     <li><a href="{{ route('store.edit') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.store') }}</a></li>
                     <li><a href="{{ route('subscribe') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.subscribe') }}</a></li>
-                    <li><a href="{{ route('ad-banners.index') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.advertise') }}</a></li>
+                    <li><a href="{{ route('ad-banners.index') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.my_banners') }}</a></li>
                     <li><a href="{{ route('notifications.index') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.notifications') }}</a></li>
                     <li><a href="{{ route('profile.edit') }}" class="block rounded-lg px-3 py-2.5 font-medium text-slate-800 hover:bg-slate-100">{{ __('app.nav.profile') }}</a></li>
                     <li>
