@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Categories\RelationManagers;
 
 use App\Enums\FieldType;
+use App\Filament\Support\RowActions;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -126,8 +127,10 @@ class FieldsRelationManager extends RelationManager
                 CreateAction::make(),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                RowActions::group([
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

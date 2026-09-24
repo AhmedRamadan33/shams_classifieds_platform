@@ -7,6 +7,7 @@ namespace App\Filament\Resources\AdBanners\Tables;
 use App\Enums\AdBannerStatus;
 use App\Enums\AdPlacement;
 use App\Filament\Resources\AdBanners\Actions\AdBannerActions;
+use App\Filament\Support\RowActions;
 use App\Models\AdBanner;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
@@ -63,9 +64,11 @@ class AdBannersTable
                     ->options(AdPlacement::options()),
             ])
             ->recordActions([
-                ViewAction::make(),
-                AdBannerActions::approve(),
-                AdBannerActions::reject(),
+                RowActions::group([
+                    ViewAction::make(),
+                    AdBannerActions::approve(),
+                    AdBannerActions::reject(),
+                ]),
             ]);
     }
 }

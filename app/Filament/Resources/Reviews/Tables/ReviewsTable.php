@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Reviews\Tables;
 
 use App\Filament\Resources\Reviews\Actions\ReviewActions;
+use App\Filament\Support\RowActions;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
@@ -47,8 +48,10 @@ class ReviewsTable
                     ->label(__('app.admin.is_hidden')),
             ])
             ->recordActions([
-                ReviewActions::hide(),
-                ReviewActions::unhide(),
+                RowActions::group([
+                    ReviewActions::hide(),
+                    ReviewActions::unhide(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

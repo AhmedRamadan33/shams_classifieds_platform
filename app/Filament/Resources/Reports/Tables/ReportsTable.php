@@ -8,6 +8,7 @@ use App\Enums\ReportReason;
 use App\Enums\ReportStatus;
 use App\Filament\Resources\Listings\ListingResource;
 use App\Filament\Resources\Reports\Actions\ReportActions;
+use App\Filament\Support\RowActions;
 use App\Models\Report;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -63,9 +64,11 @@ class ReportsTable
                     ->options(ReportReason::options()),
             ])
             ->recordActions([
-                ReportActions::resolve(),
-                ReportActions::dismiss(),
-                ReportActions::removeListing(),
+                RowActions::group([
+                    ReportActions::resolve(),
+                    ReportActions::dismiss(),
+                    ReportActions::removeListing(),
+                ]),
             ]);
     }
 }

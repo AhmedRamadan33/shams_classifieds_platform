@@ -7,6 +7,7 @@ namespace App\Filament\Resources\Listings\Tables;
 use App\Enums\ListingStatus;
 use App\Filament\Resources\Listings\Actions\ListingActions;
 use App\Filament\Resources\Listings\ListingResource;
+use App\Filament\Support\RowActions;
 use App\Models\Category;
 use App\Models\Listing;
 use Filament\Actions\BulkActionGroup;
@@ -81,11 +82,13 @@ class ListingsTable
                     ),
             ])
             ->recordActions([
-                ViewAction::make(),
-                ListingActions::approve(),
-                ListingActions::reject(),
-                ListingActions::feature(),
-                DeleteAction::make(),
+                RowActions::group([
+                    ViewAction::make(),
+                    ListingActions::approve(),
+                    ListingActions::reject(),
+                    ListingActions::feature(),
+                    DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

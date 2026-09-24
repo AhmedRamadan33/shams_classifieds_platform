@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Filament\Support\RowActions;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -61,8 +62,10 @@ class UsersTable
                         : $query),
             ])
             ->recordActions([
-                EditAction::make(),
-                self::banToggle(),
+                RowActions::group([
+                    EditAction::make(),
+                    self::banToggle(),
+                ]),
             ]);
     }
 

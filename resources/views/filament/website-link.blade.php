@@ -1,0 +1,9 @@
+<x-filament::icon-button
+    icon="heroicon-o-globe-alt"
+    tag="a"
+    :href="url('/')"
+    target="_blank"
+    color="gray"
+    :label="__('app.admin.open_website')"
+    :tooltip="__('app.admin.open_website')"
+/>

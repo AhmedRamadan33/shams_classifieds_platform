@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Stores\Tables;
 
+use App\Filament\Support\RowActions;
 use App\Models\Store;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -42,12 +43,14 @@ class StoresTable
             ])
             ->defaultSort('created_at', 'desc')
             ->recordActions([
-                Action::make('open_public')
-                    ->label(__('app.admin.open_public'))
-                    ->icon(Heroicon::OutlinedEye)
-                    ->color('gray')
-                    ->url(fn (Store $record): string => $record->url(), shouldOpenInNewTab: true),
-                DeleteAction::make(),
+                RowActions::group([
+                    Action::make('open_public')
+                        ->label(__('app.admin.open_public'))
+                        ->icon(Heroicon::OutlinedEye)
+                        ->color('gray')
+                        ->url(fn (Store $record): string => $record->url(), shouldOpenInNewTab: true),
+                    DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
