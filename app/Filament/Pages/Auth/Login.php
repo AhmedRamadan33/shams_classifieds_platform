@@ -9,6 +9,7 @@ use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use SensitiveParameter;
 
@@ -27,16 +28,22 @@ class Login extends BaseLogin
     protected function getPhoneFormComponent(): Component
     {
         return TextInput::make('phone')
-            ->label(__('app.auth.phone'))
-            ->inputMode('tel')
+            ->label(__('app.auth.login_identifier'))
             ->required()
-            ->autocomplete('tel')
+            ->autocomplete('username')
             ->autofocus()
             ->extraInputAttributes(['dir' => 'ltr']);
     }
 
     protected function getCredentialsFromFormData(#[SensitiveParameter] array $data): array
     {
+        if (str_contains((string) $data['phone'], '@')) {
+            return [
+                'email' => Str::lower(trim((string) $data['phone'])),
+                'password' => $data['password'],
+            ];
+        }
+
         return [
             'phone' => app(PhoneNormalizer::class)->tryNormalize($data['phone']) ?? $data['phone'],
             'password' => $data['password'],

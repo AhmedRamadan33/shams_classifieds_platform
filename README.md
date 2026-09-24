@@ -25,7 +25,8 @@ php artisan serve                # http://127.0.0.1:8000
 php artisan queue:work           # in another terminal: builds the WebP image conversions
 ```
 
-- **Admin panel:** `/admin`. Sign in with `ADMIN_PHONE` / `ADMIN_PASSWORD` from `.env`.
+- **Admin panel:** `/admin`. Sign in with `ADMIN_PHONE` (or `ADMIN_EMAIL`) and `ADMIN_PASSWORD` from `.env`.
+  Every login form (site, admin panel, API) accepts either the phone number or the e-mail of the account.
 - **OTP codes:** `SMS_DRIVER=log` (the default) writes every code to `storage/logs/laravel.log`; read
   it there to finish a registration locally. Set `SMS_DRIVER=twilio` or `SMS_DRIVER=vonage` and the
   matching credentials in `.env` to send real SMS (see `.env.example`).
@@ -80,11 +81,12 @@ php artisan queue:work           # in another terminal: builds the WebP image co
   Search engine".
 - **Demo data** (local only): `php artisan migrate:fresh --seed` (with `SEED_DEMO_DATA=true`, the default in
   `.env.example`) or `php artisan db:seed --class=DemoSeeder` adds ~200 listings, 12 users
-  (password `password`), a moderator (`01111111111` / `password`), favorites, reports, stores, reviews,
+  (`user1@shams.test` … `user12@shams.test`), a moderator (`moderator@shams.test`), favorites, reports, stores, reviews,
   conversations and sponsored banners. Every listing carries real photographs that match its title
   (CC0 stock photos kept in `database/seeders/data/images/`, credits in `CREDITS.md` there), a
   location and field values that agree with the title, and the banners link to live pages. Run
-  `php artisan queue:work` afterwards so the image conversions get generated.
+  `php artisan queue:work` afterwards so the image conversions get generated. All demo accounts, and the
+  local administrator (`admin@shams.test`), share the password `123456789`.
 - **Before deploying:** run `php artisan launch:check` (add `--strict` to also fail on warnings). It
   checks the environment, SMS/mail/CAPTCHA configuration, admin password, PHP extensions and upload
   limits, database engine and migrations, `public/storage`, the sitemap and `mysqldump` availability.

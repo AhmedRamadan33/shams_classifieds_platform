@@ -21,6 +21,33 @@ it('logs in with a phone number and password', function () {
     $this->assertAuthenticatedAs($user);
 });
 
+it('logs in with an e-mail address and password, whatever its letter case', function (string $typed) {
+    $user = User::factory()->create(['phone' => '+201012345678', 'email' => 'admin@shams.test']);
+
+    $this->post('/login', ['phone' => $typed, 'password' => 'password'])
+        ->assertRedirect(route('dashboard'));
+
+    $this->assertAuthenticatedAs($user);
+})->with(['admin@shams.test', 'Admin@Shams.Test', '  admin@shams.test ']);
+
+it('rejects an unknown e-mail address or a wrong password for a known one', function () {
+    User::factory()->create(['phone' => '+201012345678', 'email' => 'admin@shams.test']);
+
+    $this->post('/login', ['phone' => 'nobody@shams.test', 'password' => 'password'])->assertSessionHasErrors('phone');
+    $this->post('/login', ['phone' => 'admin@shams.test', 'password' => 'wrong-password'])->assertSessionHasErrors('phone');
+
+    $this->assertGuest();
+});
+
+it('blocks a banned user who logs in with an e-mail address', function () {
+    User::factory()->banned()->create(['phone' => '+201012345678', 'email' => 'admin@shams.test']);
+
+    $this->post('/login', ['phone' => 'admin@shams.test', 'password' => 'password'])
+        ->assertSessionHasErrors(['phone' => __('app.auth.banned')]);
+
+    $this->assertGuest();
+});
+
 it('accepts the phone in any supported format', function (string $typed) {
     $user = User::factory()->create(['phone' => '+201012345678']);
 

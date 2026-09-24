@@ -18,6 +18,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\DemoSeeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
@@ -82,6 +83,13 @@ it('creates demo listings across categories with dynamic values, images, users, 
     $moderator = User::where('phone', '+201111111111')->sole();
     expect($moderator->hasRole('moderator'))->toBeTrue()->and($moderator->hasVerifiedPhone())->toBeTrue();
 
+    expect($moderator->email)->toBe('moderator@shams.test');
+
+    User::where('phone', 'like', '+2012%')->orderBy('id')->get()->each(function (User $user, int $index) {
+        expect($user->email)->toBe('user'.($index + 1).'@shams.test');
+    });
+
+    User::all()->each(fn (User $user) => expect(Hash::check('123456789', $user->password))->toBeTrue());
     expect(AdBanner::count())->toBe(7)
         ->and(AdBanner::doesntHave('media')->count())->toBe(0)
         ->and(AdBanner::whereNotNull('listing_id')->count())->toBe(1)

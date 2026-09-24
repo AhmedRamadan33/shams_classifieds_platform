@@ -124,7 +124,7 @@ paths:
     post:
       tags: [Auth]
       security: []
-      summary: Log in with phone + password
+      summary: Log in with phone (or e-mail) + password
       requestBody:
         required: true
         content:
@@ -133,7 +133,7 @@ paths:
               type: object
               required: [phone, password]
               properties:
-                phone: { type: string }
+                phone: { type: string, description: "The phone number, or the e-mail address of the account when it has one." }
                 password: { type: string, format: password }
                 device_name: { type: string, description: "Optional; labels the token (e.g. \"Ahmed's iPhone\")." }
       responses:

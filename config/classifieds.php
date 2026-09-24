@@ -55,6 +55,7 @@ return [
     'admin' => [
         'name' => env('ADMIN_NAME', 'مدير الموقع'),
         'phone' => env('ADMIN_PHONE'),
+        'email' => env('ADMIN_EMAIL'),
         'password' => env('ADMIN_PASSWORD'),
     ],
 

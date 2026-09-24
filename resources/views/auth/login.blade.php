@@ -5,8 +5,8 @@
     <form method="POST" action="{{ route('login') }}" class="mt-6 space-y-4">
         @csrf
 
-        <x-input name="phone" type="tel" :label="__('app.auth.phone')" :hint="__('app.auth.phone_hint')"
-                 inputmode="tel" autocomplete="tel" placeholder="01012345678" ltr required autofocus />
+        <x-input name="phone" type="text" :label="__('app.auth.login_identifier')" :hint="__('app.auth.login_identifier_hint')"
+                 autocomplete="username" placeholder="01012345678" ltr required autofocus />
 
         <x-input name="password" type="password" :label="__('app.auth.password')" autocomplete="current-password" required />
 

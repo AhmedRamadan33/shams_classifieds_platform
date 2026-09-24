@@ -32,7 +32,18 @@ class LoginRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        if ($this->logsInWithEmail()) {
+            $this->merge(['phone' => Str::lower(trim((string) $this->input('phone')))]);
+
+            return;
+        }
+
         $this->normalizePhoneInput();
+    }
+
+    public function logsInWithEmail(): bool
+    {
+        return str_contains((string) $this->input('phone'), '@');
     }
 
     public function retrieveUser(): User
@@ -40,7 +51,7 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         $provider = Auth::guard('web')->getProvider();
-        $credentials = ['phone' => $this->string('phone')->toString()];
+        $credentials = [$this->logsInWithEmail() ? 'email' : 'phone' => $this->string('phone')->toString()];
 
         $user = $provider->retrieveByCredentials($credentials);
 

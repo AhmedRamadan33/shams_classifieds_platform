@@ -25,6 +25,7 @@ class AdminSeeder extends Seeder
 
         $admin->fill([
             'name' => config('classifieds.admin.name'),
+            'email' => config('classifieds.admin.email') ?: $admin->email,
             'password' => $password,
             'phone_verified_at' => $admin->phone_verified_at ?? now(),
             'is_banned' => false,

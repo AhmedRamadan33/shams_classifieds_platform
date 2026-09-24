@@ -40,7 +40,9 @@ class DemoSeeder extends Seeder
 {
     public static int $listingCount = 200;
 
-    private const DEMO_PASSWORD = 'password';
+    private const DEMO_PASSWORD = '123456789';
+
+    private const EMAIL_DOMAIN = 'shams.test';
 
     private const MODERATOR_PHONE = '01111111111';
 
@@ -357,6 +359,7 @@ class DemoSeeder extends Seeder
             $user = User::create([
                 'name' => self::NAMES[$i - 1],
                 'phone' => $this->demoPhone($i),
+                'email' => "user{$i}@".self::EMAIL_DOMAIN,
                 'phone_verified_at' => now()->subDays(random_int(20, 90)),
                 'password' => self::DEMO_PASSWORD,
             ]);
@@ -371,6 +374,7 @@ class DemoSeeder extends Seeder
         $moderator = User::create([
             'name' => 'مشرف تجريبي',
             'phone' => '+20'.ltrim(self::MODERATOR_PHONE, '0'),
+            'email' => 'moderator@'.self::EMAIL_DOMAIN,
             'phone_verified_at' => now(),
             'password' => self::DEMO_PASSWORD,
         ]);

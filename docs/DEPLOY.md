@@ -87,6 +87,7 @@ MAIL_FROM_ADDRESS=no-reply@your-domain.com
 
 CLASSIFIEDS_REQUIRE_REVIEW=true       # keep moderation on
 ADMIN_PHONE=01xxxxxxxxx               # the seeded administrator
+ADMIN_EMAIL=admin@your-domain.com     # optional; the administrator can also sign in with it
 ADMIN_PASSWORD=<strong password>      # change it, then log in and rotate it
 
 SMS_DRIVER=twilio                     # or vonage; "log" cannot deliver codes in production, see below

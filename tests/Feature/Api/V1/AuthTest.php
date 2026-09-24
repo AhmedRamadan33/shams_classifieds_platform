@@ -77,6 +77,16 @@ it('logs a verified user in with phone and password', function () {
     expect($response->json('data.id'))->toBe($user->id);
 });
 
+it('logs a verified user in with an e-mail address and password', function () {
+    $user = User::factory()->create(['email' => 'admin@shams.test', 'password' => 'password123']);
+
+    $response = $this->postJson('/api/v1/auth/login', ['phone' => 'admin@shams.test', 'password' => 'password123'])
+        ->assertOk()
+        ->assertJsonStructure(['token', 'data']);
+
+    expect($response->json('data.id'))->toBe($user->id);
+});
+
 it('rejects a login with the wrong password', function () {
     User::factory()->create(['phone' => '+201012345678', 'password' => 'password123']);
 

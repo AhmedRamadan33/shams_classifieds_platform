@@ -50,8 +50,8 @@ it('keeps banned staff out of the panel', function () {
     $this->actingAs(User::factory()->admin()->banned()->create())->get('/admin')->assertForbidden();
 });
 
-it('redirects guests to the panel login, which uses the phone number', function () {
+it('redirects guests to the panel login, which takes a phone number or an e-mail', function () {
     $this->get('/admin')->assertRedirect('/admin/login');
 
-    $this->get('/admin/login')->assertOk()->assertSee(__('app.auth.phone'));
+    $this->get('/admin/login')->assertOk()->assertSee(__('app.auth.login_identifier'));
 });
