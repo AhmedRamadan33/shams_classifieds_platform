@@ -9,7 +9,7 @@ export const uploadsDir = path.join(root, 'storage', 'app', 'e2e-public');
 export const uploadsLink = path.join(root, 'public', 'storage-e2e');
 
 export const ADMIN = { phone: '01000000000', password: 'e2e-admin-pass' };
-export const MODERATOR = { phone: '01111111111', password: 'password' };
+export const MODERATOR = { phone: '01111111111', password: '123456789' };
 
 export const appEnv = {
     APP_ENV: 'local',

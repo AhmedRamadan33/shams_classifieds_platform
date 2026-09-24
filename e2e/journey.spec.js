@@ -140,7 +140,8 @@ test.describe('full journey', () => {
         await expect(row).toBeVisible();
         await page.screenshot({ path: path.join(shots, `${info.project.name}-admin-listings.png`), fullPage: true });
 
-        await row.getByRole('button', { name: 'موافقة' }).click();
+        await row.getByRole('button', { name: 'إجراءات' }).click();
+        await page.locator('.fi-dropdown-panel:visible').getByText('موافقة', { exact: true }).click();
         await page.getByRole('button', { name: 'تأكيد' }).click();
         await expect(page.getByText('تمت الموافقة على الإعلان.')).toBeVisible();
     });

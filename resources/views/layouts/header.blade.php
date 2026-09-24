@@ -19,6 +19,7 @@
         </a>
 
         <nav class="hidden shrink-0 items-center gap-1 lg:flex" aria-label="{{ __('app.menu') }}">
+            <a href="{{ route('home') }}" @if (request()->routeIs('home')) aria-current="page" @endif class="rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-100 hover:text-brand-700 {{ request()->routeIs('home') ? 'text-brand-700' : 'text-slate-700' }}">{{ __('app.nav.home') }}</a>
             <a href="{{ route('search') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-brand-700">{{ __('app.nav.browse') }}</a>
             <a href="{{ route('ad-banners.create') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-brand-700">{{ __('app.nav.advertise') }}</a>
         </nav>
