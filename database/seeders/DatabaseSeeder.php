@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         if (app()->environment('local') && config('classifieds.seed_demo_data')) {
-            $this->call(DemoSeeder::class);
+            $this->call([DemoSeeder::class, ShowcaseAccountsSeeder::class]);
         }
     }
 }
