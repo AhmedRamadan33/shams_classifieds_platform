@@ -13,10 +13,6 @@
         </div>
     </section>
 
-    <div class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <x-ad-banner placement="home_top" />
-    </div>
-
     <div class="mx-auto max-w-7xl space-y-12 px-4 pb-4 sm:px-6 lg:px-8">
         <section aria-labelledby="home-categories" class="-mt-2">
             <h2 id="home-categories" class="text-xl font-bold text-slate-900">{{ __('app.home.categories_title') }}</h2>
@@ -72,5 +68,7 @@
             <p class="mx-auto mt-2 max-w-xl text-brand-50">{{ __('app.home.cta_text') }}</p>
             <a href="{{ route('listings.create') }}" class="mt-5 inline-flex rounded-lg bg-white px-6 py-3 text-sm font-bold text-brand-800 hover:bg-brand-50">{{ __('app.nav.add_listing') }}</a>
         </section>
+
+        <x-ad-banner placement="home_top" />
     </div>
 </x-app-layout>

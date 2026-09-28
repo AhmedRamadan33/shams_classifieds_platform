@@ -20,6 +20,61 @@ it('shows an active home_top banner on the home page, but not a banner for anoth
     $response->assertDontSee(route('ad-banners.click', $sidebar));
 });
 
+it('shows every active banner of a placement as the slides of one slider', function () {
+    $banners = AdBanner::factory()->active()->count(3)->create(['placement' => 'home_top']);
+    $other = AdBanner::factory()->active()->create(['placement' => 'search_sidebar']);
+
+    $html = $this->get('/')->assertOk()->getContent();
+
+    foreach ($banners as $banner) {
+        expect($html)->toContain(route('ad-banners.click', $banner));
+    }
+
+    expect($html)->not->toContain(route('ad-banners.click', $other))
+        ->and(substr_count($html, 'aria-roledescription="carousel"'))->toBe(1)
+        ->and(substr_count($html, 'aria-roledescription="slide"'))->toBe(3)
+        ->and($html)->toContain(__('app.ad_banners.next'))
+        ->and($html)->toContain(__('app.ad_banners.previous'));
+});
+
+it('shows a single banner as a plain block without slider controls', function () {
+    $banner = AdBanner::factory()->active()->create(['placement' => 'home_top']);
+
+    $html = $this->get('/')->assertOk()->getContent();
+
+    expect($html)->toContain(route('ad-banners.click', $banner))
+        ->and($html)->not->toContain(__('app.ad_banners.next'))
+        ->and($html)->not->toContain('x-show="index');
+});
+
+it('puts the slider of a sidebar placement on the search page too', function () {
+    $banners = AdBanner::factory()->active()->count(2)->create(['placement' => 'search_sidebar']);
+
+    $html = $this->get('/search')->assertOk()->getContent();
+
+    foreach ($banners as $banner) {
+        expect($html)->toContain(route('ad-banners.click', $banner));
+    }
+});
+
+it('caps a slider at ten banners', function () {
+    AdBanner::factory()->active()->count(12)->create(['placement' => 'home_top']);
+
+    $html = $this->get('/')->assertOk()->getContent();
+
+    expect(substr_count($html, 'aria-roledescription="slide"'))->toBe(10);
+});
+
+it('places the home banners at the end of the page, after the call to action and before the footer', function () {
+    $banner = AdBanner::factory()->active()->create(['placement' => 'home_top']);
+
+    $this->get('/')->assertOk()->assertSeeInOrder([
+        __('app.home.categories_title'),
+        __('app.home.cta_title'),
+        route('ad-banners.click', $banner),
+        '<footer',
+    ], false);
+});
 it('never shows a pending, rejected or expired banner anywhere', function () {
     $pending = AdBanner::factory()->create(['placement' => 'home_top']);
     $rejected = AdBanner::factory()->rejected()->create(['placement' => 'home_top']);
