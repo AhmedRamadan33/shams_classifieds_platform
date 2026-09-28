@@ -57,11 +57,24 @@ final class DemoConversations
         'ينفع جداً، مستنيك وهجهز كل حاجة.',
     ];
 
+    private const JOB = [
+        'السلام عليكم، شفت إعلان "{title}" وحابب أعرف التفاصيل.',
+        'وعليكم السلام، أهلاً بيك. عندك خبرة قد إيه في المجال ده؟',
+        'عندي خبرة كام سنة في نفس التخصص، ومستعد أبدأ فوراً.',
+        'تمام، ممكن تبعتلي السيرة الذاتية على واتساب؟',
+        'جاري الإرسال دلوقتي، وياريت أعرف مواعيد الدوام والراتب التقريبي.',
+        'الدوام من 9 لـ 5، والراتب حسب الخبرة بعد المقابلة الشخصية.',
+        'تمام، مستني ميعاد المقابلة إن شاء الله.',
+        'هراجع السيرة الذاتية وأرجعلك بالرد خلال يومين.',
+    ];
+
     private const VEHICLE_CATEGORIES = ['cars-for-sale', 'cars-for-rent', 'motorcycles', 'car-parts'];
 
     private const REAL_ESTATE_CATEGORIES = ['apartments-for-sale', 'apartments-for-rent', 'villas', 'land', 'shops-and-offices'];
 
     private const SERVICE_CATEGORIES = ['maintenance-and-finishing', 'transport-and-shipping', 'lessons-and-courses', 'events-and-photography', 'other-services'];
+
+    private const JOB_CATEGORIES = ['job-vacancies', 'job-seekers'];
 
     public static function create(Listing $listing, User $buyer, int $unreadCount = 0, int $daysAgo = 1, bool $endsWithBuyer = false): ?Conversation
     {
@@ -130,6 +143,7 @@ final class DemoConversations
             in_array($slug, self::VEHICLE_CATEGORIES, true) => self::VEHICLE,
             in_array($slug, self::REAL_ESTATE_CATEGORIES, true) => self::REAL_ESTATE,
             in_array($slug, self::SERVICE_CATEGORIES, true) => self::SERVICE,
+            in_array($slug, self::JOB_CATEGORIES, true) => self::JOB,
             default => self::GOODS,
         };
     }
