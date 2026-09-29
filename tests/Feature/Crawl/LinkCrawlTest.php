@@ -107,6 +107,7 @@ beforeEach(function () {
     Queue::fake();
     Storage::fake('public');
     DemoSeeder::$listingCount = 24;
+    config(['classifieds.seed_demo_data' => true]);
     $this->seed(DemoSeeder::class);
 });
 

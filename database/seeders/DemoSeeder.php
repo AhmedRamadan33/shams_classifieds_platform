@@ -319,8 +319,8 @@ class DemoSeeder extends Seeder
 
     public function run(): void
     {
-        if (! app()->environment(['local', 'testing'])) {
-            $this->command?->warn('DemoSeeder only runs in the local environment. Nothing was created.');
+        if (! config('classifieds.seed_demo_data')) {
+            $this->command?->warn('SEED_DEMO_DATA is not enabled. Nothing was created.');
 
             return;
         }

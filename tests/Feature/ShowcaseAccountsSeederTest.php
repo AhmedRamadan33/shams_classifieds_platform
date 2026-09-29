@@ -29,6 +29,7 @@ beforeEach(function () {
         'classifieds.admin.phone' => '01000000000',
         'classifieds.admin.email' => 'admin@shams.test',
         'classifieds.admin.password' => '123456789',
+        'classifieds.seed_demo_data' => true,
     ]);
 });
 

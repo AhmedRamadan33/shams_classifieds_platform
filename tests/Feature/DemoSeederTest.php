@@ -26,6 +26,7 @@ beforeEach(function () {
     Queue::fake();
     Storage::fake('public');
     DemoSeeder::$listingCount = 40;
+    config(['classifieds.seed_demo_data' => true]);
 });
 
 afterEach(function () {
@@ -163,8 +164,8 @@ it('only references photos that exist and titles that are in the catalog', funct
         ->and(array_diff_key($constants['ATTRIBUTES'], $titles))->toBe([]);
 });
 
-it('refuses to run outside the local environment', function () {
-    $this->app->detectEnvironment(fn () => 'production');
+it('refuses to run when SEED_DEMO_DATA is off', function () {
+    config(['classifieds.seed_demo_data' => false]);
 
     app(DemoSeeder::class)->run();
 
@@ -173,4 +174,13 @@ it('refuses to run outside the local environment', function () {
         ->and(AdBanner::count())->toBe(0)
         ->and(Store::count())->toBe(0)
         ->and(SavedSearch::count())->toBe(0);
+});
+
+it('runs in production too, as long as SEED_DEMO_DATA is on (this is meant to seed a live demo deployment)', function () {
+    $this->app->detectEnvironment(fn () => 'production');
+
+    app(DemoSeeder::class)->run();
+
+    expect(Listing::count())->toBe(40)
+        ->and(User::where('phone', 'like', '+2012%')->count())->toBe(12);
 });

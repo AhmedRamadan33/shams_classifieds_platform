@@ -21,8 +21,7 @@ afterEach(function () {
     DemoSeeder::$listingCount = 200;
 });
 
-it('adds the demo data when a local environment is seeded with the flag on', function () {
-    $this->app->detectEnvironment(fn () => 'local');
+it('adds the demo data when the flag is on', function () {
     config(['classifieds.seed_demo_data' => true]);
 
     $this->seed(DatabaseSeeder::class);
@@ -31,6 +30,16 @@ it('adds the demo data when a local environment is seeded with the flag on', fun
         ->and(User::where('phone', '+201000000000')->exists())->toBeTrue()
         ->and(Listing::count())->toBe(6)
         ->and(AdBanner::count())->toBeGreaterThan(0);
+});
+
+it('adds the demo data in production too, as long as the flag is on (a demo deployment stays a demo)', function () {
+    $this->app->detectEnvironment(fn () => 'production');
+    config(['classifieds.seed_demo_data' => true]);
+
+    app(DatabaseSeeder::class)->run();
+
+    expect(Listing::count())->toBe(6)
+        ->and(User::where('phone', '+201000000000')->exists())->toBeTrue();
 });
 
 it('creates the administrator with the configured e-mail and lets them sign in with it', function () {
@@ -53,7 +62,6 @@ it('creates the administrator with the configured e-mail and lets them sign in w
 });
 
 it('leaves the demo data out when the flag is off', function () {
-    $this->app->detectEnvironment(fn () => 'local');
     config(['classifieds.seed_demo_data' => false]);
 
     $this->seed(DatabaseSeeder::class);
@@ -63,11 +71,11 @@ it('leaves the demo data out when the flag is off', function () {
         ->and(AdBanner::count())->toBe(0);
 });
 
-it('never adds demo data outside the local environment', function () {
-    $this->app->detectEnvironment(fn () => 'testing');
-    config(['classifieds.seed_demo_data' => true]);
+it('never adds demo data when the flag is off, in any environment', function () {
+    $this->app->detectEnvironment(fn () => 'production');
+    config(['classifieds.seed_demo_data' => false]);
 
-    $this->seed(DatabaseSeeder::class);
+    app(DatabaseSeeder::class)->run();
 
     expect(Listing::count())->toBe(0)
         ->and(User::where('phone', 'like', '+2012%')->count())->toBe(0);

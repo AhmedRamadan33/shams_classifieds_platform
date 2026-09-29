@@ -90,6 +90,10 @@ ADMIN_PHONE=01xxxxxxxxx               # the seeded administrator
 ADMIN_EMAIL=admin@your-domain.com     # optional; the administrator can also sign in with it
 ADMIN_PASSWORD=<strong password>      # change it, then log in and rotate it
 
+SEED_DEMO_DATA=true                   # keep true for a public demo deployment (fills the site with
+                                       # realistic sample listings/users/banners on every migrate --seed);
+                                       # set to false before seeding a real launch with real users
+
 SMS_DRIVER=twilio                     # or vonage; "log" cannot deliver codes in production, see below
 TWILIO_SID=...
 TWILIO_TOKEN=...

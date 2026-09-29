@@ -79,8 +79,10 @@ php artisan queue:work           # in another terminal: builds the WebP image co
   and a `MEILISEARCH_HOST`/`MEILISEARCH_KEY` once a server is running; every other filter (category,
   price, visibility…) still runs as normal SQL on top of it either way. See `docs/DEPLOY.md`, "9c.
   Search engine".
-- **Demo data** (local only): `php artisan migrate:fresh --seed` (with `SEED_DEMO_DATA=true`, the default in
-  `.env.example`) or `php artisan db:seed --class=DemoSeeder` adds ~200 listings, 12 users
+- **Demo data:** controlled by `SEED_DEMO_DATA` (`true` by default in `.env.example`), not by the
+  environment — it runs anywhere, including a production deployment meant to stay a public demo. Set
+  it to `false` before seeding a real launch. `php artisan migrate:fresh --seed` or
+  `php artisan db:seed --class=DemoSeeder` adds ~200 listings, 12 users
   (`user1@shams.test` … `user12@shams.test`), a moderator (`moderator@shams.test`), favorites, reports, stores, reviews,
   conversations and sponsored banners. Every listing carries real photographs that match its title
   (CC0 stock photos kept in `database/seeders/data/images/`, credits in `CREDITS.md` there), a

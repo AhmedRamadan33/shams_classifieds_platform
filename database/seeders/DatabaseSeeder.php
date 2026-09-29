@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             AdPackageSeeder::class,
         ]);
 
-        if (app()->environment('local') && config('classifieds.seed_demo_data')) {
+        if (config('classifieds.seed_demo_data')) {
             $this->call([DemoSeeder::class, ShowcaseAccountsSeeder::class]);
         }
     }
