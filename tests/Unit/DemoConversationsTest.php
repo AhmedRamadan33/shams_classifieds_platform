@@ -8,7 +8,7 @@ use App\Models\User;
 use Database\Seeders\Support\DemoConversations;
 
 it('never talks about price, condition or selling in a job listing conversation', function (string $slug) {
-    $category = Category::query()->firstOrCreate(['slug' => $slug], Category::factory()->raw());
+    $category = Category::query()->firstOrCreate(['slug' => $slug], ['name' => $slug]);
     $seller = User::factory()->create();
     $buyer = User::factory()->create();
     $listing = Listing::factory()->for($category)->for($seller)->create(['price' => null]);
@@ -24,7 +24,7 @@ it('never talks about price, condition or selling in a job listing conversation'
 })->with(['job-vacancies', 'job-seekers']);
 
 it('picks the vehicle, real estate or service dialogue for their own categories', function (string $slug, string $needle) {
-    $category = Category::query()->firstOrCreate(['slug' => $slug], Category::factory()->raw());
+    $category = Category::query()->firstOrCreate(['slug' => $slug], ['name' => $slug]);
     $listing = Listing::factory()->for($category)->create();
 
     $conversation = DemoConversations::create($listing, User::factory()->create());
@@ -37,7 +37,7 @@ it('picks the vehicle, real estate or service dialogue for their own categories'
 ]);
 
 it('falls back to the generic for-sale dialogue for a plain goods category', function () {
-    $category = Category::query()->firstOrCreate(['slug' => 'mobiles'], Category::factory()->raw());
+    $category = Category::query()->firstOrCreate(['slug' => 'mobiles'], ['name' => 'mobiles']);
     $listing = Listing::factory()->for($category)->create();
 
     $conversation = DemoConversations::create($listing, User::factory()->create());
