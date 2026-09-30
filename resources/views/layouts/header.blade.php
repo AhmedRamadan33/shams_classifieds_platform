@@ -2,7 +2,7 @@
         x-data="{ drawer: false, menu: false }"
         @keydown.escape.window="drawer = false; menu = false">
     <div class="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
-        <button type="button" class="rounded-lg p-2 text-slate-700 hover:bg-slate-100 lg:hidden"
+        <button type="button" class="rounded-lg p-2 text-slate-700 hover:bg-slate-100 xl:hidden"
                 @click="drawer = true" :aria-expanded="drawer.toString()" aria-controls="mobile-drawer"
                 aria-label="{{ __('app.open_menu') }}">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -18,7 +18,7 @@
             <span>{{ __('app.brand') }}</span>
         </a>
 
-        <nav class="hidden shrink-0 items-center gap-1 lg:flex" aria-label="{{ __('app.menu') }}">
+        <nav class="hidden shrink-0 items-center gap-1 xl:flex" aria-label="{{ __('app.menu') }}">
             <a href="{{ route('home') }}" @if (request()->routeIs('home')) aria-current="page" @endif class="rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-100 hover:text-brand-700 {{ request()->routeIs('home') ? 'text-brand-700' : 'text-slate-700' }}">{{ __('app.nav.home') }}</a>
             <a href="{{ route('search') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-brand-700">{{ __('app.nav.browse') }}</a>
             <a href="{{ route('ad-banners.create') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-brand-700">{{ __('app.nav.advertise') }}</a>
@@ -71,7 +71,7 @@
                     @endif
                 </a>
 
-                <div class="relative hidden lg:block">
+                <div class="relative hidden xl:block">
                     <button type="button" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
                             @click="menu = !menu" :aria-expanded="menu.toString()" aria-haspopup="true">
                         @if (Auth::user()->avatarUrl())
@@ -101,13 +101,13 @@
                     </div>
                 </div>
             @else
-                <a href="{{ route('login') }}" class="hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 lg:inline-block">{{ __('app.nav.login') }}</a>
-                <a href="{{ route('register') }}" class="hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 lg:inline-block">{{ __('app.nav.register') }}</a>
+                <a href="{{ route('login') }}" class="hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 xl:inline-block">{{ __('app.nav.login') }}</a>
+                <a href="{{ route('register') }}" class="hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 xl:inline-block">{{ __('app.nav.register') }}</a>
             @endauth
         </div>
     </div>
 
-    <div id="mobile-drawer" x-show="drawer" x-cloak class="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="{{ __('app.menu') }}">
+    <div id="mobile-drawer" x-show="drawer" x-cloak class="fixed inset-0 z-50 xl:hidden" role="dialog" aria-modal="true" aria-label="{{ __('app.menu') }}">
         <div class="absolute inset-0 bg-slate-900/50" @click="drawer = false" x-transition.opacity></div>
         <nav class="absolute inset-y-0 start-0 w-72 max-w-[85%] overflow-y-auto bg-white p-4 shadow-xl"
              x-show="drawer"
