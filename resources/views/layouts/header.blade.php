@@ -107,6 +107,7 @@
         </div>
     </div>
 
+    <template x-teleport="body">
     <div id="mobile-drawer" x-show="drawer" x-cloak class="fixed inset-0 z-50 xl:hidden" role="dialog" aria-modal="true" aria-label="{{ __('app.menu') }}">
         <div class="absolute inset-0 bg-slate-900/50" @click="drawer = false" x-transition.opacity></div>
         <nav class="absolute inset-y-0 start-0 w-72 max-w-[85%] overflow-y-auto bg-white p-4 shadow-xl"
@@ -162,4 +163,5 @@
             </ul>
         </nav>
     </div>
+    </template>
 </header>

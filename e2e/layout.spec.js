@@ -69,6 +69,7 @@ test.describe('mobile navigation', () => {
 
         const box = await drawer.locator('nav').boundingBox();
         expect(box.x + box.width / 2).toBeGreaterThan(375 / 2);
+        expect(box.height).toBeGreaterThan(400);
 
         await page.keyboard.press('Escape');
         await expect(drawer).toBeHidden();
