@@ -27,4 +27,12 @@
         direction: ltr;
         text-align: end;
     }
+
+    /* @tailwindcss/forms pins the select chevron to the physical right edge,
+       which overlaps the first letters of RTL option text. Mirror it to the left. */
+    [dir='rtl'] select:not([multiple]):not([size]) {
+        background-position: left 0.5rem center;
+        padding-right: 0.75rem;
+        padding-left: 2.5rem;
+    }
 }
