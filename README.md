@@ -27,6 +27,9 @@ php artisan queue:work           # in another terminal: builds the WebP image co
 
 - **Admin panel:** `/admin`. Sign in with `ADMIN_PHONE` (or `ADMIN_EMAIL`) and `ADMIN_PASSWORD` from `.env`.
   Every login form (site, admin panel, API) accepts either the phone number or the e-mail of the account.
+- **Integration settings:** every credential mentioned below (mail, SMS, payment, WhatsApp, CAPTCHA) can
+  be set in `.env` **or** from «الإعدادات ← إعدادات التكاملات» in the admin panel (`/admin/settings`); a
+  value saved there overrides `.env` immediately, with secrets encrypted and never redisplayed.
 - **OTP codes:** `SMS_DRIVER=log` (the default) writes every code to `storage/logs/laravel.log`; read
   it there to finish a registration locally. Set `SMS_DRIVER=twilio` or `SMS_DRIVER=vonage` and the
   matching credentials in `.env` to send real SMS (see `.env.example`).

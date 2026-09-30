@@ -119,6 +119,15 @@ WHATSAPP_ACCESS_TOKEN=...
 
 Then run `php artisan launch:check` (below) — it verifies every one of these before you go live.
 
+**All of the integration credentials above (mail, SMS, payment, WhatsApp, CAPTCHA) can also be set —
+and later changed — from the admin panel itself**, under «الإعدادات ← إعدادات التكاملات»
+(`/admin/settings`, admin-only). A value saved there overrides the matching `.env` value on every
+request, immediately, with no redeploy and no `config:cache` step needed (the page clears it for you).
+Secret fields (passwords, API tokens) are encrypted in the database and never redisplayed after
+saving — leave one blank to keep whatever is already stored. `.env` stays the baseline/fallback: set
+it there for the *first* deploy, then use the admin page for anything you need to rotate or fix
+afterwards without SSH access.
+
 Behind a load balancer or reverse proxy that terminates TLS, tell Laravel to trust it (otherwise
 generated URLs, canonical links and the sitemap use `http://`): add
 `$middleware->trustProxies(at: '*');` (or your proxy IPs) inside `withMiddleware()` in `bootstrap/app.php`.
